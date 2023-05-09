@@ -24,13 +24,13 @@ class Ui_VersionSelectionView(object):
     def setupUi(self, VersionSelectionView):
         if not VersionSelectionView.objectName():
             VersionSelectionView.setObjectName(u"VersionSelectionView")
-        VersionSelectionView.resize(627, 302)
+        VersionSelectionView.resize(605, 300)
         self._2 = QHBoxLayout(VersionSelectionView)
         self._2.setObjectName(u"_2")
         self._2.setContentsMargins(0, 0, 0, 0)
         self.tree_version_list = QTreeWidget(VersionSelectionView)
         self.tree_version_list.setObjectName(u"tree_version_list")
-        self.tree_version_list.setMinimumSize(QSize(300, 0))
+        self.tree_version_list.setMinimumSize(QSize(300, 200))
         self.tree_version_list.setAlternatingRowColors(True)
         self.tree_version_list.setIndentation(0)
         self.tree_version_list.header().setStretchLastSection(False)

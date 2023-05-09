@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>627</width>
-    <height>302</height>
+    <width>605</width>
+    <height>300</height>
    </rect>
   </property>
   <layout class="QHBoxLayout" name="_2">
@@ -28,7 +28,7 @@
      <property name="minimumSize">
       <size>
        <width>300</width>
-       <height>0</height>
+       <height>200</height>
       </size>
      </property>
      <property name="alternatingRowColors">
