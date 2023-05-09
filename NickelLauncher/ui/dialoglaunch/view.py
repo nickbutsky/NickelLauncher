@@ -14,7 +14,7 @@ class DialogLaunch(QDialog):
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
         self._ui = Ui_DialogLaunch()
-        self._setup_ui()
+        self._ui.setupUi(self)
         self._setup_signals()
 
     @property
@@ -34,11 +34,6 @@ class DialogLaunch(QDialog):
 
     def set_progressbar_undefined(self):
         self._ui.progress_bar.setMaximum(0)
-
-    def _setup_ui(self):
-        self._ui.setupUi(self)
-
-        self.setFixedSize(400, 104)
 
     def _setup_signals(self):
         self._ui.button.clicked.connect(self.close)
