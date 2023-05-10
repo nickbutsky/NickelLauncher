@@ -1,5 +1,11 @@
-from PySide6.QtWidgets import QApplication, QWidget, QScrollArea, QLayout
-from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import QApplication, QWidget, QScrollArea, QMessageBox, QLayout
+from PySide6.QtCore import Qt, QTimer
+
+
+def show_message_box(icon: QMessageBox.Icon, title: str, text: str, parent: QWidget | None = None):
+    message_box = QMessageBox(icon, title, text, parent=parent)
+    message_box.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+    message_box.show()
 
 
 def ensure_widget_visible(scroll_area: QScrollArea, widget: QWidget):

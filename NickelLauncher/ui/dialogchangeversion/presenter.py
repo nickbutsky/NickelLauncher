@@ -3,6 +3,8 @@ from typing import Any, Callable, Protocol
 from PySide6.QtWidgets import QWidget, QMessageBox
 from PySide6.QtCore import Signal
 
+from ui.functions import show_message_box
+
 
 class Version(Protocol):
     @property
@@ -73,7 +75,7 @@ class VersionChangePresenter:
         try:
             self._version_supplier.update_version_list()
         except Exception as e:
-            QMessageBox(QMessageBox.Icon.Warning, 'Error', str(e), parent=self._view.widget).show()
+            show_message_box(QMessageBox.Icon.Warning, 'Error', str(e), self._view.widget)
         self._view.set_version_list(self._version_supplier.get_version_list())
 
     def _on_done(self):

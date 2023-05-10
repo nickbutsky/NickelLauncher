@@ -3,6 +3,8 @@ from typing import Any, Callable, Protocol
 from PySide6.QtWidgets import QWidget, QMessageBox
 from PySide6.QtCore import Signal
 
+from ui.functions import show_message_box
+
 
 class InstanceGroup(Protocol):
     @property
@@ -81,7 +83,7 @@ class InstanceCreatePresenter:
         self._view.spawn_async()
 
         if should_show_warning:
-            QMessageBox(QMessageBox.Icon.Warning, 'Error', warning_message, parent=self._view.widget).show()
+            show_message_box(QMessageBox.Icon.Warning, 'Error', warning_message, self._view.widget)
 
     def add_success_callback(self, callback: Callable[[], Any]):
         if callback not in self._to_call_on_success:
@@ -99,7 +101,7 @@ class InstanceCreatePresenter:
         try:
             self._version_supplier.update_version_list()
         except Exception as e:
-            QMessageBox(QMessageBox.Icon.Warning, 'Error', str(e), parent=self._view.widget).show()
+            show_message_box(QMessageBox.Icon.Warning, 'Error', str(e), self._view.widget)
         self._set_version_list()
 
     def _invoke_instance_creation(self):
