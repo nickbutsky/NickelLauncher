@@ -67,7 +67,7 @@ class _LineEdit(QLineEdit):
         self._initial_text = text
 
     def keyPressEvent(self, a0: QKeyEvent):
-        if a0.key() in [Qt.Key.Key_Enter, Qt.Key.Key_Return]:
+        if a0.key() in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
             if self.text() == self._initial_text:
                 self.focusOutEvent(QFocusEvent(QEvent.Type.FocusOut))
             else:
