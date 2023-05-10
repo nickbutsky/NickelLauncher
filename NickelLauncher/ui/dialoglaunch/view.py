@@ -36,5 +36,9 @@ class DialogLaunch(QDialog):
         self._ui.progress_bar.setMaximum(0)
 
     def _setup_signals(self):
-        self._ui.button.clicked.connect(self.close)
-        self.finished.connect(self.closed.emit)
+        def close():
+            self.closed.emit()
+            self.close()
+
+        self._ui.button.clicked.connect(close)
+        self.finished.connect(close)
