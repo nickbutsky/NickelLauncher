@@ -16,7 +16,7 @@ class App(QApplication):
         self.setOrganizationName('Nickel59')
         self.setApplicationName('NickelLauncher')
 
-        self.setStyleSheet(qdarktheme.load_stylesheet('light'))
+        qdarktheme.setup_theme('light')
 
         self.setWindowIcon(QIcon(os.path.join(':', 'icons', 'default.png')))
 
