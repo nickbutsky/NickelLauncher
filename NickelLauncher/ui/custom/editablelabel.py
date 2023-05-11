@@ -16,9 +16,6 @@ class EditableLabel(QWidget):
 
         self.__setup()
 
-    def set_text(self, text: str):
-        self._label.setText(text)
-
     def enter_editing_mode(self):
         if self._in_editing_mode:
             return
