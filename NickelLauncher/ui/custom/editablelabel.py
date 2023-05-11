@@ -60,6 +60,7 @@ class _LineEdit(QLineEdit):
 
     def __init__(self, text: str, parent: QWidget | None = None):
         super().__init__(text, parent)
+        self.setFrame(False)
 
         self._initial_text = text
 
