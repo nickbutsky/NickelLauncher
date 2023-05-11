@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit
-from PySide6.QtCore import Qt, QEvent, Signal
+from PySide6.QtCore import Qt, QEvent, QPoint, Signal
 from PySide6.QtGui import QFocusEvent, QKeyEvent
 
 
@@ -24,7 +24,7 @@ class EditableLabel(QLabel):
         self._line_edit.setText(self.text())
 
         self._line_edit.setFixedHeight(self.height() + 5)
-        self._line_edit.move(self.pos())
+        self._line_edit.move(QPoint(self.pos().x() - 3, self.pos().y() - 3))
         self._line_edit.setVisible(True)
 
         self.setVisible(False)
