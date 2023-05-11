@@ -23,7 +23,7 @@ class EditableLabel(QLabel):
 
         self._line_edit.setText(self.text())
 
-        self._line_edit.setFixedHeight(self.height() + 5)
+        self._line_edit.setFixedHeight(self.height() + 6)
         self._line_edit.move(QPoint(self.pos().x() - 3, self.pos().y() - 3))
         self._line_edit.setVisible(True)
 
