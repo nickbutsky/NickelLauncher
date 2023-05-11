@@ -45,6 +45,8 @@ class ButtonInstance(QToolButton):
         self._label_name = EditableLabel(instance.name, self)
         self._label_version_name = QLabel(instance.version_name, self)
 
+        self._width, self._height = 200, 50
+
         self._setup_ui()
         self._setup_signals()
 
@@ -64,7 +66,7 @@ class ButtonInstance(QToolButton):
 
         old_label_version_name = self._label_version_name
         self._label_version_name = QLabel(self.instance.version_name, self)
-        self._label_version_name.setFixedWidth(249)
+        self._label_version_name.setFixedWidth(self._width)
         self.layout().replaceWidget(old_label_version_name, self._label_version_name)
         old_label_version_name.deleteLater()
 
@@ -85,20 +87,23 @@ class ButtonInstance(QToolButton):
         self.setCheckable(True)
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
-        width, height = 249, 66
-        self.setFixedSize(width, height)
+        self.setFixedSize(self._width, self._height)
 
         layout = QGridLayout(self)
         self.setLayout(layout)
         layout.setContentsMargins(4, 4, 4, 4)
 
         label_icon = QLabel(self)
-        label_icon.setPixmap(QPixmap(os.path.join(':', 'icons', 'default.png')).scaled(48, 48))
+        label_icon.setPixmap(
+            QPixmap(
+                os.path.join(':', 'icons', 'default.png')
+            ).scaled(label_icon.width() * 1.25, label_icon.height() * 1.25, Qt.AspectRatioMode.KeepAspectRatio)
+        )
         layout.addWidget(label_icon, 0, 0, 2, 1)
 
         layout.addWidget(self._label_name, 0, 1, 1, 1)
 
-        self._label_version_name.setFixedWidth(width)
+        self._label_version_name.setFixedWidth(self._width)
         layout.addWidget(self._label_version_name, 1, 1, 1, 1)
 
     def _setup_signals(self):

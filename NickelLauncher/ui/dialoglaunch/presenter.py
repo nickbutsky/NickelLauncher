@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QWidget, QMessageBox
 from PySide6.QtCore import QObject, QThread, QTimer, Signal
 
 from report import Report
+from ui.functions import show_message_box
 
 
 class Instance(Protocol):
@@ -47,7 +48,7 @@ class InstanceLaunchPresenter:
     def _refresh_view(self, report: Report):
         if report.type == Report.ERROR:
             self._thread.terminate()
-            QMessageBox(QMessageBox.Icon.Critical, 'Error', report.text, parent=self._view.widget.parentWidget()).show()
+            show_message_box(QMessageBox.Icon.Critical, 'Error', report.text, self._view.widget.parentWidget())
             return
 
         self._view.set_text(report.text)

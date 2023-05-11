@@ -24,11 +24,6 @@ class Ui_DialogChangeGroup(object):
         if not DialogChangeGroup.objectName():
             DialogChangeGroup.setObjectName(u"DialogChangeGroup")
         DialogChangeGroup.resize(215, 102)
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(DialogChangeGroup.sizePolicy().hasHeightForWidth())
-        DialogChangeGroup.setSizePolicy(sizePolicy)
         self.verticalLayout = QVBoxLayout(DialogChangeGroup)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.label = QLabel(DialogChangeGroup)

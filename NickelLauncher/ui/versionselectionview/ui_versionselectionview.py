@@ -24,29 +24,29 @@ class Ui_VersionSelectionView(object):
     def setupUi(self, VersionSelectionView):
         if not VersionSelectionView.objectName():
             VersionSelectionView.setObjectName(u"VersionSelectionView")
-        VersionSelectionView.resize(627, 302)
-        self.horizontalLayout = QHBoxLayout(VersionSelectionView)
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        VersionSelectionView.resize(605, 300)
+        self._2 = QHBoxLayout(VersionSelectionView)
+        self._2.setObjectName(u"_2")
+        self._2.setContentsMargins(0, 0, 0, 0)
         self.tree_version_list = QTreeWidget(VersionSelectionView)
         self.tree_version_list.setObjectName(u"tree_version_list")
-        self.tree_version_list.setMinimumSize(QSize(300, 0))
+        self.tree_version_list.setMinimumSize(QSize(300, 200))
         self.tree_version_list.setAlternatingRowColors(True)
         self.tree_version_list.setIndentation(0)
         self.tree_version_list.header().setStretchLastSection(False)
 
-        self.horizontalLayout.addWidget(self.tree_version_list)
+        self._2.addWidget(self.tree_version_list)
 
         self.layout_filter = QVBoxLayout()
         self.layout_filter.setObjectName(u"layout_filter")
         self.layout_filter.setSizeConstraint(QLayout.SetFixedSize)
-        self.label_3 = QLabel(VersionSelectionView)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setEnabled(True)
-        self.label_3.setMinimumSize(QSize(93, 16))
-        self.label_3.setAlignment(Qt.AlignCenter)
+        self.label = QLabel(VersionSelectionView)
+        self.label.setObjectName(u"label")
+        self.label.setEnabled(True)
+        self.label.setMinimumSize(QSize(93, 16))
+        self.label.setAlignment(Qt.AlignCenter)
 
-        self.layout_filter.addWidget(self.label_3)
+        self.layout_filter.addWidget(self.label)
 
         self.checkbox_release = QCheckBox(VersionSelectionView)
         self.checkbox_release.setObjectName(u"checkbox_release")
@@ -70,9 +70,9 @@ class Ui_VersionSelectionView(object):
 
         self.layout_filter.addWidget(self.checkbox_preview)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.layout_filter.addItem(self.verticalSpacer)
+        self.layout_filter.addItem(self.spacer)
 
         self.button_refresh = QPushButton(VersionSelectionView)
         self.button_refresh.setObjectName(u"button_refresh")
@@ -82,7 +82,7 @@ class Ui_VersionSelectionView(object):
         self.layout_filter.addWidget(self.button_refresh)
 
 
-        self.horizontalLayout.addLayout(self.layout_filter)
+        self._2.addLayout(self.layout_filter)
 
 
         self.retranslateUi(VersionSelectionView)
@@ -91,16 +91,16 @@ class Ui_VersionSelectionView(object):
     # setupUi
 
     def retranslateUi(self, VersionSelectionView):
-        VersionSelectionView.setWindowTitle(QCoreApplication.translate("VersionSelectionView", u"Form", None))
         ___qtreewidgetitem = self.tree_version_list.headerItem()
         ___qtreewidgetitem.setText(3, QCoreApplication.translate("VersionSelectionView", u"x86", None));
         ___qtreewidgetitem.setText(2, QCoreApplication.translate("VersionSelectionView", u"x64", None));
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("VersionSelectionView", u"Type", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("VersionSelectionView", u"Version", None));
-        self.label_3.setText(QCoreApplication.translate("VersionSelectionView", u"Filter", None))
+        self.label.setText(QCoreApplication.translate("VersionSelectionView", u"Filter", None))
         self.checkbox_release.setText(QCoreApplication.translate("VersionSelectionView", u"Releases", None))
         self.checkbox_beta.setText(QCoreApplication.translate("VersionSelectionView", u"Betas", None))
         self.checkbox_preview.setText(QCoreApplication.translate("VersionSelectionView", u"Previews", None))
         self.button_refresh.setText(QCoreApplication.translate("VersionSelectionView", u"Refresh", None))
+        pass
     # retranslateUi
 

@@ -1,23 +1,19 @@
-from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout
-from PySide6.QtCore import Qt, QEvent, Signal
+from PySide6.QtWidgets import QWidget, QLabel, QLineEdit
+from PySide6.QtCore import Qt, QEvent, QPoint, Signal
 from PySide6.QtGui import QFocusEvent, QKeyEvent
 
 
-class EditableLabel(QWidget):
+class EditableLabel(QLabel):
     editing_finished = Signal(str)
 
     def __init__(self, text: str, parent: QWidget | None = None):
-        super().__init__(parent)
+        super().__init__(text, parent)
 
         self._in_editing_mode = False
 
-        self._label = QLabel(text, self)
-        self._line_edit = _LineEdit(text, self)
+        self._line_edit = _LineEdit(text, parent)
 
         self.__setup()
-
-    def set_text(self, text: str):
-        self._label.setText(text)
 
     def enter_editing_mode(self):
         if self._in_editing_mode:
@@ -25,10 +21,13 @@ class EditableLabel(QWidget):
 
         self._in_editing_mode = True
 
-        self._line_edit.setText(self._label.text())
+        self._line_edit.setText(self.text())
 
+        self._line_edit.setFixedHeight(self.height() + 6)
+        self._line_edit.move(QPoint(self.pos().x() - 3, self.pos().y() - 3))
         self._line_edit.setVisible(True)
-        self._label.setVisible(False)
+
+        self.setVisible(False)
 
         self._line_edit.setFocus()
 
@@ -39,18 +38,16 @@ class EditableLabel(QWidget):
         self._in_editing_mode = False
 
         if accept_changes:
-            self._label.setText(self._line_edit.text())
+            self.setText(self._line_edit.text())
 
-        self._label.setVisible(True)
+        self.setVisible(True)
         self._line_edit.setVisible(False)
 
+    def deleteLater(self):
+        self._line_edit.deleteLater()
+        super().deleteLater()
+
     def __setup(self):
-        self.setLayout(QHBoxLayout(self))
-        self.layout().setContentsMargins(0, 0, 0, 0)
-
-        self.layout().addWidget(self._label)
-        self.layout().addWidget(self._line_edit)
-
         self._line_edit.setVisible(False)
 
         self._line_edit.editing_finished.connect(self.editing_finished)
@@ -63,11 +60,12 @@ class _LineEdit(QLineEdit):
 
     def __init__(self, text: str, parent: QWidget | None = None):
         super().__init__(text, parent)
+        self.setFrame(False)
 
         self._initial_text = text
 
     def keyPressEvent(self, a0: QKeyEvent):
-        if a0.key() in [Qt.Key.Key_Enter, Qt.Key.Key_Return]:
+        if a0.key() in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
             if self.text() == self._initial_text:
                 self.focusOutEvent(QFocusEvent(QEvent.Type.FocusOut))
             else:

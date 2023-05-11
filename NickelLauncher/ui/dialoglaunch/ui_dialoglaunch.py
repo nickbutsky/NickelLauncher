@@ -22,31 +22,24 @@ class Ui_DialogLaunch(object):
     def setupUi(self, DialogLaunch):
         if not DialogLaunch.objectName():
             DialogLaunch.setObjectName(u"DialogLaunch")
-        DialogLaunch.resize(400, 104)
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(DialogLaunch.sizePolicy().hasHeightForWidth())
-        DialogLaunch.setSizePolicy(sizePolicy)
-        DialogLaunch.setContextMenuPolicy(Qt.NoContextMenu)
-        self.verticalLayout = QVBoxLayout(DialogLaunch)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        DialogLaunch.resize(300, 104)
+        self.vboxLayout = QVBoxLayout(DialogLaunch)
+        self.vboxLayout.setObjectName(u"vboxLayout")
         self.label = QLabel(DialogLaunch)
         self.label.setObjectName(u"label")
 
-        self.verticalLayout.addWidget(self.label)
+        self.vboxLayout.addWidget(self.label)
 
         self.progress_bar = QProgressBar(DialogLaunch)
         self.progress_bar.setObjectName(u"progress_bar")
-        self.progress_bar.setValue(0)
         self.progress_bar.setTextVisible(False)
 
-        self.verticalLayout.addWidget(self.progress_bar)
+        self.vboxLayout.addWidget(self.progress_bar)
 
         self.button = QPushButton(DialogLaunch)
         self.button.setObjectName(u"button")
 
-        self.verticalLayout.addWidget(self.button)
+        self.vboxLayout.addWidget(self.button)
 
 
         self.retranslateUi(DialogLaunch)

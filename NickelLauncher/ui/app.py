@@ -3,7 +3,7 @@ import sys
 
 import qdarktheme
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import Qt, QSettings
+from PySide6.QtCore import QSettings
 from PySide6.QtGui import QIcon
 
 from ui import resources
@@ -12,13 +12,11 @@ from ui.mainwindow.mainwindow import MainWindow
 
 class App(QApplication):
     def __init__(self):
-        QApplication.setAttribute(Qt.ApplicationAttribute.AA_UseHighDpiPixmaps)
-        QApplication.setAttribute(Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
         super().__init__(sys.argv)
         self.setOrganizationName('Nickel59')
         self.setApplicationName('NickelLauncher')
 
-        self.setStyleSheet(qdarktheme.load_stylesheet('light'))
+        qdarktheme.setup_theme('light')
 
         self.setWindowIcon(QIcon(os.path.join(':', 'icons', 'default.png')))
 

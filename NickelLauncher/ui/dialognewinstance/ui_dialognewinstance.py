@@ -23,7 +23,8 @@ class Ui_DialogNewInstance(object):
     def setupUi(self, DialogNewInstance):
         if not DialogNewInstance.objectName():
             DialogNewInstance.setObjectName(u"DialogNewInstance")
-        DialogNewInstance.resize(700, 500)
+        DialogNewInstance.resize(500, 350)
+        DialogNewInstance.setMinimumSize(QSize(500, 350))
         self.vertical_layout = QVBoxLayout(DialogNewInstance)
         self.vertical_layout.setObjectName(u"vertical_layout")
         self.layout_name_input = QFormLayout()
