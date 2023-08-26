@@ -30,7 +30,7 @@ class DialogNewInstance(QDialog):
         self.show()
 
     def get_instance_name(self) -> str:
-        return self._ui.edit_name.text()
+        return self._ui.edit_name.text() or self._ui.edit_name.placeholderText()
 
     def get_group_name(self) -> str:
         return self._ui.combo_box_group.currentText()
@@ -50,6 +50,9 @@ class DialogNewInstance(QDialog):
     def reset_focus(self):
         self._ui.edit_name.setFocus()
 
+    def _update_instance_name_placeholder(self):
+        self._ui.edit_name.setPlaceholderText(self.get_version_name())
+
     def _setup_ui(self):
         self._ui.setupUi(self)
 
@@ -58,6 +61,8 @@ class DialogNewInstance(QDialog):
         self.reset_focus()
 
     def _setup_signals(self):
+        self._version_selection_view.version_picked.connect(self._update_instance_name_placeholder)
+
         self._version_selection_view.version_list_update_requested.connect(self.version_list_update_requested.emit)
 
         self._ui.button_box.accepted.connect(self.ok.emit)
