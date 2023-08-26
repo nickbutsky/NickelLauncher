@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QApplication, QWidget, QScrollArea, QMessageBox, QLayout
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtWidgets import QApplication, QWidget, QScrollArea, QMessageBox, QLineEdit, QLayout
+from PySide6.QtCore import Qt, QTimer, QRegularExpression
+from PySide6.QtGui import QRegularExpressionValidator
 
 
 def show_message_box(icon: QMessageBox.Icon, title: str, text: str, parent: QWidget | None = None):
@@ -41,6 +42,10 @@ def find_parent_layout(widget: QWidget) -> QLayout | None:
     if parent_widget and parent_widget.layout():
         return _find_parent_layout(widget, parent_widget.layout())
     return None
+
+
+def set_no_leading_whitespace_validator(line_edit: QLineEdit):
+    line_edit.setValidator(QRegularExpressionValidator(QRegularExpression(r'^[^ \t].*$'), line_edit))
 
 
 def _find_parent_layout(widget: QWidget, top_level_layout: QLayout) -> QLayout | None:

@@ -5,6 +5,7 @@ from PySide6.QtCore import Qt, Signal
 
 from ui.dialognewinstance.ui_dialognewinstance import Ui_DialogNewInstance
 from ui.versionselectionview.versionselectionview import VersionSelectionView, Version
+from ui.functions import set_no_leading_whitespace_validator
 
 
 class DialogNewInstance(QDialog):
@@ -57,6 +58,9 @@ class DialogNewInstance(QDialog):
         self._ui.setupUi(self)
 
         self._ui.vertical_layout.insertWidget(1, self._version_selection_view)
+
+        set_no_leading_whitespace_validator(self._ui.edit_name)
+        set_no_leading_whitespace_validator(self._ui.combo_box_group.lineEdit())
 
         self.reset_focus()
 
