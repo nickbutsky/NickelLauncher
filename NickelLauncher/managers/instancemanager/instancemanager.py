@@ -62,9 +62,6 @@ class InstanceManager:
         self._get_group(name).hidden = hidden
         self._save_config()
 
-    def rename_instance(self, instance: Instance, new_name: str):
-        instance.rename(new_name.strip())
-
     def change_instance_group(self, instance: Instance, group_name: str):
         self._remove_instance_from_group(instance)
 

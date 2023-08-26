@@ -33,6 +33,8 @@ class Instance(Protocol):
     @property
     def minecraft_dir_path(self) -> str: return ...
 
+    def rename(self, new_name: str): ...
+
     def change_version(self, version_name: str): ...
 
     def set_architecture_choice(self, architecture: str): ...
@@ -61,8 +63,6 @@ class Model(Protocol):
     def set_last_instance(self, instance: Instance): ...
 
     def set_group_hidden(self, name: str, hidden: bool): ...
-
-    def rename_instance(self, instance: Instance, new_name: str): ...
 
     def change_instance_group(self, instance: Instance, group_name: str): ...
 
@@ -141,7 +141,7 @@ class InstanceViewPresenter:
         self._view.current_instance.set_architecture_choice(architecture)
 
     def _on_rename_requested(self, new_name: str):
-        self._model.rename_instance(self._view.current_instance, new_name)
+        self._view.current_instance.rename(new_name)
         self._view.update_instance_representation(self._view.current_instance)
 
     def _on_change_group_requested(self):
