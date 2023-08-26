@@ -64,8 +64,6 @@ class Model(Protocol):
 
     def rename_instance(self, instance: Instance, new_name: str): ...
 
-    def is_acceptable_instance_name(self, name: str) -> bool: ...
-
     def change_instance_group(self, instance: Instance, group_name: str): ...
 
     def subscribe_to_state_change_notifications(self, callback: Callable[[], Any]): ...
@@ -143,9 +141,6 @@ class InstanceViewPresenter:
         self._view.current_instance.set_architecture_choice(architecture)
 
     def _on_rename_requested(self, new_name: str):
-        if not self._model.is_acceptable_instance_name(new_name):
-            return
-
         self._model.rename_instance(self._view.current_instance, new_name)
         self._view.update_instance_representation(self._view.current_instance)
 

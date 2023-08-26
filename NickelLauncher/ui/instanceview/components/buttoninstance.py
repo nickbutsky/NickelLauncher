@@ -70,7 +70,7 @@ class ButtonInstance(QToolButton):
         self.layout().replaceWidget(old_label_version_name, self._label_version_name)
         old_label_version_name.deleteLater()
 
-        self._label_name.editing_finished.connect(self.rename_requested.emit)
+        self._label_name.editing_finished.connect(self._request_rename)
 
     def _on_context_menu_requested(self, point: QPoint):
         if self.isChecked():
@@ -82,6 +82,11 @@ class ButtonInstance(QToolButton):
             popup_menu.change_version_requested.connect(self.change_version_requested.emit)
 
             popup_menu.popup(self.mapToGlobal(point))
+
+    def _request_rename(self, new_name: str):
+        if not new_name:
+            return
+        self.rename_requested.emit(new_name)
 
     def _setup_ui(self):
         self.setCheckable(True)
@@ -108,7 +113,7 @@ class ButtonInstance(QToolButton):
 
     def _setup_signals(self):
         self.customContextMenuRequested.connect(self._on_context_menu_requested)
-        self._label_name.editing_finished.connect(self.rename_requested.emit)
+        self._label_name.editing_finished.connect(self._request_rename)
 
 
 class _PopupMenu(QMenu):
