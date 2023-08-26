@@ -65,6 +65,8 @@ class InstanceManager:
     def change_instance_group(self, instance: Instance, group_name: str):
         self._remove_instance_from_group(instance)
 
+        group_name = group_name.strip()
+
         group = self._get_group(group_name)
         if group:
             group.instances.append(instance)
@@ -84,6 +86,8 @@ class InstanceManager:
         return None
 
     def _create_group(self, name: str, instance: Instance):
+        name = name.strip()
+
         if self._get_group(name):
             raise GroupExistsError
 

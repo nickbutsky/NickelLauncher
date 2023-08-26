@@ -23,7 +23,7 @@ class Instance:
     def create(cls, name: str, path: str, version_name: str) -> Self:
         instance = cls()
 
-        instance._name = name
+        instance._name = name.strip()
 
         instance._path = path
 
@@ -117,7 +117,7 @@ class Instance:
         return os.path.join(self.path, 'com.mojang')
 
     def rename(self, new_name: str):
-        self._name = new_name
+        self._name = new_name.strip()
         self._save_config()
 
     def change_version(self, version_name: str):
