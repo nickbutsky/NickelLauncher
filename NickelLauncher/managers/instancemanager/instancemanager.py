@@ -32,7 +32,6 @@ class InstanceManager:
         return self._instance_groups
 
     def create_instance(self, name: str, group_name: str, version_name: str):
-        name = name.strip()
         group_name = group_name.strip()
 
         self._watchdog_thread.ignore_dir_created_event = True
