@@ -32,9 +32,6 @@ class InstanceManager:
         return self._instance_groups
 
     def create_instance(self, name: str, group_name: str, version_name: str):
-        if not self.is_acceptable_instance_name(name):
-            raise UnacceptableInstanceName
-
         name = name.strip()
         group_name = group_name.strip()
 
@@ -66,9 +63,6 @@ class InstanceManager:
         self._save_config()
 
     def rename_instance(self, instance: Instance, new_name: str):
-        if not self.is_acceptable_instance_name(new_name):
-            raise UnacceptableInstanceName
-
         instance.rename(new_name.strip())
 
     def change_instance_group(self, instance: Instance, group_name: str):
@@ -81,10 +75,6 @@ class InstanceManager:
             self._instance_groups.append(InstanceGroup(group_name, [instance]))
         self._delete_empty_groups()
         self._save_config()
-
-    @staticmethod
-    def is_acceptable_instance_name(name: str) -> bool:
-        return bool(name.strip())
 
     def subscribe_to_state_change_notifications(self, callback: Callable[[], Any]):
         if callback not in self._to_call_on_state_change:
@@ -139,12 +129,11 @@ class InstanceManager:
 
     @staticmethod
     def _name_to_dir_name(name: str) -> str:
-        if not name:
-            raise UnacceptableInstanceName
-
         dir_name = name
         dir_name = dir_name.replace(' ', '_')
         dir_name = sanitize_filename(dir_name)
+        if not dir_name:
+            dir_name = '1'
 
         temp_dir_name = dir_name
         i = 1
@@ -158,10 +147,6 @@ class InstanceManager:
                 break
 
         return temp_dir_name
-
-
-class UnacceptableInstanceName(ValueError):
-    pass
 
 
 class GroupExistsError(ValueError):
