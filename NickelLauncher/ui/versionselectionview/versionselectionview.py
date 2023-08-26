@@ -38,7 +38,8 @@ class VersionSelectionView(QWidget):
         }
 
     def get_version_name(self) -> str:
-        return self._ui.tree_version_list.currentItem().text(0)
+        current_item = self._ui.tree_version_list.currentItem()
+        return current_item.text(0) if current_item else ''
 
     def select_version(self, name: str):
         for checkbox in self._checkboxes.values():
