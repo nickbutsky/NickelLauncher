@@ -14,7 +14,7 @@ class Downloader:
         else:
             urlretrieve(url, destination)
 
-    def _local_reporthook(self, block_num, block_size, total_size):
+    def _local_reporthook(self, block_num: int, block_size: int, total_size: int):
         read_so_far = block_num * block_size
         if total_size > 0:
             percent = read_so_far * 100 / total_size
