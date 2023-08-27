@@ -123,7 +123,7 @@ class InstanceManager:
     def _to_dict(self) -> dict:
         return {
             'format_version': 1,
-            'groups': [group.to_dict() for group in self._instance_groups if group.name],
+            'groups': [group.to_dict() for group in self._instance_groups],
             'last_instance': self._last_instance.dir_name if self._last_instance else None
         }
 
