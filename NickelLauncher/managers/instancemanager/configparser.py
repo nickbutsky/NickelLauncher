@@ -50,8 +50,7 @@ def _is_valid_config(config: dict) -> bool:
         group_names.append(group_dict['name'])
         instance_dir_names += group_dict['instances']
 
-    if (len(group_names) == len(set(group_names))) and (len(instance_dir_names) == len(set(instance_dir_names))):
-        return True
+    return (len(group_names) == len(set(group_names))) and (len(instance_dir_names) == len(set(instance_dir_names)))
 
 
 def _load_instance_groups(group_dicts: list[dict], instances_dir_path: str) -> list[InstanceGroup]:
