@@ -26,4 +26,3 @@ class Downloader:
             read_so_far = total_size
 
         self.reporthook(Report(Report.PROGRESS, 'Downloading', ProgressDetails(read_so_far, total_size, 'MB')))
-        print(f'{read_so_far, total_size}')
