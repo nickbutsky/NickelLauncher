@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'dialoglaunch.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -32,7 +32,6 @@ class Ui_DialogLaunch(object):
 
         self.progress_bar = QProgressBar(DialogLaunch)
         self.progress_bar.setObjectName(u"progress_bar")
-        self.progress_bar.setTextVisible(False)
 
         self.vboxLayout.addWidget(self.progress_bar)
 
