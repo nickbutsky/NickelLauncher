@@ -1,7 +1,7 @@
 from typing import Any, Callable
 from urllib.request import urlretrieve
 
-from report import Report
+from report import Report, ProgressDetails
 
 
 class Downloader:
@@ -15,9 +15,15 @@ class Downloader:
             urlretrieve(url, destination)
 
     def _local_reporthook(self, block_num: int, block_size: int, total_size: int):
-        read_so_far = block_num * block_size
-        if total_size > 0:
-            percent = read_so_far * 100 / total_size
-            self.reporthook(Report(Report.PROGRESS, 'Downloading', int(percent)))
-        else:
+        if total_size <= 0:
             self.reporthook(Report(Report.PROGRESS, 'Downloading'))
+            return
+
+        read_so_far = round(float(block_num * block_size) / pow(1024, 2), 1)
+        total_size = round(float(total_size) / pow(1024, 2), 1)
+
+        if read_so_far > total_size:
+            read_so_far = total_size
+
+        self.reporthook(Report(Report.PROGRESS, 'Downloading', ProgressDetails(read_so_far, total_size, 'MB')))
+        print(f'{read_so_far, total_size}')

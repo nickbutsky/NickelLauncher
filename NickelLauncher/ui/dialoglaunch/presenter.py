@@ -25,7 +25,7 @@ class View(Protocol):
 
     def set_text(self, text: str): ...
 
-    def set_progressbar_percentage(self, percentage: int): ...
+    def set_progressbar_details(self, already_processed: float, total_size: float, unit: str): ...
 
     def set_progressbar_undefined(self): ...
 
@@ -53,10 +53,12 @@ class InstanceLaunchPresenter:
 
         self._view.set_text(report.text)
 
-        if report.percent == -1:
+        if not report.details:
             self._view.set_progressbar_undefined()
         else:
-            self._view.set_progressbar_percentage(report.percent)
+            self._view.set_progressbar_details(
+                report.details.already_processed, report.details.total_size, report.details.unit
+            )
 
     def _on_thread_finished(self):
         if not self._done_first:
