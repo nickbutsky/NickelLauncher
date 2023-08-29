@@ -2,12 +2,11 @@ from typing import Protocol
 import os
 
 from PySide6.QtWidgets import QWidget, QToolButton, QLabel, QMenu, QGridLayout
-from PySide6.QtCore import Qt, QPoint, QUrl, Signal
-from PySide6.QtGui import QAction, QPixmap, QMouseEvent, QDesktopServices
+from PySide6.QtCore import Qt, QObject, QPoint, QUrl, Signal
+from PySide6.QtGui import QAction, QActionGroup, QPixmap, QMouseEvent, QDesktopServices
 
 from ui import resources
 from ui.custom.editablelabel import EditableLabel
-from ui.instanceview.components.menulaunch import MenuLaunch
 
 
 class Instance(Protocol):
@@ -127,10 +126,15 @@ class _PopupMenu(QMenu):
         super().__init__(parent)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
-        menu_launch = MenuLaunch(instance, self)
-        menu_launch.launch_requested.connect(self.launch_requested.emit)
-        menu_launch.architecture_change_requested.connect(self.architecture_change_requested.emit)
-        self.addMenu(menu_launch)
+        action_launch = QAction('Launch', self)
+        action_launch.triggered.connect(self.launch_requested.emit)
+        self.addAction(action_launch)
+
+        self.addSeparator()
+
+        group_architecture_choices = _ActionGroupArchitectureChoices(instance, self)
+        group_architecture_choices.architecture_change_requested.connect(self.architecture_change_requested.emit)
+        self.addActions(group_architecture_choices.actions())
 
         self.addSeparator()
 
@@ -157,3 +161,30 @@ class _PopupMenu(QMenu):
         def open_instance_folder(): QDesktopServices.openUrl(QUrl.fromLocalFile(instance.path))
         action_open_instance_folder.triggered.connect(open_instance_folder)
         self.addAction(action_open_instance_folder)
+
+
+class _ActionGroupArchitectureChoices(QActionGroup):
+    architecture_change_requested = Signal(str)
+
+    def __init__(self, instance: Instance, parent: QObject):
+        super().__init__(parent)
+        self.setExclusive(True)
+
+        self._instance = instance
+
+        self._setup()
+
+    def _setup(self):
+        for architecture in self._instance.available_version_architectures:
+            action = QAction(architecture, self)
+            action.setCheckable(True)
+
+            if architecture == self._instance.architecture_choice:
+                action.setChecked(True)
+
+            action.triggered.connect(self._on_architecture_choice_change_requested)
+
+            self.addAction(action)
+
+    def _on_architecture_choice_change_requested(self):
+        self.architecture_change_requested.emit(self.checkedAction().text())
