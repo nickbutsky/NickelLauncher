@@ -21,27 +21,27 @@ USER_SIDS = {
 class Instance:
     @classmethod
     def create(cls, name: str, path: str, version_name: str) -> Self:
-        instance = cls()
+        self = cls()
 
-        instance._name = name.strip()
+        self._name = name.strip()
 
-        instance._path = path
+        self._path = path
 
-        instance._versions = version_manager.get_versions(version_name)
-        instance._architecture_choice = instance.available_version_architectures[0]
+        self._versions = version_manager.get_versions(version_name)
+        self._architecture_choice = self.available_version_architectures[0]
 
-        os.mkdir(instance.minecraft_dir_path)
-        instance._save_config()
+        os.mkdir(self.minecraft_dir_path)
+        self._save_config()
 
-        return instance
+        return self
 
     @classmethod
     def load(cls, path: str) -> Self | None:
-        instance = cls()
+        self = cls()
 
-        instance._path = path
+        self._path = path
 
-        if not os.path.isdir(instance.minecraft_dir_path):
+        if not os.path.isdir(self.minecraft_dir_path):
             logging.error(f'Failed to load an instance at {path}. No minecraft folder.')
             return None
 
@@ -64,16 +64,16 @@ class Instance:
             logging.error(f'Failed to load an instance at {path}. Invalid config.')
             return None
 
-        instance._name = config['name']
+        self._name = config['name']
 
-        instance._versions = version_manager.get_versions(config['version']['name'])
-        instance._architecture_choice = config['version']['architecture_choice']
+        self._versions = version_manager.get_versions(config['version']['name'])
+        self._architecture_choice = config['version']['architecture_choice']
 
-        if (not instance._versions) or (instance._architecture_choice not in instance.available_version_architectures):
+        if (not self._versions) or (self._architecture_choice not in self.available_version_architectures):
             logging.error(f'Failed to load an instance at {path}. Invalid version name in config.')
             return None
 
-        return instance
+        return self
 
     def __init__(self):
         """
