@@ -35,6 +35,7 @@ class ButtonInstance(QToolButton):
     rename_requested = Signal(str)
     change_group_requested = Signal()
     change_version_requested = Signal()
+    copy_requested = Signal()
 
     def __init__(self, instance: Instance, parent: QWidget | None = None):
         super().__init__(parent)
@@ -79,6 +80,7 @@ class ButtonInstance(QToolButton):
             popup_menu.rename_requested.connect(self._label_name.enter_editing_mode)
             popup_menu.change_group_requested.connect(self.change_group_requested.emit)
             popup_menu.change_version_requested.connect(self.change_version_requested.emit)
+            popup_menu.copy_requested.connect(self.copy_requested.emit)
 
             popup_menu.popup(self.mapToGlobal(point))
 
@@ -121,6 +123,7 @@ class _PopupMenu(QMenu):
     rename_requested = Signal()
     change_group_requested = Signal()
     change_version_requested = Signal()
+    copy_requested = Signal()
 
     def __init__(self, instance: Instance, parent: QWidget | None = None):
         super().__init__(parent)
@@ -161,6 +164,12 @@ class _PopupMenu(QMenu):
         def open_instance_folder(): QDesktopServices.openUrl(QUrl.fromLocalFile(instance.path))
         action_open_instance_folder.triggered.connect(open_instance_folder)
         self.addAction(action_open_instance_folder)
+
+        self.addSeparator()
+
+        action_copy_instance = QAction('Copy Instance', self)
+        action_copy_instance.triggered.connect(self.copy_requested.emit)
+        self.addAction(action_copy_instance)
 
 
 class _ActionGroupArchitectureChoices(QActionGroup):
