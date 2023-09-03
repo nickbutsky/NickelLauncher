@@ -1,4 +1,6 @@
+from __future__ import annotations
 from typing import Any, Callable
+from dataclasses import dataclass
 import os
 
 from pathvalidate import sanitize_filename
@@ -50,6 +52,20 @@ class InstanceManager:
 
         self._watchdog_thread.ignore_dir_created_event = False
 
+    def copy_instance(self, instance: Instance, copy_worlds: bool = True):
+        instance_location = self._get_instance_location(instance)
+
+        self._watchdog_thread.ignore_dir_created_event = True
+
+        path = os.path.join(INSTANCES_DIR_PATH, self._name_to_dir_name(f'{instance.name}(copy)'))
+        os.mkdir(path)
+
+        instance_location.instance_group.instances.insert(
+            instance_location.position + 1, Instance.copy(instance, path, copy_worlds)
+        )
+
+        self._watchdog_thread.ignore_dir_created_event = False
+
     def get_last_instance(self) -> Instance | None:
         return self._last_instance
 
@@ -83,6 +99,17 @@ class InstanceManager:
             if group.name == name:
                 return group
         return None
+
+    def _get_instance_location(self, instance: Instance) -> _InstanceLocation:
+        group = None
+        position = 0
+        for instance_group in self._instance_groups:
+            for i, instance_ in enumerate(instance_group.instances):
+                if instance_ == instance:
+                    group = instance_group
+                    position = i
+                    break
+        return _InstanceLocation(group, position)
 
     def _create_group(self, name: str, instance: Instance):
         name = name.strip()
@@ -151,3 +178,9 @@ class InstanceManager:
 
 class GroupExistsError(ValueError):
     pass
+
+
+@dataclass(frozen=True, slots=True)
+class _InstanceLocation:
+    instance_group: InstanceGroup
+    position: int

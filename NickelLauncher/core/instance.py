@@ -1,5 +1,7 @@
+from __future__ import annotations
 from typing import Any, Callable, Self
 import os
+import shutil
 import logging
 
 from schema import Schema
@@ -72,6 +74,32 @@ class Instance:
         if (not self._versions) or (self._architecture_choice not in self.available_version_architectures):
             logging.error(f'Failed to load an instance at {path}. Invalid version name in config.')
             return None
+
+        return self
+
+    @classmethod
+    def copy(cls, instance: Instance, path: str, copy_worlds: bool = True) -> Self:
+        self = cls()
+
+        self._path = path
+
+        def ignore_minecraft_worlds(dir_path: str, dir_list: list[str]) -> list[str]:
+            if (dir_path == instance.minecraft_dir_path) and ('minecraftWorlds' in dir_list):
+                return ['minecraftWorlds']
+            return []
+
+        if copy_worlds:
+            shutil.copytree(instance.minecraft_dir_path, self.minecraft_dir_path)
+        else:
+            shutil.copytree(instance.minecraft_dir_path, self.minecraft_dir_path, ignore=ignore_minecraft_worlds)
+            os.mkdir(os.path.join(self.minecraft_dir_path, 'minecraftWorlds'))
+
+        self._name = f'{instance.name}(copy)'
+
+        self._versions = instance._versions
+        self._architecture_choice = instance.architecture_choice
+
+        self._save_config()
 
         return self
 
