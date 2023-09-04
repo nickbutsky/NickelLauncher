@@ -1,6 +1,6 @@
 from typing import Any, Callable, Protocol
 
-from PySide6.QtWidgets import QWidget, QMessageBox
+from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import Signal
 
 import managers.versionmanager as version_manager
