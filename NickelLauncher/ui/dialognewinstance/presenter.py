@@ -16,8 +16,6 @@ class InstanceManager(Protocol):
 
     def create_instance(self, name: str, group_name: str, version_name: str): ...
 
-    def is_acceptable_instance_name(self, name: str) -> bool: ...
-
 
 class Version(Protocol):
     @property
@@ -104,20 +102,13 @@ class InstanceCreatePresenter:
             show_message_box(QMessageBox.Icon.Warning, 'Error', str(e), self._view.widget)
         self._set_version_list()
 
-    def _invoke_instance_creation(self):
-        name = self._view.get_instance_name()
-        group_name = self._view.get_group_name()
-        version_name = self._view.get_version_name()
-
-        if not self._instance_manager.is_acceptable_instance_name(name):
-            self._view.reset_focus()
-            return
-
-        self._instance_manager.create_instance(name, group_name, version_name)
-
+    def _create_instance(self):
+        self._instance_manager.create_instance(
+            self._view.get_instance_name(), self._view.get_group_name(), self._view.get_version_name()
+        )
         self._view.close()
         self._emit_success()
 
     def _setup_signals(self):
-        self._view.ok.connect(self._invoke_instance_creation)
+        self._view.ok.connect(self._create_instance)
         self._view.version_list_update_requested.connect(self._update_version_list)

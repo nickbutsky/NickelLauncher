@@ -2,6 +2,8 @@ from PySide6.QtWidgets import QWidget, QLabel, QLineEdit
 from PySide6.QtCore import Qt, QEvent, QPoint, Signal
 from PySide6.QtGui import QFocusEvent, QKeyEvent
 
+from ui.functions import set_no_leading_whitespace_validator
+
 
 class EditableLabel(QLabel):
     editing_finished = Signal(str)
@@ -49,6 +51,8 @@ class EditableLabel(QLabel):
 
     def __setup(self):
         self._line_edit.setVisible(False)
+
+        set_no_leading_whitespace_validator(self._line_edit)
 
         self._line_edit.editing_finished.connect(self.editing_finished)
         self._line_edit.lost_focus.connect(self.exit_editing_mode)

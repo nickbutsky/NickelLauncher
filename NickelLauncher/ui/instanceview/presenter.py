@@ -12,6 +12,7 @@ from ui.dialogchangegroup.view import DialogChangeGroup
 from ui.dialogchangegroup.presenter import GroupChangePresenter
 from ui.dialogchangeversion.view import DialogChangeVersion
 from ui.dialogchangeversion.presenter import VersionChangePresenter
+from ui.functions import show_question_box
 
 
 class Instance(Protocol):
@@ -32,6 +33,8 @@ class Instance(Protocol):
 
     @property
     def minecraft_dir_path(self) -> str: return ...
+
+    def rename(self, new_name: str): ...
 
     def change_version(self, version_name: str): ...
 
@@ -54,6 +57,8 @@ class InstanceGroup(Protocol):
 class Model(Protocol):
     def create_instance(self, name: str, group_name: str, version_name: str): ...
 
+    def copy_instance(self, instance: Instance, copy_worlds: bool = True): ...
+
     def get_instance_groups(self) -> list[InstanceGroup]: ...
 
     def get_last_instance(self) -> Instance | None: ...
@@ -61,10 +66,6 @@ class Model(Protocol):
     def set_last_instance(self, instance: Instance): ...
 
     def set_group_hidden(self, name: str, hidden: bool): ...
-
-    def rename_instance(self, instance: Instance, new_name: str): ...
-
-    def is_acceptable_instance_name(self, name: str) -> bool: ...
 
     def change_instance_group(self, instance: Instance, group_name: str): ...
 
@@ -79,6 +80,7 @@ class View(Protocol):
     rename_requested: Signal
     change_group_requested: Signal
     change_version_requested: Signal
+    copy_requested: Signal
     group_expanded: Signal
     group_collapsed: Signal
 
@@ -143,10 +145,7 @@ class InstanceViewPresenter:
         self._view.current_instance.set_architecture_choice(architecture)
 
     def _on_rename_requested(self, new_name: str):
-        if not self._model.is_acceptable_instance_name(new_name):
-            return
-
-        self._model.rename_instance(self._view.current_instance, new_name)
+        self._view.current_instance.rename(new_name)
         self._view.update_instance_representation(self._view.current_instance)
 
     def _on_change_group_requested(self):
@@ -167,6 +166,24 @@ class InstanceViewPresenter:
         )
         self._version_change_presenter.run()
 
+    def _on_copy_requested(self):
+        def on_yes():
+            self._model.copy_instance(self._view.current_instance, True)
+            self._reload_view()
+
+        def on_no():
+            self._model.copy_instance(self._view.current_instance, False)
+            self._reload_view()
+
+        show_question_box(
+            'Copy Instance',
+            'Do you want to copy the worlds?',
+            on_yes,
+            on_no,
+            True,
+            self._view.current_instance_representation
+        )
+
     def _on_group_expanded(self, group_name: str):
         self._model.set_group_hidden(group_name, False)
 
@@ -180,5 +197,6 @@ class InstanceViewPresenter:
         self._view.rename_requested.connect(self._on_rename_requested)
         self._view.change_group_requested.connect(self._on_change_group_requested)
         self._view.change_version_requested.connect(self._on_change_version_requested)
+        self._view.copy_requested.connect(self._on_copy_requested)
         self._view.group_expanded.connect(self._on_group_expanded)
         self._view.group_collapsed.connect(self._on_group_collapsed)

@@ -18,6 +18,7 @@ class Version(Protocol):
 
 
 class VersionSelectionView(QWidget):
+    version_picked = Signal()
     version_list_update_requested = Signal()
 
     def __init__(self, parent: QWidget | None = None):
@@ -37,7 +38,8 @@ class VersionSelectionView(QWidget):
         }
 
     def get_version_name(self) -> str:
-        return self._ui.tree_version_list.currentItem().text(0)
+        current_item = self._ui.tree_version_list.currentItem()
+        return current_item.text(0) if current_item else ''
 
     def select_version(self, name: str):
         for checkbox in self._checkboxes.values():
@@ -101,5 +103,7 @@ class VersionSelectionView(QWidget):
         self._ui.checkbox_release.toggled.connect(self._reload)
         self._ui.checkbox_beta.toggled.connect(self._reload)
         self._ui.checkbox_preview.toggled.connect(self._reload)
+
+        self._ui.tree_version_list.itemSelectionChanged.connect(self.version_picked.emit)
 
         self._ui.button_refresh.clicked.connect(self.version_list_update_requested.emit)

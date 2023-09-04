@@ -1,5 +1,7 @@
+from __future__ import annotations
 from typing import Any, Callable, Self
 import os
+import shutil
 import logging
 
 from schema import Schema
@@ -21,27 +23,27 @@ USER_SIDS = {
 class Instance:
     @classmethod
     def create(cls, name: str, path: str, version_name: str) -> Self:
-        instance = cls()
+        self = cls()
 
-        instance._name = name
+        self._name = name.strip()
 
-        instance._path = path
+        self._path = path
 
-        instance._versions = version_manager.get_versions(version_name)
-        instance._architecture_choice = instance.available_version_architectures[0]
+        self._versions = version_manager.get_versions(version_name)
+        self._architecture_choice = self.available_version_architectures[0]
 
-        os.mkdir(instance.minecraft_dir_path)
-        instance._save_config()
+        os.mkdir(self.minecraft_dir_path)
+        self._save_config()
 
-        return instance
+        return self
 
     @classmethod
     def load(cls, path: str) -> Self | None:
-        instance = cls()
+        self = cls()
 
-        instance._path = path
+        self._path = path
 
-        if not os.path.isdir(instance.minecraft_dir_path):
+        if not os.path.isdir(self.minecraft_dir_path):
             logging.error(f'Failed to load an instance at {path}. No minecraft folder.')
             return None
 
@@ -64,16 +66,42 @@ class Instance:
             logging.error(f'Failed to load an instance at {path}. Invalid config.')
             return None
 
-        instance._name = config['name']
+        self._name = config['name']
 
-        instance._versions = version_manager.get_versions(config['version']['name'])
-        instance._architecture_choice = config['version']['architecture_choice']
+        self._versions = version_manager.get_versions(config['version']['name'])
+        self._architecture_choice = config['version']['architecture_choice']
 
-        if (not instance._versions) or (instance._architecture_choice not in instance.available_version_architectures):
+        if (not self._versions) or (self._architecture_choice not in self.available_version_architectures):
             logging.error(f'Failed to load an instance at {path}. Invalid version name in config.')
             return None
 
-        return instance
+        return self
+
+    @classmethod
+    def copy(cls, instance: Instance, path: str, copy_worlds: bool = True) -> Self:
+        self = cls()
+
+        self._path = path
+
+        def ignore_minecraft_worlds(dir_path: str, dir_list: list[str]) -> list[str]:
+            if (dir_path == instance.minecraft_dir_path) and ('minecraftWorlds' in dir_list):
+                return ['minecraftWorlds']
+            return []
+
+        if copy_worlds:
+            shutil.copytree(instance.minecraft_dir_path, self.minecraft_dir_path)
+        else:
+            shutil.copytree(instance.minecraft_dir_path, self.minecraft_dir_path, ignore=ignore_minecraft_worlds)
+            os.mkdir(os.path.join(self.minecraft_dir_path, 'minecraftWorlds'))
+
+        self._name = f'{instance.name}(copy)'
+
+        self._versions = instance._versions
+        self._architecture_choice = instance.architecture_choice
+
+        self._save_config()
+
+        return self
 
     def __init__(self):
         """
@@ -117,7 +145,7 @@ class Instance:
         return os.path.join(self.path, 'com.mojang')
 
     def rename(self, new_name: str):
-        self._name = new_name
+        self._name = new_name.strip()
         self._save_config()
 
     def change_version(self, version_name: str):

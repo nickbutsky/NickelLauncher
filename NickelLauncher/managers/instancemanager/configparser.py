@@ -50,31 +50,35 @@ def _is_valid_config(config: dict) -> bool:
         group_names.append(group_dict['name'])
         instance_dir_names += group_dict['instances']
 
-    if (len(group_names) == len(set(group_names))) and (len(instance_dir_names) == len(set(instance_dir_names))):
-        return True
+    return (len(group_names) == len(set(group_names))) and (len(instance_dir_names) == len(set(instance_dir_names)))
 
 
 def _load_instance_groups(group_dicts: list[dict], instances_dir_path: str) -> list[InstanceGroup]:
-    groups = [InstanceGroup('', [])]
-
-    processed_instance_dir_names = []
+    grouped_instance_dir_names = []
     for group_dict in group_dicts:
-        instances = [Instance.load(os.path.join(instances_dir_path, dir_name)) for dir_name in group_dict['instances']]
-        instances[:] = [instance for instance in instances if instance is not None]
-        processed_instance_dir_names.extend(group_dict['instances'])
+        grouped_instance_dir_names += group_dict['instances']
 
-        groups.append(InstanceGroup(group_dict['name'], instances, group_dict['hidden']))
-
-    remaining_dir_names = [
+    ungrouped_instance_dir_names = [
         dir_name for dir_name in os.listdir(instances_dir_path)
-        if os.path.isdir(os.path.join(instances_dir_path, dir_name)) and dir_name not in processed_instance_dir_names
+        if os.path.isdir(os.path.join(instances_dir_path, dir_name)) and dir_name not in grouped_instance_dir_names
     ]
 
     ungrouped_instances = [
-        Instance.load(os.path.join(instances_dir_path, dir_name)) for dir_name in remaining_dir_names
+        Instance.load(os.path.join(instances_dir_path, dir_name)) for dir_name in ungrouped_instance_dir_names
     ]
     ungrouped_instances[:] = [instance for instance in ungrouped_instances if instance is not None]
-    groups[0].instances = ungrouped_instances
+
+    groups = [InstanceGroup('', [])]
+    for group_dict in group_dicts:
+        instances = [Instance.load(os.path.join(instances_dir_path, dir_name)) for dir_name in group_dict['instances']]
+        instances[:] = [instance for instance in instances if instance is not None]
+
+        if group_dict['name'] == '':
+            groups[0].instances += instances
+        else:
+            groups.append(InstanceGroup(group_dict['name'], instances, group_dict['hidden']))
+
+    groups[0].instances += ungrouped_instances
 
     return [group for group in groups if group.instances]
 

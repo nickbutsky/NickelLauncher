@@ -28,9 +28,11 @@ class DialogLaunch(QDialog):
     def set_text(self, text: str):
         self._ui.label.setText(text)
 
-    def set_progressbar_percentage(self, percentage: int):
-        self._ui.progress_bar.setMaximum(100)
-        self._ui.progress_bar.setValue(percentage)
+    def set_progressbar_details(self, already_processed: float, total_size: float, unit: str):
+        self._ui.progress_bar.setFormat(f'%v/%m {unit}')
+
+        self._ui.progress_bar.setMaximum(total_size)
+        self._ui.progress_bar.setValue(already_processed)
 
     def set_progressbar_undefined(self):
         self._ui.progress_bar.setMaximum(0)

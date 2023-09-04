@@ -2,12 +2,11 @@ from typing import Protocol
 import os
 
 from PySide6.QtWidgets import QWidget, QToolButton, QLabel, QMenu, QGridLayout
-from PySide6.QtCore import Qt, QPoint, QUrl, Signal
-from PySide6.QtGui import QAction, QPixmap, QMouseEvent, QDesktopServices
+from PySide6.QtCore import Qt, QObject, QPoint, QUrl, Signal
+from PySide6.QtGui import QAction, QActionGroup, QPixmap, QMouseEvent, QDesktopServices
 
 from ui import resources
 from ui.custom.editablelabel import EditableLabel
-from ui.instanceview.components.menulaunch import MenuLaunch
 
 
 class Instance(Protocol):
@@ -36,6 +35,7 @@ class ButtonInstance(QToolButton):
     rename_requested = Signal(str)
     change_group_requested = Signal()
     change_version_requested = Signal()
+    copy_requested = Signal()
 
     def __init__(self, instance: Instance, parent: QWidget | None = None):
         super().__init__(parent)
@@ -70,7 +70,7 @@ class ButtonInstance(QToolButton):
         self.layout().replaceWidget(old_label_version_name, self._label_version_name)
         old_label_version_name.deleteLater()
 
-        self._label_name.editing_finished.connect(self.rename_requested.emit)
+        self._label_name.editing_finished.connect(self._request_rename)
 
     def _on_context_menu_requested(self, point: QPoint):
         if self.isChecked():
@@ -80,8 +80,14 @@ class ButtonInstance(QToolButton):
             popup_menu.rename_requested.connect(self._label_name.enter_editing_mode)
             popup_menu.change_group_requested.connect(self.change_group_requested.emit)
             popup_menu.change_version_requested.connect(self.change_version_requested.emit)
+            popup_menu.copy_requested.connect(self.copy_requested.emit)
 
             popup_menu.popup(self.mapToGlobal(point))
+
+    def _request_rename(self, new_name: str):
+        if not new_name:
+            return
+        self.rename_requested.emit(new_name)
 
     def _setup_ui(self):
         self.setCheckable(True)
@@ -108,7 +114,7 @@ class ButtonInstance(QToolButton):
 
     def _setup_signals(self):
         self.customContextMenuRequested.connect(self._on_context_menu_requested)
-        self._label_name.editing_finished.connect(self.rename_requested.emit)
+        self._label_name.editing_finished.connect(self._request_rename)
 
 
 class _PopupMenu(QMenu):
@@ -117,15 +123,21 @@ class _PopupMenu(QMenu):
     rename_requested = Signal()
     change_group_requested = Signal()
     change_version_requested = Signal()
+    copy_requested = Signal()
 
     def __init__(self, instance: Instance, parent: QWidget | None = None):
         super().__init__(parent)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
-        menu_launch = MenuLaunch(instance, self)
-        menu_launch.launch_requested.connect(self.launch_requested.emit)
-        menu_launch.architecture_change_requested.connect(self.architecture_change_requested.emit)
-        self.addMenu(menu_launch)
+        action_launch = QAction('Launch', self)
+        action_launch.triggered.connect(self.launch_requested.emit)
+        self.addAction(action_launch)
+
+        self.addSeparator()
+
+        group_architecture_choices = _ActionGroupArchitectureChoices(instance, self)
+        group_architecture_choices.architecture_change_requested.connect(self.architecture_change_requested.emit)
+        self.addActions(group_architecture_choices.actions())
 
         self.addSeparator()
 
@@ -152,3 +164,36 @@ class _PopupMenu(QMenu):
         def open_instance_folder(): QDesktopServices.openUrl(QUrl.fromLocalFile(instance.path))
         action_open_instance_folder.triggered.connect(open_instance_folder)
         self.addAction(action_open_instance_folder)
+
+        self.addSeparator()
+
+        action_copy_instance = QAction('Copy Instance', self)
+        action_copy_instance.triggered.connect(self.copy_requested.emit)
+        self.addAction(action_copy_instance)
+
+
+class _ActionGroupArchitectureChoices(QActionGroup):
+    architecture_change_requested = Signal(str)
+
+    def __init__(self, instance: Instance, parent: QObject):
+        super().__init__(parent)
+        self.setExclusive(True)
+
+        self._instance = instance
+
+        self._setup()
+
+    def _setup(self):
+        for architecture in self._instance.available_version_architectures:
+            action = QAction(architecture, self)
+            action.setCheckable(True)
+
+            if architecture == self._instance.architecture_choice:
+                action.setChecked(True)
+
+            action.triggered.connect(self._on_architecture_choice_change_requested)
+
+            self.addAction(action)
+
+    def _on_architecture_choice_change_requested(self):
+        self.architecture_change_requested.emit(self.checkedAction().text())

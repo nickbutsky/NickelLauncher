@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QWidget, QDialog
 from PySide6.QtCore import Qt, Signal
 
 from ui.dialogchangegroup.ui_dialogchangegroup import Ui_DialogChangeGroup
+from ui.functions import set_no_leading_whitespace_validator
 
 
 class DialogChangeGroup(QDialog):
@@ -13,7 +14,7 @@ class DialogChangeGroup(QDialog):
 
         self._ui = Ui_DialogChangeGroup()
 
-        self._ui.setupUi(self)
+        self._setup_ui()
         self._setup_signals()
 
     def spawn_async(self):
@@ -28,6 +29,10 @@ class DialogChangeGroup(QDialog):
 
     def set_current_group_name(self, name: str):
         self._ui.combo_box.setCurrentText(name)
+
+    def _setup_ui(self):
+        self._ui.setupUi(self)
+        set_no_leading_whitespace_validator(self._ui.combo_box.lineEdit())
 
     def _setup_signals(self):
         self._ui.dialog_button_box.accepted.connect(self.ok.emit)

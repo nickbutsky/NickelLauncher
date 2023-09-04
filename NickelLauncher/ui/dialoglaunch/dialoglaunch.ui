@@ -22,11 +22,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QProgressBar" name="progress_bar">
-     <property name="textVisible">
-      <bool>false</bool>
-     </property>
-    </widget>
+    <widget class="QProgressBar" name="progress_bar"/>
    </item>
    <item>
     <widget class="QPushButton" name="button">

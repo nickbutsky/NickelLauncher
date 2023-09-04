@@ -16,6 +16,7 @@ class InstanceView(ScrollArea):
     rename_requested = Signal(str)
     change_group_requested = Signal()
     change_version_requested = Signal()
+    copy_requested = Signal()
     group_expanded = Signal(str)
     group_collapsed = Signal(str)
 
@@ -89,3 +90,4 @@ class InstanceView(ScrollArea):
             button_instance.rename_requested.connect(self.rename_requested.emit)
             button_instance.change_group_requested.connect(self.change_group_requested.emit)
             button_instance.change_version_requested.connect(self.change_version_requested.emit)
+            button_instance.copy_requested.connect(self.copy_requested.emit)

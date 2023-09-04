@@ -1,4 +1,6 @@
+from __future__ import annotations
 from typing import Any, Callable
+from dataclasses import dataclass
 import os
 
 from pathvalidate import sanitize_filename
@@ -32,10 +34,6 @@ class InstanceManager:
         return self._instance_groups
 
     def create_instance(self, name: str, group_name: str, version_name: str):
-        if not self.is_acceptable_instance_name(name):
-            raise UnacceptableInstanceName
-
-        name = name.strip()
         group_name = group_name.strip()
 
         self._watchdog_thread.ignore_dir_created_event = True
@@ -54,6 +52,22 @@ class InstanceManager:
 
         self._watchdog_thread.ignore_dir_created_event = False
 
+    def copy_instance(self, instance: Instance, copy_worlds: bool = True):
+        instance_location = self._get_instance_location(instance)
+
+        self._watchdog_thread.ignore_dir_created_event = True
+
+        path = os.path.join(INSTANCES_DIR_PATH, self._name_to_dir_name(f'{instance.name}(copy)'))
+        os.mkdir(path)
+
+        copied_instance = Instance.copy(instance, path, copy_worlds)
+
+        instance_location.instance_group.instances.insert(instance_location.position + 1, copied_instance)
+
+        self.set_last_instance(copied_instance)
+
+        self._watchdog_thread.ignore_dir_created_event = False
+
     def get_last_instance(self) -> Instance | None:
         return self._last_instance
 
@@ -65,14 +79,10 @@ class InstanceManager:
         self._get_group(name).hidden = hidden
         self._save_config()
 
-    def rename_instance(self, instance: Instance, new_name: str):
-        if not self.is_acceptable_instance_name(new_name):
-            raise UnacceptableInstanceName
-
-        instance.rename(new_name.strip())
-
     def change_instance_group(self, instance: Instance, group_name: str):
         self._remove_instance_from_group(instance)
+
+        group_name = group_name.strip()
 
         group = self._get_group(group_name)
         if group:
@@ -81,10 +91,6 @@ class InstanceManager:
             self._instance_groups.append(InstanceGroup(group_name, [instance]))
         self._delete_empty_groups()
         self._save_config()
-
-    @staticmethod
-    def is_acceptable_instance_name(name: str) -> bool:
-        return bool(name.strip())
 
     def subscribe_to_state_change_notifications(self, callback: Callable[[], Any]):
         if callback not in self._to_call_on_state_change:
@@ -96,7 +102,20 @@ class InstanceManager:
                 return group
         return None
 
+    def _get_instance_location(self, instance: Instance) -> _InstanceLocation:
+        group = None
+        position = 0
+        for instance_group in self._instance_groups:
+            for i, instance_ in enumerate(instance_group.instances):
+                if instance_ == instance:
+                    group = instance_group
+                    position = i
+                    break
+        return _InstanceLocation(group, position)
+
     def _create_group(self, name: str, instance: Instance):
+        name = name.strip()
+
         if self._get_group(name):
             raise GroupExistsError
 
@@ -133,18 +152,17 @@ class InstanceManager:
     def _to_dict(self) -> dict:
         return {
             'format_version': 1,
-            'groups': [group.to_dict() for group in self._instance_groups if group.name],
+            'groups': [group.to_dict() for group in self._instance_groups],
             'last_instance': self._last_instance.dir_name if self._last_instance else None
         }
 
     @staticmethod
     def _name_to_dir_name(name: str) -> str:
-        if not name:
-            raise UnacceptableInstanceName
-
         dir_name = name
         dir_name = dir_name.replace(' ', '_')
         dir_name = sanitize_filename(dir_name)
+        if not dir_name:
+            dir_name = '1'
 
         temp_dir_name = dir_name
         i = 1
@@ -160,9 +178,11 @@ class InstanceManager:
         return temp_dir_name
 
 
-class UnacceptableInstanceName(ValueError):
-    pass
-
-
 class GroupExistsError(ValueError):
     pass
+
+
+@dataclass(frozen=True, slots=True)
+class _InstanceLocation:
+    instance_group: InstanceGroup
+    position: int
