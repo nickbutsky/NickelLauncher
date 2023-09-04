@@ -1,4 +1,6 @@
-from PySide6.QtWidgets import QApplication, QWidget, QScrollArea, QMessageBox, QLineEdit, QLayout
+from typing import Any, Callable
+
+from PySide6.QtWidgets import QApplication, QWidget, QScrollArea, QMessageBox, QLineEdit, QAbstractButton, QLayout
 from PySide6.QtCore import Qt, QTimer, QRegularExpression
 from PySide6.QtGui import QRegularExpressionValidator
 
@@ -7,6 +9,35 @@ def show_message_box(icon: QMessageBox.Icon, title: str, text: str, parent: QWid
     message_box = QMessageBox(icon, title, text, parent=parent)
     message_box.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
     message_box.show()
+
+
+def show_question_box(
+        title: str,
+        text: str,
+        on_yes: Callable[[], Any] | None,
+        on_no: Callable[[], Any] | None = None,
+        show_cancel: bool = False,
+        parent: QWidget | None = None
+):
+    standard_buttons = QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+    if show_cancel:
+        standard_buttons |= QMessageBox.StandardButton.Cancel
+
+    question_box = QMessageBox(QMessageBox.Icon.Question, title, text, standard_buttons, parent)
+    question_box.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+
+    def on_button_clicked(button: QAbstractButton):
+        slot = {
+            QMessageBox.ButtonRole.YesRole: on_yes,
+            QMessageBox.ButtonRole.NoRole: on_no,
+            QMessageBox.ButtonRole.RejectRole: None
+        }[question_box.buttonRole(button)]
+        if slot:
+            slot()
+
+    question_box.buttonClicked.connect(on_button_clicked)
+
+    question_box.show()
 
 
 def ensure_widget_visible(scroll_area: QScrollArea, widget: QWidget):
