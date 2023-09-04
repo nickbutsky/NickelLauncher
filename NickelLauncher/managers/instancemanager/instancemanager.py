@@ -60,9 +60,11 @@ class InstanceManager:
         path = os.path.join(INSTANCES_DIR_PATH, self._name_to_dir_name(f'{instance.name}(copy)'))
         os.mkdir(path)
 
-        instance_location.instance_group.instances.insert(
-            instance_location.position + 1, Instance.copy(instance, path, copy_worlds)
-        )
+        copied_instance = Instance.copy(instance, path, copy_worlds)
+
+        instance_location.instance_group.instances.insert(instance_location.position + 1, copied_instance)
+
+        self.set_last_instance(copied_instance)
 
         self._watchdog_thread.ignore_dir_created_event = False
 
