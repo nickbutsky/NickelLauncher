@@ -1,0 +1,18 @@
+{
+	"script-path": "NickelLauncher\\main.py",
+	"arguments": {
+		"output-filename": "NickelLauncher",
+		"company-name": "Nickel59",
+		"product-version": "0.2",
+		"file-version": "0.2",
+		"windows-icon-from-ico": "icon.ico",
+		"enable-plugin": "pyside6",
+		"output-dir": "dist"
+	},
+	"flags": [
+		"windows-uac-admin",
+		"standalone",
+		"remove-output",
+		"windows-disable-console"
+	]
+}

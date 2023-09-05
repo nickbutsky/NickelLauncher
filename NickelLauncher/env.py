@@ -6,7 +6,7 @@ import subprocess
 import logging
 
 
-IS_IN_DEBUG_MODE = True
+IS_IN_DEBUG_MODE = not ('__compiled__' in globals())
 
 if IS_IN_DEBUG_MODE:
     LAUNCHER_DATA_DIR_PATH = os.path.join(os.getenv('APPDATA'), 'NickelLauncher')
