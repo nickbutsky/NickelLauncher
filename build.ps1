@@ -1,4 +1,4 @@
-python.exe -m pip install --upgrade nuitka
+python.exe -m pip install Nuitka==1.6.6
 
 $config = ConvertFrom-Json -InputObject (Get-Content -Path "nuitka_config.json" -Raw)
 
