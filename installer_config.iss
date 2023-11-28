@@ -1,9 +1,8 @@
+#define AppId "{52CE7B35-D314-43D5-99E9-9745A77976E4}"
+
 #define AppName "NickelLauncher"
 #define AppPublisher "Nickel59"
 #define AppURL "https://github.com/Nickel59/NickelLauncher"
-
-#define AppId "{52CE7B35-D314-43D5-99E9-9745A77976E4}"
-
 #define AppExeName "NickelLauncher.exe"
 #define AppSourceDir "dist\NickelLauncher"
 #define AppVersion RemoveFileExt(GetFileVersion(AppSourceDir + '\' + AppExeName))
