@@ -1,3 +1,5 @@
+param([string]$isccPath)
+
 $appConfig = ConvertFrom-Json -InputObject (Get-Content -Path "app_config.json" -Raw)
 $nuitkaConfig = ConvertFrom-Json -InputObject (python -c "import json, json_ref_dict; print(json.dumps(json_ref_dict.materialize(json_ref_dict.RefDict('nuitka_config.json'))))")
 
@@ -11,4 +13,6 @@ Invoke-Expression "nuitka $arguments $flags $scriptPath"
 
 Rename-Item -Path "dist\$([System.IO.Path]::GetFileNameWithoutExtension($scriptPath)).dist" -NewName $appConfig."name"
 
-Invoke-Expression "&'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' /DAppName=$($appConfig.'name') /DAppPublisher=$($appConfig.'publisher') /DAppVersion=$($appConfig.'version') /DAppURL=$($appConfig.'url') installer_config.iss"
+if ($PSBoundParameters.ContainsKey('isccPath')) {
+    Invoke-Expression "&'$isccPath' /DAppName=$( $appConfig.'name' ) /DAppPublisher=$( $appConfig.'publisher' ) /DAppVersion=$( $appConfig.'version' ) /DAppURL=$( $appConfig.'url' ) installer_config.iss"
+}
