@@ -1,11 +1,7 @@
 #define AppId "{52CE7B35-D314-43D5-99E9-9745A77976E4}"
 
-#define AppName "NickelLauncher"
-#define AppPublisher "Nickel59"
-#define AppURL "https://github.com/Nickel59/NickelLauncher"
-#define AppExeName "NickelLauncher.exe"
-#define AppSourceDir "dist\NickelLauncher"
-#define AppVersion RemoveFileExt(GetFileVersion(AppSourceDir + '\' + AppExeName))
+#define AppExeName AppName + ".exe"
+#define AppSourceDir "dist\" + AppName
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.

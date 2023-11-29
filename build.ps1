@@ -10,3 +10,5 @@ if (Test-Path "dist") { Remove-Item "dist" -Recurse }
 Invoke-Expression "nuitka $arguments $flags $scriptPath"
 
 Rename-Item -Path "dist\$([System.IO.Path]::GetFileNameWithoutExtension($scriptPath)).dist" -NewName $appConfig."name"
+
+Invoke-Expression "&'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' /DAppName=$($appConfig.'name') /DAppPublisher=$($appConfig.'publisher') /DAppVersion=$($appConfig.'version') /DAppURL=$($appConfig.'url') installer_config.iss"
