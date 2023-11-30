@@ -14,7 +14,7 @@ Invoke-Expression "nuitka $arguments $flags $scriptPath"
 Rename-Item -Path "dist\$([System.IO.Path]::GetFileNameWithoutExtension($scriptPath)).dist" -NewName $appConfig."name"
 
 if ($PSBoundParameters.ContainsKey('isccPath')) {
-    if (-not (Test-Path "Unins.dll")) {
+    if (-not (Test-Path "UninsIS.dll")) {
         $tempFolder = [System.IO.Path]::GetTempPath() + [System.IO.Path]::GetRandomFileName()
         New-Item -ItemType Directory -Path $tempFolder
         Invoke-WebRequest -Uri "https://github.com/Bill-Stewart/UninsIS/releases/download/v1.0.1/UninsIS-1.0.1.zip" -OutFile "$tempFolder\UninsIS-1.0.1.zip"
