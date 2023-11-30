@@ -1,10 +1,10 @@
 {
 	"script-path": "NickelLauncher\\main.py",
 	"arguments": {
-		"output-filename": "NickelLauncher",
-		"company-name": "Nickel59",
-		"product-version": "0.2.1",
-		"file-version": "0.2.1",
+		"output-filename": {"$ref": "app_config.json#/name"},
+		"company-name": {"$ref": "app_config.json#/publisher"},
+		"product-version": {"$ref": "app_config.json#/version"},
+		"file-version": {"$ref": "app_config.json#/version"},
 		"windows-icon-from-ico": "icon.ico",
 		"enable-plugin": "pyside6",
 		"output-dir": "dist"

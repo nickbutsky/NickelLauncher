@@ -1,5 +1,4 @@
 from typing import Sequence
-import sys
 import os
 import shutil
 import subprocess
@@ -9,9 +8,9 @@ import logging
 IS_IN_DEBUG_MODE = not ('__compiled__' in globals())
 
 if IS_IN_DEBUG_MODE:
-    LAUNCHER_DATA_DIR_PATH = os.path.join(os.getenv('APPDATA'), 'NickelLauncher')
+    LAUNCHER_DATA_DIR_PATH = os.path.join(os.getenv('APPDATA'), 'NickelLauncherTest')
 else:
-    LAUNCHER_DATA_DIR_PATH = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), 'data')
+    LAUNCHER_DATA_DIR_PATH = os.path.join(os.getenv('APPDATA'), 'NickelLauncher')
 
 VERSIONS_DIR_PATH = os.path.join(LAUNCHER_DATA_DIR_PATH, 'versions')
 INSTANCES_DIR_PATH = os.path.join(LAUNCHER_DATA_DIR_PATH, 'instances')
