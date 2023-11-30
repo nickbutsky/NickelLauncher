@@ -6,11 +6,8 @@ $nuitkaConfig = ConvertFrom-Json -InputObject (python -c "import json, json_ref_
 $scriptPath = $nuitkaConfig."script-path"
 $arguments = ($nuitkaConfig.arguments.PSObject.Properties | ForEach-Object {"--$($_.Name)=$($_.Value)"}) -join " "
 $flags = "--$($nuitkaConfig.flags -join " --")"
-
 if (Test-Path "dist") { Remove-Item "dist" -Recurse }
-
 Invoke-Expression "nuitka $arguments $flags $scriptPath"
-
 Rename-Item -Path "dist\$([System.IO.Path]::GetFileNameWithoutExtension($scriptPath)).dist" -NewName $appConfig."name"
 
 if ($PSBoundParameters.ContainsKey('isccPath')) {
