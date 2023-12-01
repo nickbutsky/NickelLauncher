@@ -26,6 +26,7 @@ PrivilegesRequired=lowest
 Compression=lzma
 SolidCompression=yes
 UninstallDisplayIcon={uninstallexe}
+VersionInfoVersion={#AppVersion}
 WizardSizePercent=100
 WizardStyle=modern
 
