@@ -18,12 +18,14 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 DisableReadyPage=yes
-OutputBaseFilename={#AppName} {#AppVersion}
+OutputBaseFilename={#AppName}-{#AppVersion}
+SetupIconFile=icon.ico
 OutputDir=dist
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 Compression=lzma
 SolidCompression=yes
+UninstallDisplayIcon={uninstallexe}
 WizardSizePercent=100
 WizardStyle=modern
 
