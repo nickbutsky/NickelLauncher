@@ -4,14 +4,13 @@ from logging.handlers import RotatingFileHandler
 
 from tendo.singleton import SingleInstance
 
-from env import VERSIONS_DIR_PATH, INSTANCES_DIR_PATH, TEMP_DIR_PATH, LOGS_DIR_PATH, clear_directory
+from env import VERSIONS_DIR_PATH, INSTANCES_DIR_PATH, TEMP_DIR_PATH, LOGS_DIR_PATH
 from ui.app import App
 
 
 class Setup:
     def run(self):
         self._create_dirs()
-        Cleaner().run()
         self._setup_rotating_logger(LOGS_DIR_PATH, 'nl')
 
     @staticmethod
@@ -40,14 +39,6 @@ class Setup:
         )
 
 
-class Cleaner:
-    DIRECTORY_PATHS_TO_CLEAN = [TEMP_DIR_PATH]
-
-    def run(self):
-        for directory_path in self.DIRECTORY_PATHS_TO_CLEAN:
-            clear_directory(directory_path)
-
-
 def main():
     me = SingleInstance()
 
@@ -55,8 +46,6 @@ def main():
 
     app = App()
     app.exec()
-
-    Cleaner().run()
 
 
 if __name__ == '__main__':
