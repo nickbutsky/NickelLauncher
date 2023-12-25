@@ -2,10 +2,10 @@ from __future__ import annotations
 from typing import Any, Callable
 from dataclasses import dataclass
 import os
+import json
 
 from pathvalidate import sanitize_filename
 
-from configmanager import save_config
 from env import INSTANCES_DIR_PATH
 from core.instance import Instance
 from core.instancegroup import InstanceGroup
@@ -147,7 +147,11 @@ class InstanceManager:
         self._last_instance = parsed_config.last_instance
 
     def _save_config(self):
-        save_config(self._to_dict(), self._config_path, True)
+        try:
+            with open(self._config_path, 'w') as f:
+                json.dump(self._to_dict(), f, indent=4)
+        except OSError:
+            return
 
     def _to_dict(self) -> dict:
         return {

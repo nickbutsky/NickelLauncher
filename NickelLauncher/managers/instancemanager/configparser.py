@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 import os
+import json
 
 from schema import Schema, Or
 
-from configmanager import load_config, ConfigLoadError
 from core.instance import Instance
 from core.instancegroup import InstanceGroup
 
@@ -16,8 +16,9 @@ class ParsedConfig:
 
 def parse_config(config_path: str, instances_dir_path: str) -> ParsedConfig:
     try:
-        config = load_config(config_path)
-    except ConfigLoadError:
+        with open(config_path) as f:
+            config = json.load(f)
+    except (OSError, json.JSONDecodeError):
         return ParsedConfig(_load_instance_groups([], instances_dir_path), None)
 
     if not _is_valid_config(config):

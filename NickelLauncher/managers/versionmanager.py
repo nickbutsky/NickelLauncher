@@ -4,7 +4,6 @@ import json
 from schema import Schema
 import requests
 
-from configmanager import load_config, ConfigLoadError
 from env import VERSIONS_DIR_PATH
 from core.version import Version
 
@@ -77,8 +76,9 @@ def _load_versions(config: list[dict]) -> dict[str, list[Version]]:
 
 def _load_config() -> list[dict]:
     try:
-        config = load_config(_VERSIONS_CONFIG_PATH)
-    except ConfigLoadError:
+        with open(_VERSIONS_CONFIG_PATH) as f:
+            config = json.load(f)
+    except (OSError, json.JSONDecodeError):
         return []
 
     if not Schema(

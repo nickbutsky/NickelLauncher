@@ -2,12 +2,12 @@ from __future__ import annotations
 from typing import Any, Callable, Self
 import os
 import shutil
+import json
 import logging
 
 from schema import Schema
 
 import system
-from configmanager import load_config, save_config, ConfigLoadError
 from report import Report
 from core.version import Version
 import managers.versionmanager as version_manager
@@ -48,8 +48,9 @@ class Instance:
             return None
 
         try:
-            config = load_config(os.path.join(path, 'config.json'))
-        except ConfigLoadError:
+            with open(os.path.join(path, 'config.json')) as f:
+                config = json.load(f)
+        except (OSError, json.JSONDecodeError) as e:
             logging.error(f'Failed to load an instance at {path}. Invalid config.')
             return None
 
@@ -184,7 +185,8 @@ class Instance:
         }
 
     def _save_config(self):
-        save_config(self._to_dict(), os.path.join(self.path, 'config.json'))
+        with open(os.path.join(self.path, 'config.json'), 'w') as f:
+            json.dump(self._to_dict(), f, indent=4)
 
     def _grant_access(self):
         cmd = f'icacls "{self.path}" /grant:r *{USER_SIDS[self._versions[0].type]}:(OI)(CI)F /t'
