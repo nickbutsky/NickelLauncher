@@ -6,7 +6,7 @@ import logging
 
 from schema import Schema
 
-from env import run_command
+import system
 from configmanager import load_config, save_config, ConfigLoadError
 from report import Report
 from core.version import Version
@@ -188,7 +188,7 @@ class Instance:
 
     def _grant_access(self):
         cmd = f'icacls "{self.path}" /grant:r *{USER_SIDS[self._versions[0].type]}:(OI)(CI)F /t'
-        run_command(cmd, False)
+        system.run_command(cmd, False)
 
 
 class UnavailableArchitectureError(ValueError):

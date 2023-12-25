@@ -4,7 +4,7 @@ import os
 import random
 import logging
 
-import env
+import system
 from report import Report
 import packagemanager
 from net.versiondownloader import VersionDownloader
@@ -72,5 +72,5 @@ class Version:
             os.getenv('LOCALAPPDATA'), 'Packages', self._get_pfn(), 'LocalState', 'games'
         )
         os.makedirs(default_instance_dir_path, exist_ok=True)
-        env.clear_directory(default_instance_dir_path)
+        system.clear_directory(default_instance_dir_path)
         os.symlink(game_dir_path, os.path.join(default_instance_dir_path, 'com.mojang'), target_is_directory=True)

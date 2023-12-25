@@ -1,6 +1,6 @@
 import json
 
-import env
+import system
 
 
 def find_packages(package_family_name: str) -> list[dict]:
@@ -8,7 +8,7 @@ def find_packages(package_family_name: str) -> list[dict]:
         'powershell',
         f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | convertto-json'
     )
-    output = env.run_command(cmd, False)
+    output = system.run_command(cmd, False)
 
     if output:
         deserialized_output = json.loads(output)
@@ -24,14 +24,14 @@ def find_packages(package_family_name: str) -> list[dict]:
 def remove_package(package_dict: dict):
     package_fullname = package_dict['PackageFullName']
     cmd = 'powershell', f'Remove-AppxPackage -Package {package_fullname}'
-    env.run_command(cmd)
+    system.run_command(cmd)
 
 
 def add_package(path: str):
     cmd = 'powershell', f'Add-AppxPackage "{path}"'
-    env.run_command(cmd)
+    system.run_command(cmd)
 
 
 def launch_package(package_family_name: str, application_id: str):
     cmd = 'powershell', f'explorer.exe shell:appsFolder\\{package_family_name}!{application_id}'
-    env.run_command(cmd)
+    system.run_command(cmd)
