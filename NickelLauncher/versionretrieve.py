@@ -2,14 +2,15 @@ from copy import copy
 import os
 import json
 
+from ordered_set import OrderedSet
 from schema import Schema
 import requests
 
 from env import VERSIONS_DIR_PATH
-from core.version import Version
+from core.version import Version, Architecture
 
 
-SUPPORTED_ARCHITECTURES = ['x64', 'x86']
+SUPPORTED_ARCHITECTURES = OrderedSet([Architecture.X64, Architecture.X86])
 
 _VERSIONS_JSON_PATH = os.path.join(VERSIONS_DIR_PATH, 'versions.json')
 
@@ -41,11 +42,11 @@ def _parse_versions_json_contents(contents: list[dict]) -> list[Version]:
             item['type'],
             {
                 architecture: guids for architecture, guids in item['guids'].items()
-                if guids and architecture in SUPPORTED_ARCHITECTURES
+                if (architecture in SUPPORTED_ARCHITECTURES) and guids
             },
             {
                 architecture: os.path.join(VERSIONS_DIR_PATH, f"{item['name']}_{architecture}.Appx")
-                for architecture, guids in item['guids'].items() if guids and architecture in SUPPORTED_ARCHITECTURES
+                for architecture, guids in item['guids'].items() if (architecture in SUPPORTED_ARCHITECTURES) and guids
             }
         ) for item in contents
     ]
