@@ -2,7 +2,6 @@ from copy import copy
 import os
 import json
 
-from ordered_set import OrderedSet
 from schema import Schema
 import requests
 
@@ -10,7 +9,7 @@ from env import VERSIONS_DIR_PATH
 from core.version import Version, Architecture
 
 
-SUPPORTED_ARCHITECTURES = OrderedSet([Architecture.X64, Architecture.X86])
+SUPPORTED_ARCHITECTURES = {Architecture.X64, Architecture.X86}
 
 _VERSIONS_JSON_PATH = os.path.join(VERSIONS_DIR_PATH, 'versions.json')
 
