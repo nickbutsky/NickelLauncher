@@ -69,14 +69,12 @@ def _load_instance_groups(
         if os.path.isdir(os.path.join(INSTANCES_DIR_PATH, dir_name)) and dir_name not in grouped_instance_dir_names
     ]
 
-    ungrouped_instances = [
-        _load_instance(os.path.join(INSTANCES_DIR_PATH, dir_name)) for dir_name in ungrouped_instance_dir_names
-    ]
+    ungrouped_instances = [_load_instance(dir_name) for dir_name in ungrouped_instance_dir_names]
     ungrouped_instances[:] = [instance for instance in ungrouped_instances if instance is not None]
 
     groups = [InstanceGroup('', [])]
     for group_dict in group_dicts:
-        instances = [_load_instance(os.path.join(INSTANCES_DIR_PATH, dir_name)) for dir_name in group_dict['instances']]
+        instances = [_load_instance(dir_name) for dir_name in group_dict['instances']]
         instances[:] = [instance for instance in instances if instance is not None]
 
         if group_dict['name'] == '':
@@ -89,7 +87,8 @@ def _load_instance_groups(
     return [group for group in groups if group.instances]
 
 
-def _load_instance(path: str) -> Instance | None:
+def _load_instance(instance_dir_name: str) -> Instance | None:
+    path = os.path.join(INSTANCES_DIR_PATH, instance_dir_name)
     try:
         with open(Instance.get_config_path(path)) as f:
             config = json.load(f)
