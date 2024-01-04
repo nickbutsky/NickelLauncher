@@ -12,9 +12,9 @@ class VersionType(StrEnum):
 
 
 class Architecture(StrEnum):
-    X64: auto()
-    X86: auto()
-    ARM: auto()
+    X64 = auto()
+    X86 = auto()
+    ARM = auto()
 
 
 @dataclass(frozen=True, slots=True)
