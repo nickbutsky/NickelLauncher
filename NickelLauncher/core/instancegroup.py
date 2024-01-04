@@ -4,10 +4,6 @@ from core.instance import Instance
 
 
 class InstanceGroup:
-    name: str
-    instances: list[Instance]
-    hidden: bool = False
-
     def __init__(self, name: str, instances: list[Instance], hidden: bool = False):
         self.instances = instances
         self.hidden = hidden
