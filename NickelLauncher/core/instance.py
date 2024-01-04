@@ -1,7 +1,7 @@
 import os
 import json
 
-from new_core.version import Version, Architecture
+from core.version import Version, Architecture
 
 
 class Instance:
