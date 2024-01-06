@@ -1,6 +1,7 @@
 from typing import Iterable
 from enum import StrEnum, auto
 from dataclasses import dataclass
+from pathlib import Path
 
 from ordered_set import OrderedSet
 
@@ -22,7 +23,7 @@ class Version:
     name: str
     type: VersionType
     guids: dict[Architecture, Iterable[str]]
-    package_paths: dict[Architecture, str]
+    package_paths: dict[Architecture, Path]
 
     @property
     def available_architectures(self) -> OrderedSet[Architecture]:
