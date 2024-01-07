@@ -1,12 +1,11 @@
 from typing import TypedDict
 from dataclasses import dataclass
-import os
 import json
 
 from schema import Schema, Or
 
-from env import INSTANCES_DIR_PATH
-from core.instance import Instance
+from env import ROOT
+from core.instance import Instance, InstanceDirectory
 from core.instancegroup import InstanceGroup
 import versionretrieve
 
@@ -19,7 +18,7 @@ class LoadResult:
 
 def load_instances() -> LoadResult:
     try:
-        with open(os.path.join(INSTANCES_DIR_PATH, 'groups.json')) as f:
+        with open(ROOT.instances / 'groups.json') as f:
             contents = json.load(f)
     except (OSError, json.JSONDecodeError):
         return LoadResult(_load_instance_groups([]), None)
@@ -60,21 +59,23 @@ def _are_groups_json_contents_valid(contents: dict) -> bool:
 def _load_instance_groups(
         group_dicts: list[TypedDict('', {'name': str, 'hidden': bool, 'instances': list[str]})]
 ) -> list[InstanceGroup]:
-    grouped_instance_dir_names = []
+    grouped_instance_dirs = []
     for group_dict in group_dicts:
-        grouped_instance_dir_names += group_dict['instances']
+        grouped_instance_dirs += [InstanceDirectory(ROOT.instances / dir_name) for dir_name in group_dict['instances']]
 
-    ungrouped_instance_dir_names = [
-        dir_name for dir_name in os.listdir(INSTANCES_DIR_PATH)
-        if os.path.isdir(os.path.join(INSTANCES_DIR_PATH, dir_name)) and dir_name not in grouped_instance_dir_names
+    ungrouped_instance_dirs = [
+        InstanceDirectory(item) for item in ROOT.instances.iterdir()
+        if item.is_dir() and item not in grouped_instance_dirs
     ]
 
-    ungrouped_instances = [_load_instance(dir_name) for dir_name in ungrouped_instance_dir_names]
+    ungrouped_instances = [_load_instance(directory) for directory in ungrouped_instance_dirs]
     ungrouped_instances[:] = [instance for instance in ungrouped_instances if instance is not None]
 
     groups = [InstanceGroup('', [])]
     for group_dict in group_dicts:
-        instances = [_load_instance(dir_name) for dir_name in group_dict['instances']]
+        instances = [
+            _load_instance(InstanceDirectory(ROOT.instances / dir_name)) for dir_name in group_dict['instances']
+        ]
         instances[:] = [instance for instance in instances if instance is not None]
 
         if group_dict['name'] == '':
@@ -87,10 +88,9 @@ def _load_instance_groups(
     return [group for group in groups if group.instances]
 
 
-def _load_instance(instance_dir_name: str) -> Instance | None:
-    path = os.path.join(INSTANCES_DIR_PATH, instance_dir_name)
+def _load_instance(instance_directory: InstanceDirectory) -> Instance | None:
     try:
-        with open(Instance.get_config_path(path)) as f:
+        with open(instance_directory.config_json) as f:
             config = json.load(f)
     except (OSError, json.JSONDecodeError):
         return None
@@ -113,8 +113,8 @@ def _load_instance(instance_dir_name: str) -> Instance | None:
         )
     except StopIteration:
         return None
-    instance = Instance(config['name'], path, version, config['version']['architecture_choice'])
-    if not os.path.isdir(instance.minecraft_dir_path):
+    instance = Instance(config['name'], version, config['version']['architecture_choice'], instance_directory)
+    if not instance_directory.com_mojang.is_dir():
         return None
     return instance
 
@@ -122,6 +122,6 @@ def _load_instance(instance_dir_name: str) -> Instance | None:
 def _get_last_instance(instance_dir_name: str, instance_groups: list[InstanceGroup]) -> Instance | None:
     for group in instance_groups:
         for instance in group.instances:
-            if instance.dir_name == instance_dir_name:
+            if instance.directory.name == instance_dir_name:
                 return instance
     return None
