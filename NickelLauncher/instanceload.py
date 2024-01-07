@@ -73,8 +73,11 @@ def _load_instance_groups(
         if item.is_dir() and item not in grouped_instance_dirs
     ]
 
-    ungrouped_instances = [_load_instance(directory) for directory in ungrouped_instance_dirs]
-    ungrouped_instances[:] = [instance for instance in ungrouped_instances if instance is not None]
+    ungrouped_instances = [
+        instance for instance in [
+            _load_instance(directory) for directory in ungrouped_instance_dirs
+        ] if instance is not None
+    ]
 
     groups = [InstanceGroup('', [])]
     for group_dict in group_dicts:
