@@ -4,7 +4,7 @@ import json
 from core.version import Version, Architecture
 
 
-class InstanceDirectory(Path):
+class InstanceDirectory(type(Path())):
     @property
     def com_mojang(self) -> Path:
         return Path(self) / 'com.mojang'
