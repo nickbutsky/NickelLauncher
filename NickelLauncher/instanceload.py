@@ -82,9 +82,10 @@ def _load_instance_groups(
     groups = [InstanceGroup('', [])]
     for group_dict in group_dicts:
         instances = [
-            _load_instance(InstanceDirectory(ROOT.instances / dir_name)) for dir_name in group_dict['instances']
+            instance for instance in [
+                _load_instance(InstanceDirectory(ROOT.instances / dir_name)) for dir_name in group_dict['instances']
+            ] if instance is not None
         ]
-        instances[:] = [instance for instance in instances if instance is not None]
 
         if group_dict['name'] == '':
             groups[0].instances += instances
