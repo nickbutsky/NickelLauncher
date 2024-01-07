@@ -59,9 +59,14 @@ def _are_groups_json_contents_valid(contents: dict) -> bool:
 def _load_instance_groups(
         group_dicts: list[TypedDict('', {'name': str, 'hidden': bool, 'instances': list[str]})]
 ) -> list[InstanceGroup]:
-    grouped_instance_dirs = []
-    for group_dict in group_dicts:
-        grouped_instance_dirs += [InstanceDirectory(ROOT.instances / dir_name) for dir_name in group_dict['instances']]
+    # The only unpacking way my typechecker recognises
+    grouped_instance_dirs = [
+        directory for sublist in [
+            [
+                InstanceDirectory(ROOT.instances / dir_name) for dir_name in group_dict['instances']
+            ] for group_dict in group_dicts
+        ] for directory in sublist
+    ]
 
     ungrouped_instance_dirs = [
         InstanceDirectory(item) for item in ROOT.instances.iterdir()
