@@ -23,7 +23,7 @@ class Version:
     name: str
     type: VersionType
     guids: dict[Architecture, Iterable[str]]
-    package_paths: dict[Architecture, Path]
+    packages: dict[Architecture, Path]
 
     @property
     def available_architectures(self) -> OrderedSet[Architecture]:
