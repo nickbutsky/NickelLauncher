@@ -1,34 +1,31 @@
-import os
+from pathlib import Path
 import json
 
 from core.version import Version, Architecture
 
 
+class InstanceDirectory(Path):
+    @property
+    def com_mojang(self) -> Path:
+        return Path(self) / 'com.mojang'
+
+    @property
+    def config_json(self) -> Path:
+        return Path(self) / 'config.json'
+
+
 class Instance:
-    def __init__(self, name: str, path: str, version: Version, architecture_choice: Architecture):
+    def __init__(self, name: str, version: Version, architecture_choice: Architecture, directory: InstanceDirectory):
         self._name = name.strip()
-        self._path = path
         self._version = version
         if architecture_choice not in self.version.available_architectures:
             raise UnavailableArchitectureError
         self._architecture_choice = architecture_choice
+        self._directory = directory
 
     @property
     def name(self) -> str:
         return self._name
-
-    @property
-    def dir_name(self) -> str:
-        _, dir_name = os.path.split(self.path)
-        return dir_name
-
-    @property
-    def path(self) -> str:
-        return self._path
-
-    @property
-    def minecraft_dir_path(self) -> str:
-        return os.path.join(self.path, 'com.mojang')
 
     @property
     def version(self) -> Version:
@@ -37,6 +34,10 @@ class Instance:
     @property
     def architecture_choice(self) -> Architecture:
         return self._architecture_choice
+
+    @property
+    def directory(self) -> InstanceDirectory:
+        return self._directory
 
     def rename(self, new_name: str):
         self._name = new_name.strip()
@@ -55,12 +56,8 @@ class Instance:
         self.save_config()
 
     def save_config(self):
-        with open(self.get_config_path(self.path), 'w') as f:
+        with open(self.directory.config_json, 'w') as f:
             json.dump(self._to_dict(), f, indent=4)
-
-    @staticmethod
-    def get_config_path(instance_path: str):
-        return os.path.join(instance_path, 'config.json')
 
     def _to_dict(self) -> dict:
         return {
