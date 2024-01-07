@@ -27,33 +27,36 @@ class Instance:
     def name(self) -> str:
         return self._name
 
+    @name.setter
+    def name(self, name: str):
+        self._name = name.strip()
+        self.save_config()
+
     @property
     def version(self) -> Version:
         return self._version
+
+    @version.setter
+    def version(self, version: Version):
+        self._version = version
+        if self.architecture_choice not in self.version.available_architectures:
+            self.architecture_choice = self.version.available_architectures[0]
+        self.save_config()
 
     @property
     def architecture_choice(self) -> Architecture:
         return self._architecture_choice
 
-    @property
-    def directory(self) -> InstanceDirectory:
-        return self._directory
-
-    def rename(self, new_name: str):
-        self._name = new_name.strip()
-        self.save_config()
-
-    def change_version(self, version: Version):
-        self._version = version
-        if self.architecture_choice not in self.version.available_architectures:
-            self.set_architecture_choice(self.version.available_architectures[0])
-        self.save_config()
-
-    def set_architecture_choice(self, architecture: Architecture):
+    @architecture_choice.setter
+    def architecture_choice(self, architecture: Architecture):
         if architecture not in self.version.available_architectures:
             raise UnavailableArchitectureError
         self._architecture_choice = architecture
         self.save_config()
+
+    @property
+    def directory(self) -> InstanceDirectory:
+        return self._directory
 
     def save_config(self):
         with open(self.directory.config_json, 'w') as f:
