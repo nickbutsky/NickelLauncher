@@ -1,3 +1,4 @@
+from pathlib import Path
 import json
 
 import system
@@ -27,8 +28,8 @@ def remove_package(package_dict: dict):
     system.run_command(cmd)
 
 
-def add_package(path: str):
-    cmd = 'powershell', f'Add-AppxPackage "{path}"'
+def add_package(package: Path):
+    cmd = 'powershell', f'Add-AppxPackage "{package}"'
     system.run_command(cmd)
 
 
