@@ -22,5 +22,5 @@ class InstanceGroup:
         return {
             'name': self.name,
             'hidden': self.hidden,
-            'instances': [instance.dir_name for instance in self.instances]
+            'instances': [instance.directory.name for instance in self.instances]
         }
