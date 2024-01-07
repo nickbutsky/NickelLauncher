@@ -86,7 +86,6 @@ def _load_instance_groups(
                 _load_instance(InstanceDirectory(ROOT.instances / dir_name)) for dir_name in group_dict['instances']
             ] if instance is not None
         ]
-
         if group_dict['name'] == '':
             groups[0].instances += instances
         else:
