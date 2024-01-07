@@ -1,17 +1,16 @@
 from copy import copy
-import os
 import json
 
 from schema import Schema
 import requests
 
-from env import VERSIONS_DIR_PATH
+from env import ROOT
 from core.version import Version, Architecture
 
 
 SUPPORTED_ARCHITECTURES = {Architecture.X64, Architecture.X86}
 
-_VERSIONS_JSON_PATH = os.path.join(VERSIONS_DIR_PATH, 'versions.json')
+_VERSIONS_JSON = ROOT.versions / 'versions.json'
 
 _versions: list[Version] = []
 
@@ -28,7 +27,7 @@ def get_versions_locally() -> list[Version]:
 def get_versions_remotely() -> list[Version]:
     global _versions
     res = requests.get('https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/versions.json')
-    with open(_VERSIONS_JSON_PATH, 'w') as f:
+    with open(_VERSIONS_JSON, 'w') as f:
         f.write(res.text)
     _versions = _parse_versions_json_contents(json.loads(res.text))
     return copy(_versions)
@@ -44,7 +43,7 @@ def _parse_versions_json_contents(contents: list[dict]) -> list[Version]:
                 if (architecture in SUPPORTED_ARCHITECTURES) and guids
             },
             {
-                architecture: os.path.join(VERSIONS_DIR_PATH, f"{item['name']}_{architecture}.Appx")
+                architecture: ROOT.versions / f"{item['name']}_{architecture}.Appx"
                 for architecture, guids in item['guids'].items() if (architecture in SUPPORTED_ARCHITECTURES) and guids
             }
         ) for item in contents
@@ -53,7 +52,7 @@ def _parse_versions_json_contents(contents: list[dict]) -> list[Version]:
 
 def _load_versions_json() -> list[dict]:
     try:
-        with open(_VERSIONS_JSON_PATH) as f:
+        with open(_VERSIONS_JSON) as f:
             contents = json.load(f)
     except (OSError, json.JSONDecodeError):
         return []
