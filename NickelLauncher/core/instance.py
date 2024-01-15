@@ -1,5 +1,7 @@
+from typing import Callable, Self, Any
 from pathlib import Path
-import json
+
+from ordered_set import OrderedSet
 
 from customtypes import UserPath
 from core.version import Version, Architecture
@@ -24,6 +26,8 @@ class Instance:
         self._architecture_choice = architecture_choice
         self._directory = directory
 
+        self._subscribers: OrderedSet[Callable[[Self], Any]] = OrderedSet()
+
     @property
     def name(self) -> str:
         return self._name
@@ -31,7 +35,7 @@ class Instance:
     @name.setter
     def name(self, name: str):
         self._name = name.strip()
-        self.save_config()
+        self._notify_subscribers()
 
     @property
     def version(self) -> Version:
@@ -42,7 +46,7 @@ class Instance:
         self._version = version
         if self.architecture_choice not in self.version.available_architectures:
             self.architecture_choice = self.version.available_architectures[0]
-        self.save_config()
+        self._notify_subscribers()
 
     @property
     def architecture_choice(self) -> Architecture:
@@ -53,25 +57,28 @@ class Instance:
         if architecture not in self.version.available_architectures:
             raise UnavailableArchitectureError
         self._architecture_choice = architecture
-        self.save_config()
+        self._notify_subscribers()
 
     @property
     def directory(self) -> InstanceDirectory:
         return self._directory
 
-    def save_config(self):
-        with open(self.directory.config_json, 'w') as f:
-            json.dump(self._to_dict(), f, indent=4)
-
-    def _to_dict(self) -> dict:
+    def to_dict(self) -> dict:
         return {
             'format_version': 1,
             'name': self.name,
-            "version": {
-                "name": self.version.name,
-                "architecture_choice": self.architecture_choice
+            'version': {
+                'name': self.version.name,
+                'architecture_choice': self.architecture_choice
             }
         }
+
+    def subscribe(self, subscriber: Callable[[Self], Any]):
+        self._subscribers.add(subscriber)
+
+    def _notify_subscribers(self):
+        for subscriber in self._subscribers:
+            subscriber(self)
 
 
 class UnavailableArchitectureError(ValueError):
