@@ -73,7 +73,7 @@ class Instance:
             }
         }
 
-    def subscribe(self, subscriber: Callable[[Self], Any]):
+    def subscribe_to_change(self, subscriber: Callable[[Self], Any]):
         self._subscribers.add(subscriber)
 
     def _notify_subscribers(self):
