@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Callable, Self, Any
 from pathlib import Path
 
@@ -73,7 +74,7 @@ class Instance:
             }
         }
 
-    def subscribe_to_change(self, subscriber: Callable[[Self], Any]):
+    def subscribe_to_change(self, subscriber: Callable[[Instance], Any]):
         self._subscribers.add(subscriber)
 
     def _notify_subscribers(self):
