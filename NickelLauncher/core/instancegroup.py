@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, TypedDict, Self, Any
+from typing import Callable, TypedDict, Any
 
 from ordered_set import OrderedSet
 
@@ -12,7 +12,7 @@ class InstanceGroup:
         self._hidden = hidden
         self._instances = instances
 
-        self._subscribers: OrderedSet[Callable[[Self], Any]] = OrderedSet()
+        self._subscribers: OrderedSet[Callable[[], Any]] = OrderedSet()
 
     @property
     def name(self) -> str:
@@ -52,9 +52,9 @@ class InstanceGroup:
             'instances': [instance.directory.name for instance in self.instances]
         }
 
-    def subscribe_to_change(self, subscriber: Callable[[InstanceGroup], Any]):
+    def subscribe_to_change(self, subscriber: Callable[[], Any]):
         self._subscribers.add(subscriber)
 
     def _notify_subscribers(self):
         for subscriber in self._subscribers:
-            subscriber(self)
+            subscriber()
