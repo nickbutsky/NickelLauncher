@@ -1,23 +1,25 @@
 import os
 from pathlib import Path
 
+from customtypes import UserPath
 
-class Root(type(Path())):
+
+class Root(UserPath):
     @property
     def versions(self) -> Path:
-        return Path(self) / 'versions'
+        return self / 'versions'
 
     @property
     def instances(self) -> Path:
-        return Path(self) / 'instances'
+        return self / 'instances'
 
     @property
     def temp(self) -> Path:
-        return Path(self) / 'temp'
+        return self / 'temp'
 
     @property
     def logs(self) -> Path:
-        return Path(self) / 'logs'
+        return self / 'logs'
 
 
 IS_IN_DEBUG_MODE = not ('__compiled__' in globals())

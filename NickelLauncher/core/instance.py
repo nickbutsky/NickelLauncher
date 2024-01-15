@@ -1,17 +1,18 @@
 from pathlib import Path
 import json
 
+from customtypes import UserPath
 from core.version import Version, Architecture
 
 
-class InstanceDirectory(type(Path())):
+class InstanceDirectory(UserPath):
     @property
     def com_mojang(self) -> Path:
-        return Path(self) / 'com.mojang'
+        return self / 'com.mojang'
 
     @property
     def config_json(self) -> Path:
-        return Path(self) / 'config.json'
+        return self / 'config.json'
 
 
 class Instance:
