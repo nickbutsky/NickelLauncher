@@ -1,5 +1,8 @@
+from __future__ import annotations
+from typing import Callable, Any
 from pathlib import Path
-import json
+
+from ordered_set import OrderedSet
 
 from customtypes import UserPath
 from core.version import Version, Architecture
@@ -24,6 +27,8 @@ class Instance:
         self._architecture_choice = architecture_choice
         self._directory = directory
 
+        self._to_call_on_change: OrderedSet[Callable[[Instance], Any]] = OrderedSet()
+
     @property
     def name(self) -> str:
         return self._name
@@ -31,7 +36,7 @@ class Instance:
     @name.setter
     def name(self, name: str):
         self._name = name.strip()
-        self.save_config()
+        self._notify_subscribers()
 
     @property
     def version(self) -> Version:
@@ -42,7 +47,7 @@ class Instance:
         self._version = version
         if self.architecture_choice not in self.version.available_architectures:
             self.architecture_choice = self.version.available_architectures[0]
-        self.save_config()
+        self._notify_subscribers()
 
     @property
     def architecture_choice(self) -> Architecture:
@@ -53,25 +58,28 @@ class Instance:
         if architecture not in self.version.available_architectures:
             raise UnavailableArchitectureError
         self._architecture_choice = architecture
-        self.save_config()
+        self._notify_subscribers()
 
     @property
     def directory(self) -> InstanceDirectory:
         return self._directory
 
-    def save_config(self):
-        with open(self.directory.config_json, 'w') as f:
-            json.dump(self._to_dict(), f, indent=4)
+    def subscribe_to_change(self, function_to_call: Callable[[Instance], Any]):
+        self._to_call_on_change.add(function_to_call)
 
-    def _to_dict(self) -> dict:
+    def to_dict(self) -> dict:
         return {
             'format_version': 1,
             'name': self.name,
-            "version": {
-                "name": self.version.name,
-                "architecture_choice": self.architecture_choice
+            'version': {
+                'name': self.version.name,
+                'architecture_choice': self.architecture_choice
             }
         }
+
+    def _notify_subscribers(self):
+        for function_to_call in self._to_call_on_change:
+            function_to_call(self)
 
 
 class UnavailableArchitectureError(ValueError):
