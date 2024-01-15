@@ -1,34 +1,28 @@
 from typing import TypedDict
-from dataclasses import dataclass
 import json
 
 from schema import Schema, Or
 
 from env import ROOT
+from managerstate import ManagerState
 from core.instance import Instance, InstanceDirectory
 from core.instancegroup import InstanceGroup
 import versionretrieve
 
 
-@dataclass(slots=True)
-class LoadResult:
-    instance_groups: list[InstanceGroup]
-    last_instance: Instance | None
-
-
-def load_instances() -> LoadResult:
+def load_instances() -> ManagerState:
     try:
         with open(ROOT.instances / 'groups.json') as f:
             contents = json.load(f)
     except (OSError, json.JSONDecodeError):
-        return LoadResult(_load_instance_groups([]), None)
+        return ManagerState(_load_instance_groups([]), None)
 
     if not _are_groups_json_contents_valid(contents):
-        return LoadResult(_load_instance_groups([]), None)
+        return ManagerState(_load_instance_groups([]), None)
 
     instance_groups = _load_instance_groups(contents['groups'])
     last_instance = _get_last_instance(contents['last_instance'], instance_groups)
-    return LoadResult(instance_groups, last_instance)
+    return ManagerState(instance_groups, last_instance)
 
 
 def _are_groups_json_contents_valid(contents: dict) -> bool:
@@ -79,7 +73,7 @@ def _load_instance_groups(
         ] if instance is not None
     ]
 
-    groups = [InstanceGroup('', [])]
+    groups = []
     for group_dict in group_dicts:
         instances = [
             instance for instance in [
@@ -87,11 +81,9 @@ def _load_instance_groups(
             ] if instance is not None
         ]
         if group_dict['name'] == '':
-            groups[0].instances += instances
+            groups.insert(0, InstanceGroup('', instances + ungrouped_instances))
         else:
             groups.append(InstanceGroup(group_dict['name'], instances, group_dict['hidden']))
-
-    groups[0].instances += ungrouped_instances
 
     return [group for group in groups if group.instances]
 
