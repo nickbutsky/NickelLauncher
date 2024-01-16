@@ -9,10 +9,14 @@ from core.instance import Instance
 class InstanceGroup:
     def __init__(self, name: str, instances: list[Instance], hidden: bool = False):
         self._name = name.strip()
-        self._hidden = hidden if self.name != '' else False
+        self._hidden = hidden if not self.unnamed else False
         self._instances = instances
 
         self._subscribers: OrderedSet[Callable[[], Any]] = OrderedSet()
+
+    @property
+    def unnamed(self) -> bool:
+        return self.name == ''
 
     @property
     def name(self) -> str:
@@ -20,6 +24,8 @@ class InstanceGroup:
 
     @name.setter
     def name(self, name: str):
+        if self.unnamed:
+            return
         self._name = name.strip()
         self._notify_subscribers()
 
@@ -29,7 +35,7 @@ class InstanceGroup:
 
     @hidden.setter
     def hidden(self, hidden: bool):
-        if self.name == '':
+        if self.unnamed:
             return
         self._hidden = hidden
         self._notify_subscribers()
