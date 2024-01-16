@@ -7,7 +7,7 @@ from core.instancegroup import InstanceGroup
 from core.instance import Instance
 
 
-class ManagerState:
+class State:
     def __init__(self, instance_groups: list[InstanceGroup], last_instance: Instance | None):
         self._instance_groups = instance_groups
         self._last_instance = last_instance
@@ -66,7 +66,7 @@ class ManagerState:
             'last_instance': self.last_instance.directory.name
         }
 
-    def subscribe_to_change(self, subscriber: Callable[[ManagerState], Any]):
+    def subscribe_to_change(self, subscriber: Callable[[State], Any]):
         self._subscribers.add(subscriber)
 
     def _notify_subscribers(self):

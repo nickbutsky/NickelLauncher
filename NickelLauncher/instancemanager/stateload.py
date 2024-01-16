@@ -5,25 +5,25 @@ import json
 from schema import Schema, Or
 
 from env import ROOT
-from managerstate import ManagerState
+from state import State
 from core.instance import Instance
 from core.instancegroup import InstanceGroup
 import versionretrieve
 
 
-def load_instances() -> ManagerState:
+def load_state() -> State:
     try:
         with open(ROOT / 'instances' / 'groups.json') as f:
             contents = json.load(f)
     except (OSError, json.JSONDecodeError):
-        return ManagerState(_load_instance_groups([]), None)
+        return State(_load_instance_groups([]), None)
 
     if not _are_groups_json_contents_valid(contents):
-        return ManagerState(_load_instance_groups([]), None)
+        return State(_load_instance_groups([]), None)
 
     instance_groups = _load_instance_groups(contents['groups'])
     last_instance = _get_last_instance(contents['last_instance'], instance_groups)
-    return ManagerState(instance_groups, last_instance)
+    return State(instance_groups, last_instance)
 
 
 def _are_groups_json_contents_valid(contents: dict) -> bool:
