@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Callable, Self, Any
 from pathlib import Path
+import json
 
 from ordered_set import OrderedSet
 
@@ -16,8 +17,6 @@ class Instance:
         self._architecture_choice = architecture_choice
         self._directory = directory
 
-        self._subscribers: OrderedSet[Callable[[Self], Any]] = OrderedSet()
-
     @property
     def name(self) -> str:
         return self._name
@@ -25,7 +24,7 @@ class Instance:
     @name.setter
     def name(self, name: str):
         self._name = name.strip()
-        self._notify_subscribers()
+        self._save()
 
     @property
     def version(self) -> Version:
@@ -36,7 +35,7 @@ class Instance:
         self._version = version
         if self.architecture_choice not in self.version.available_architectures:
             self.architecture_choice = self.version.available_architectures[0]
-        self._notify_subscribers()
+        self._save()
 
     @property
     def architecture_choice(self) -> Architecture:
@@ -47,13 +46,17 @@ class Instance:
         if architecture not in self.version.available_architectures:
             raise UnavailableArchitectureError
         self._architecture_choice = architecture
-        self._notify_subscribers()
+        self._save()
 
     @property
     def directory(self) -> Path:
         return self._directory
 
-    def to_dict(self) -> dict:
+    def _save(self):
+        with open(self.directory / 'config_json', 'w') as f:
+            json.dump(self._to_dict(), f, indent=4)
+
+    def _to_dict(self) -> dict:
         return {
             'format_version': 1,
             'name': self.name,
@@ -62,13 +65,6 @@ class Instance:
                 'architecture_choice': self.architecture_choice
             }
         }
-
-    def subscribe_to_change(self, subscriber: Callable[[Instance], Any]):
-        self._subscribers.add(subscriber)
-
-    def _notify_subscribers(self):
-        for subscriber in self._subscribers:
-            subscriber(self)
 
 
 class UnavailableArchitectureError(ValueError):
