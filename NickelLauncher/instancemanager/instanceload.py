@@ -1,18 +1,19 @@
 from typing import TypedDict
+from pathlib import Path
 import json
 
 from schema import Schema, Or
 
 from env import ROOT
 from managerstate import ManagerState
-from core.instance import Instance, InstanceDirectory
+from core.instance import Instance
 from core.instancegroup import InstanceGroup
 import versionretrieve
 
 
 def load_instances() -> ManagerState:
     try:
-        with open(ROOT.instances / 'groups.json') as f:
+        with open(ROOT / 'instances' / 'groups.json') as f:
             contents = json.load(f)
     except (OSError, json.JSONDecodeError):
         return ManagerState(_load_instance_groups([]), None)
@@ -57,13 +58,13 @@ def _load_instance_groups(
     grouped_instance_dirs = [
         directory for sublist in [
             [
-                InstanceDirectory(ROOT.instances / dir_name) for dir_name in group_dict['instances']
+                ROOT / 'instances' / dir_name for dir_name in group_dict['instances']
             ] for group_dict in group_dicts
         ] for directory in sublist
     ]
 
     ungrouped_instance_dirs = [
-        InstanceDirectory(item) for item in ROOT.instances.iterdir()
+        item for item in (ROOT / 'instances').iterdir()
         if item.is_dir() and item not in grouped_instance_dirs
     ]
 
@@ -77,7 +78,7 @@ def _load_instance_groups(
     for group_dict in group_dicts:
         instances = [
             instance for instance in [
-                _load_instance(InstanceDirectory(ROOT.instances / dir_name)) for dir_name in group_dict['instances']
+                _load_instance(ROOT / 'instances' / dir_name) for dir_name in group_dict['instances']
             ] if instance is not None
         ]
         if group_dict['name'] == '':
@@ -88,9 +89,9 @@ def _load_instance_groups(
     return [group for group in groups if group.instances]
 
 
-def _load_instance(instance_directory: InstanceDirectory) -> Instance | None:
+def _load_instance(instance_directory: Path) -> Instance | None:
     try:
-        with open(instance_directory.config_json) as f:
+        with open(instance_directory / 'config.json') as f:
             config = json.load(f)
     except (OSError, json.JSONDecodeError):
         return None
@@ -114,7 +115,7 @@ def _load_instance(instance_directory: InstanceDirectory) -> Instance | None:
     except StopIteration:
         return None
     instance = Instance(config['name'], version, config['version']['architecture_choice'], instance_directory)
-    if not instance_directory.com_mojang.is_dir():
+    if not (instance_directory / 'com.mojang').is_dir():
         return None
     return instance
 
