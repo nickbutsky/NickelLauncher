@@ -29,7 +29,6 @@ class ManagerState:
     def add_instance_group(self, instance_group: InstanceGroup):
         if instance_group.name in [group.name for group in self.instance_groups]:
             raise InstanceGroupNameTakenError
-
         if instance_group.unnamed:
             self._instance_groups.insert(0, instance_group)
         else:
@@ -47,7 +46,14 @@ class ManagerState:
         if instance_group.unnamed:
             return
         self._instance_groups.remove(instance_group)
-        self._notify_subscribers()
+        if self.instance_groups[0].unnamed:
+            unnamed_instance_group = self.instance_groups[0]
+        else:
+            unnamed_instance_group = InstanceGroup('', instance_group.instances)
+            self._instance_groups.insert(0, unnamed_instance_group)
+        instance_group.move_instances(
+            len(unnamed_instance_group.instances), unnamed_instance_group, instance_group.instances
+        )
 
     def subscribe_to_change(self, subscriber: Callable[[], Any]):
         self._subscribers.add(subscriber)
