@@ -29,10 +29,10 @@ class ManagerState:
     def add_instance_group(self, instance_group: InstanceGroup):
         pass
 
-    def delete_instance_group(self, instance_group: InstanceGroup):
+    def move_instance_group(self, instance_group: InstanceGroup, position: int):
         pass
 
-    def move_instance_group(self, instance_group: InstanceGroup, position: int):
+    def delete_instance_group(self, instance_group: InstanceGroup):
         pass
 
     def subscribe_to_change(self, subscriber: Callable[[], Any]):
