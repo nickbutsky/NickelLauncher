@@ -10,7 +10,7 @@ from core.version import Version, Architecture
 
 SUPPORTED_ARCHITECTURES = {Architecture.X64, Architecture.X86}
 
-_VERSIONS_JSON = ROOT.versions / 'versions.json'
+_VERSIONS_JSON = ROOT / 'versions' / 'versions.json'
 
 _versions: list[Version] = []
 
