@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, TypedDict, Any
+from typing import Callable, TypedDict, Sequence, Any
 
 from ordered_set import OrderedSet
 
@@ -36,13 +36,13 @@ class InstanceGroup:
     def instances(self) -> tuple[Instance, ...]:
         return tuple(self._instances)
 
-    def add_instance(self, instance: Instance, position: int):
+    def add_instances(self, instances: Sequence[Instance], position: int):
+        pass
+
+    def move_instances(self, instances: Sequence[Instance], instance_group: InstanceGroup, position: int):
         pass
 
     def remove_instance(self, instance: Instance):
-        pass
-
-    def move_instance(self, instance: Instance, instance_group: InstanceGroup, position: int):
         pass
 
     def to_dict(self) -> TypedDict('', {'name': str, 'hidden': bool, 'instances': list[str]}):
