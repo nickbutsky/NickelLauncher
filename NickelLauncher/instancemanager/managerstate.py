@@ -55,6 +55,13 @@ class ManagerState:
                 len(unnamed_instance_group.instances), unnamed_instance_group, instance_group.instances
             )
 
+    def to_dict(self) -> dict:
+        return {
+            'format_version': 1,
+            'groups': [group.to_dict() for group in self.instance_groups],
+            'last_instance': self.last_instance.directory.name
+        }
+
     def subscribe_to_change(self, subscriber: Callable[[], Any]):
         self._subscribers.add(subscriber)
 
