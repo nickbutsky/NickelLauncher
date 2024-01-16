@@ -1,4 +1,5 @@
-from typing import Callable, Any
+from __future__ import annotations
+from typing import Callable, Self, Any
 
 from ordered_set import OrderedSet
 
@@ -11,7 +12,10 @@ class ManagerState:
         self._instance_groups = instance_groups
         self._last_instance = last_instance
 
-        self._subscribers: OrderedSet[Callable[[], Any]] = OrderedSet()
+        for group in instance_groups:
+            group.subscribe_to_change(self._notify_subscribers)
+
+        self._subscribers: OrderedSet[Callable[[Self], Any]] = OrderedSet()
 
     @property
     def last_instance(self) -> Instance:
@@ -62,12 +66,12 @@ class ManagerState:
             'last_instance': self.last_instance.directory.name
         }
 
-    def subscribe_to_change(self, subscriber: Callable[[], Any]):
+    def subscribe_to_change(self, subscriber: Callable[[ManagerState], Any]):
         self._subscribers.add(subscriber)
 
     def _notify_subscribers(self):
         for subscriber in self._subscribers:
-            subscriber()
+            subscriber(self)
 
 
 class InstanceGroupNameTakenError(ValueError):
