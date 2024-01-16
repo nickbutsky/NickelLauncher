@@ -7,10 +7,10 @@ from core.instance import Instance
 
 
 class InstanceGroup:
-    def __init__(self, name: str, instances: list[Instance], hidden: bool = False):
+    def __init__(self, name: str, instances: Sequence[Instance], hidden: bool = False):
         self._name = name.strip()
         self._hidden = hidden if not self.unnamed else False
-        self._instances = instances
+        self._instances = list(instances)
 
         self._subscribers: OrderedSet[Callable[[], Any]] = OrderedSet()
 
