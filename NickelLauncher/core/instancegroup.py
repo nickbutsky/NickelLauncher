@@ -36,10 +36,10 @@ class InstanceGroup:
     def instances(self) -> tuple[Instance, ...]:
         return tuple(self._instances)
 
-    def add_instances(self, instances: Sequence[Instance], position: int):
+    def add_instances(self, position: int, instances: Sequence[Instance]):
         pass
 
-    def move_instances(self, instances: Sequence[Instance], instance_group: InstanceGroup, position: int):
+    def move_instances(self, position: int, instance_group: InstanceGroup, instances: Sequence[Instance]):
         pass
 
     def remove_instance(self, instance: Instance):
