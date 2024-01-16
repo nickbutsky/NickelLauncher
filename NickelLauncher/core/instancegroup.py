@@ -37,13 +37,18 @@ class InstanceGroup:
         return tuple(self._instances)
 
     def add_instances(self, position: int, instances: Sequence[Instance]):
-        pass
+        self._instances[position:position] = instances
+        self._notify_subscribers()
 
     def move_instances(self, position: int, instance_group: InstanceGroup, instances: Sequence[Instance]):
-        pass
+        for instance in instances:
+            self._instances.remove(instance)
+        instance_group._instances[position:position] = instances
+        self._notify_subscribers()
 
     def remove_instance(self, instance: Instance):
-        pass
+        self._instances.remove(instance)
+        self._notify_subscribers()
 
     def to_dict(self) -> TypedDict('', {'name': str, 'hidden': bool, 'instances': list[str]}):
         return {
