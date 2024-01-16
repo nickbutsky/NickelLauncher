@@ -4,22 +4,11 @@ from pathlib import Path
 
 from ordered_set import OrderedSet
 
-from customtypes import UserPath
 from core.version import Version, Architecture
 
 
-class InstanceDirectory(UserPath):
-    @property
-    def com_mojang(self) -> Path:
-        return self / 'com.mojang'
-
-    @property
-    def config_json(self) -> Path:
-        return self / 'config.json'
-
-
 class Instance:
-    def __init__(self, name: str, version: Version, architecture_choice: Architecture, directory: InstanceDirectory):
+    def __init__(self, name: str, version: Version, architecture_choice: Architecture, directory: Path):
         self._name = name.strip()
         self._version = version
         if architecture_choice not in self.version.available_architectures:
@@ -61,7 +50,7 @@ class Instance:
         self._notify_subscribers()
 
     @property
-    def directory(self) -> InstanceDirectory:
+    def directory(self) -> Path:
         return self._directory
 
     def to_dict(self) -> dict:
