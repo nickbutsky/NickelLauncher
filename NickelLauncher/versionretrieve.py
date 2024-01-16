@@ -43,7 +43,7 @@ def _parse_versions_json_contents(contents: list[dict]) -> list[Version]:
                 if (architecture in SUPPORTED_ARCHITECTURES) and guids
             },
             {
-                architecture: ROOT.versions / f"{item['name']}_{architecture}.Appx"
+                architecture: ROOT / 'versions' / f"{item['name']}_{architecture}.Appx"
                 for architecture, guids in item['guids'].items() if (architecture in SUPPORTED_ARCHITECTURES) and guids
             }
         ) for item in contents
