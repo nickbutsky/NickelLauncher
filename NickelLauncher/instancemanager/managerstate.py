@@ -46,14 +46,14 @@ class ManagerState:
         if instance_group.unnamed:
             return
         self._instance_groups.remove(instance_group)
-        if self.instance_groups[0].unnamed:
-            unnamed_instance_group = self.instance_groups[0]
+        if not self.instance_groups[0].unnamed:
+            self._instance_groups.insert(0, InstanceGroup('', instance_group.instances))
+            self._notify_subscribers()
         else:
-            unnamed_instance_group = InstanceGroup('', instance_group.instances)
-            self._instance_groups.insert(0, unnamed_instance_group)
-        instance_group.move_instances(
-            len(unnamed_instance_group.instances), unnamed_instance_group, instance_group.instances
-        )
+            unnamed_instance_group = self.instance_groups[0]
+            instance_group.move_instances(
+                len(unnamed_instance_group.instances), unnamed_instance_group, instance_group.instances
+            )
 
     def subscribe_to_change(self, subscriber: Callable[[], Any]):
         self._subscribers.add(subscriber)
