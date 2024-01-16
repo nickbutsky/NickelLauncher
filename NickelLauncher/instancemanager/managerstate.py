@@ -29,7 +29,7 @@ class ManagerState:
     def add_instance_group(self, instance_group: InstanceGroup):
         pass
 
-    def move_instance_group(self, instance_group: InstanceGroup, position: int):
+    def move_instance_group(self, position: int, instance_group: InstanceGroup):
         pass
 
     def delete_instance_group(self, instance_group: InstanceGroup):
