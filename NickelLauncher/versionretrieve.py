@@ -10,8 +10,6 @@ from core.version import Version, Architecture
 
 SUPPORTED_ARCHITECTURES = {Architecture.X64, Architecture.X86}
 
-_VERSIONS_JSON = ROOT / 'versions' / 'versions.json'
-
 _versions: list[Version] = []
 
 
@@ -27,7 +25,7 @@ def get_versions_locally() -> list[Version]:
 def get_versions_remotely() -> list[Version]:
     global _versions
     res = requests.get('https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/versions.json')
-    with open(_VERSIONS_JSON, 'w') as f:
+    with open(ROOT / 'versions' / 'versions.json', 'w') as f:
         f.write(res.text)
     _versions = _parse_versions_json_contents(json.loads(res.text))
     return copy(_versions)
@@ -52,7 +50,7 @@ def _parse_versions_json_contents(contents: list[dict]) -> list[Version]:
 
 def _load_versions_json() -> list[dict]:
     try:
-        with open(_VERSIONS_JSON) as f:
+        with open(ROOT / 'versions' / 'versions.json') as f:
             contents = json.load(f)
     except (OSError, json.JSONDecodeError):
         return []
