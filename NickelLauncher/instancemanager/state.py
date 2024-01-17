@@ -1,9 +1,5 @@
-from __future__ import annotations
-from typing import Callable, Self, Any
 from pathlib import Path
 import json
-
-from ordered_set import OrderedSet
 
 from core.instancegroup import InstanceGroup
 from core.instance import Instance
@@ -38,6 +34,7 @@ class State:
             self._instance_groups.insert(0, instance_group)
         else:
             self._instance_groups.append(instance_group)
+        instance_group.subscribe_to_change(self._save)
         self._save()
 
     def move_instance_group(self, position: int, instance_group: InstanceGroup):
