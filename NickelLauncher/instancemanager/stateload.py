@@ -4,7 +4,6 @@ import json
 
 from schema import Schema, Or
 
-from env import ROOT
 from state import State
 from core.instance import Instance
 from core.instancegroup import InstanceGroup
@@ -16,12 +15,12 @@ def load_state(directory: Path) -> State:
         with open(directory / 'groups.json') as f:
             contents = json.load(f)
     except (OSError, json.JSONDecodeError):
-        return State(_load_instance_groups([]), None, directory)
+        return State(_load_instance_groups([], directory), None, directory)
 
     if not _are_groups_json_contents_valid(contents):
-        return State(_load_instance_groups([]), None, directory)
+        return State(_load_instance_groups([], directory), None, directory)
 
-    instance_groups = _load_instance_groups(contents['groups'])
+    instance_groups = _load_instance_groups(contents['groups'], directory)
     last_instance = _get_last_instance(contents['last_instance'], instance_groups)
     return State(instance_groups, last_instance, directory)
 
@@ -52,20 +51,17 @@ def _are_groups_json_contents_valid(contents: dict) -> bool:
 
 
 def _load_instance_groups(
-        group_dicts: list[TypedDict('', {'name': str, 'hidden': bool, 'instances': list[str]})]
+        group_dicts: list[TypedDict('', {'name': str, 'hidden': bool, 'instances': list[str]})], directory: Path
 ) -> list[InstanceGroup]:
     # The only unpacking way my typechecker recognises
     grouped_instance_dirs = [
         directory for sublist in [
-            [
-                ROOT / 'instances' / dir_name for dir_name in group_dict['instances']
-            ] for group_dict in group_dicts
+            [directory / dir_name for dir_name in group_dict['instances']] for group_dict in group_dicts
         ] for directory in sublist
     ]
 
     ungrouped_instance_dirs = [
-        item for item in (ROOT / 'instances').iterdir()
-        if item.is_dir() and item not in grouped_instance_dirs
+        item for item in directory.iterdir() if item.is_dir() and item not in grouped_instance_dirs
     ]
 
     ungrouped_instances = [
@@ -78,7 +74,7 @@ def _load_instance_groups(
     for group_dict in group_dicts:
         instances = [
             instance for instance in [
-                _load_instance(ROOT / 'instances' / dir_name) for dir_name in group_dict['instances']
+                _load_instance(directory / dir_name) for dir_name in group_dict['instances']
             ] if instance is not None
         ]
         if group_dict['name'] == '':
