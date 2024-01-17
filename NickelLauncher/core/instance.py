@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 
-from core.version import Version, Architecture
+from version import Version, Architecture
 
 
 class Instance:
