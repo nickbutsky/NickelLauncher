@@ -1,8 +1,11 @@
 from typing import Sequence
+from pathlib import Path
 import os
 import shutil
 import subprocess
 import logging
+
+import pathvalidate
 
 
 def clear_directory(path: str):
@@ -15,6 +18,26 @@ def clear_directory(path: str):
                 shutil.rmtree(item_path)
         except OSError:
             pass
+
+
+def create_subdirectory(desired_name: str, parent_directory: Path) -> Path:
+    sanitized_name = pathvalidate.sanitize_filename(desired_name.strip().replace(' ', '_'))
+    if not sanitized_name:
+        sanitized_name = '1'
+
+    name = sanitized_name
+    i = 1
+    while True:
+        for item in parent_directory.iterdir():
+            if name == item.name:
+                name = sanitized_name + str(i)
+                i += 1
+                break
+        else:
+            break
+    subdirectory = parent_directory / name
+    subdirectory.mkdir()
+    return subdirectory
 
 
 def run_command(command: str | bytes | Sequence[str | bytes], log_stdout: bool = True) -> str:
