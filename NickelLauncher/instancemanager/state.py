@@ -18,8 +18,6 @@ class State:
         for group in instance_groups:
             group.subscribe_to_change(self._save)
 
-        self._subscribers: OrderedSet[Callable[[Self], Any]] = OrderedSet()
-
     @property
     def last_instance(self) -> Instance:
         return self._last_instance
