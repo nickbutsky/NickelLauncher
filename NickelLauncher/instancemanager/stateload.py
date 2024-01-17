@@ -11,19 +11,19 @@ from core.instancegroup import InstanceGroup
 import versionretrieve
 
 
-def load_state() -> State:
+def load_state(directory: Path) -> State:
     try:
-        with open(ROOT / 'instances' / 'groups.json') as f:
+        with open(directory / 'groups.json') as f:
             contents = json.load(f)
     except (OSError, json.JSONDecodeError):
-        return State(_load_instance_groups([]), None)
+        return State(_load_instance_groups([]), None, directory)
 
     if not _are_groups_json_contents_valid(contents):
-        return State(_load_instance_groups([]), None)
+        return State(_load_instance_groups([]), None, directory)
 
     instance_groups = _load_instance_groups(contents['groups'])
     last_instance = _get_last_instance(contents['last_instance'], instance_groups)
-    return State(instance_groups, last_instance)
+    return State(instance_groups, last_instance, directory)
 
 
 def _are_groups_json_contents_valid(contents: dict) -> bool:
