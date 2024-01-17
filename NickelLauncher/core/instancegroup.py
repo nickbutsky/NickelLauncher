@@ -3,7 +3,7 @@ from typing import Callable, TypedDict, Sequence, Any
 
 from ordered_set import OrderedSet
 
-from instance import Instance
+from core.instance import Instance
 
 
 class InstanceGroup:
