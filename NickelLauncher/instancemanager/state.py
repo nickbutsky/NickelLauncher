@@ -49,7 +49,9 @@ class State:
             return
         self._instance_groups.remove(instance_group)
         if not self.instance_groups[0].unnamed:
-            self._instance_groups.insert(0, InstanceGroup('', instance_group.instances))
+            unnamed_instance_group = InstanceGroup('', instance_group.instances)
+            self._instance_groups.insert(0, unnamed_instance_group)
+            unnamed_instance_group.subscribe_to_change(self._save)
             self._save()
         else:
             unnamed_instance_group = self.instance_groups[0]
