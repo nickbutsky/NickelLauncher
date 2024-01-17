@@ -49,7 +49,7 @@ class Instance:
         return self._directory
 
     def _save(self):
-        with open(self.directory / 'config_json', 'w') as f:
+        with open(self.directory / 'config.json', 'w') as f:
             json.dump(self._to_dict(), f, indent=4)
 
     def _to_dict(self) -> dict:
