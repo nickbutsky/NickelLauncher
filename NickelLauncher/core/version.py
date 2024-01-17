@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Mapping
 from enum import StrEnum, auto
 from dataclasses import dataclass
 from pathlib import Path
@@ -22,8 +22,8 @@ class Architecture(StrEnum):
 class Version:
     name: str
     type: VersionType
-    guids: dict[Architecture, Iterable[str]]
-    packages: dict[Architecture, Path]
+    guids: Mapping[Architecture, Iterable[str]]
+    packages: Mapping[Architecture, Path]
 
     @property
     def available_architectures(self) -> OrderedSet[Architecture]:
