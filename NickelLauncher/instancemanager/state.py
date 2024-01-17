@@ -15,6 +15,10 @@ class State:
             group.subscribe_to_change(self._save)
 
     @property
+    def directory(self):
+        return self._directory
+
+    @property
     def last_instance(self) -> Instance:
         return self._last_instance
 
