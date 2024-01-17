@@ -48,6 +48,10 @@ class Instance:
     def directory(self) -> Path:
         return self._directory
 
+    def populate_directory(self):
+        (self.directory / 'com.mojang').mkdir()
+        self._save()
+
     def _save(self):
         with open(self.directory / 'config.json', 'w') as f:
             json.dump(self._to_dict(), f, indent=4)
