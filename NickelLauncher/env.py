@@ -2,4 +2,7 @@ import os
 from pathlib import Path
 
 
-ROOT = Path(os.getenv('APPDATA')) / 'NickelLauncherTest' if not ('__compiled__' in globals()) else 'NickelLauncher'
+if '__compiled__' in globals():
+    ROOT = Path(os.getenv('APPDATA')) / 'NickelLauncher'
+else:
+    ROOT = Path(__file__).parent.parent
