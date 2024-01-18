@@ -8,7 +8,7 @@ from watchdog.events import FileSystemEventHandler, FileSystemEvent, DirCreatedE
 from PySide6.QtCore import QThread, Signal
 
 
-class Watchdog(QThread):
+class WatchdogThread(QThread):
     changed = Signal()
 
     def __init__(self, directory: Path):
