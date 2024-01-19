@@ -84,7 +84,7 @@ def _load_instance_groups(
         else:
             groups.append(InstanceGroup(group_dict['name'], instances, group_dict['hidden']))
 
-    return [group for group in groups if group.instances]
+    return [group for group in groups if group.instances] if groups else [InstanceGroup('', ungrouped_instances)]
 
 
 def _load_instance(instance_directory: Path, versions: Iterable[Version]) -> Instance | None:
