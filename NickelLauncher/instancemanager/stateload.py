@@ -44,7 +44,7 @@ def _are_groups_json_contents_valid(contents: dict) -> bool:
     group_names = []
     instance_dir_names = []
     for group_dict in contents['groups']:
-        group_names.append(group_dict['name'])
+        group_names.append(group_dict['name'].strip())
         instance_dir_names += group_dict['instances']
 
     return (len(group_names) == len(set(group_names))) and (len(instance_dir_names) == len(set(instance_dir_names)))
