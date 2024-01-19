@@ -1,4 +1,4 @@
-from typing import Iterable, Mapping
+from typing import Sequence, Mapping
 from enum import StrEnum, auto
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,7 +24,7 @@ class Architecture(StrEnum):
 class Version:
     name: str
     type: VersionType
-    guids: Mapping[Architecture, Iterable[str]]
+    guids: Mapping[Architecture, Sequence[str]]
     packages: Mapping[Architecture, Path]
 
     @property
