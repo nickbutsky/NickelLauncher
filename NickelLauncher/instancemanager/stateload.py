@@ -112,9 +112,7 @@ def _load_instance(instance_directory: Path, versions: Iterable[Version]) -> Ins
     except StopIteration:
         return None
     instance = Instance(config['name'], version, config['version']['architecture_choice'], instance_directory)
-    if not (instance_directory / 'com.mojang').is_dir():
-        return None
-    return instance
+    return instance if (instance_directory / 'com.mojang').is_dir() else None
 
 
 def _get_last_instance(instance_dir_name: str, instance_groups: list[InstanceGroup]) -> Instance | None:
