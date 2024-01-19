@@ -1,6 +1,5 @@
 from typing import Sequence
 from pathlib import Path
-import os
 import shutil
 import subprocess
 import logging
@@ -8,14 +7,13 @@ import logging
 import pathvalidate
 
 
-def clear_directory(path: str):
-    for item_name in os.listdir(path):
-        item_path = os.path.join(path, item_name)
+def clear_directory(directory: Path):
+    for item in directory.iterdir():
         try:
-            if os.path.isfile(item_path) or os.path.islink(item_path):
-                os.unlink(item_path)
-            elif os.path.isdir(item_path):
-                shutil.rmtree(item_path)
+            if item.is_file() or item.is_symlink():
+                item.unlink()
+            elif item.is_dir():
+                shutil.rmtree(item)
         except OSError:
             pass
 
