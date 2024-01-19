@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 import requests
 
 
-WUCLIENT = 'http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService'
-WSU = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd'
+_WUCLIENT = 'http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService'
+_WSU = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd'
 
 
 class SOAPError(Exception):
@@ -44,7 +44,7 @@ class Envelope(Element):
         body = SubElement(self, 's:Body')
         body.append(element)
 
-        element.set('xmlns', WUCLIENT)
+        element.set('xmlns', _WUCLIENT)
 
 
 class _Header(Element):
@@ -52,7 +52,7 @@ class _Header(Element):
         super().__init__('s:Header')
 
         action = SubElement(self, 'a:Action', {'s:mustUnderstand': '1'})
-        action.text = WUCLIENT + '/' + method_name
+        action.text = _WUCLIENT + '/' + method_name
         message_id = SubElement(self, 'a:MessageID')
         message_id.text = 'urn:uuid:1a88ab88-d8eb-47bb-82d9-f2bd82654c6e'
         to = SubElement(self, 'a:To', {'s:mustUnderstand': '1'})
@@ -65,7 +65,7 @@ class _Header(Element):
                 'xmlns:o': 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
             }
         )
-        timestamp = SubElement(security, 'Timestamp', {'xmlns': WSU})
+        timestamp = SubElement(security, 'Timestamp', {'xmlns': _WSU})
         created = SubElement(timestamp, 'Created')
         created.text = (created_time := datetime.now()).strftime('%Y-%m-%dT%H:%M:%SZ')
         expires = SubElement(timestamp, 'Expires')
@@ -75,7 +75,7 @@ class _Header(Element):
             'wuws:WindowsUpdateTicketsToken',
             {
                 'wsu:id': 'ClientMSA',
-                'xmlns:wsu': WSU,
+                'xmlns:wsu': _WSU,
                 'xmlns:wuws': 'http://schemas.microsoft.com/msus/2014/10/WindowsUpdateAuthorization'
             }
         )
