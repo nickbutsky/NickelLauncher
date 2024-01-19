@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 
-from core.version import Version, Architecture
+from core.version import Version, Architecture, UnavailableArchitectureError
 
 
 class Instance:
@@ -65,7 +65,3 @@ class Instance:
                 'architecture_choice': self.architecture_choice
             }
         }
-
-
-class UnavailableArchitectureError(ValueError):
-    pass
