@@ -3,6 +3,8 @@ from pathlib import Path
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
+import ui.resources
+
 
 class App(QGuiApplication):
     def __init__(self):
