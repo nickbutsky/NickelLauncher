@@ -24,4 +24,4 @@ def run(qml_file: Path, context_properties: dict[str, QObject]):
 
     view.setSource(QUrl.fromLocalFile(qml_file))
     view.show()
-    app.exec()
+    sys.exit(app.exec())
