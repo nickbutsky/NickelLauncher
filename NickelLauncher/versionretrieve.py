@@ -1,4 +1,3 @@
-from copy import copy
 import json
 
 from schema import Schema
@@ -13,22 +12,22 @@ SUPPORTED_ARCHITECTURES = {Architecture.X64, Architecture.X86}
 _versions: list[Version] = []
 
 
-def get_versions_locally() -> list[Version]:
+def get_versions_locally() -> tuple[Version, ...]:
     global _versions
     if _versions:
-        return copy(_versions)
+        return tuple(_versions)
     versions = _parse_versions_json_contents(_load_versions_json())
     _versions = versions
-    return copy(_versions)
+    return tuple(_versions)
 
 
-def get_versions_remotely() -> list[Version]:
+def get_versions_remotely() -> tuple[Version, ...]:
     global _versions
     res = requests.get('https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/versions.json')
     with open(ROOT / 'versions' / 'versions.json', 'w') as f:
         f.write(res.text)
     _versions = _parse_versions_json_contents(json.loads(res.text))
-    return copy(_versions)
+    return tuple(_versions)
 
 
 def _parse_versions_json_contents(contents: list[dict]) -> list[Version]:
