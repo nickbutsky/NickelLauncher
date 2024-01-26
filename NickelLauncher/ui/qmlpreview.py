@@ -6,7 +6,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQuick import QQuickView
 
 
-def run(qml_file: Path, context_properties: dict[str, QObject]):
+def run(qml_file: Path, **context_properties: QObject):
     app = QGuiApplication()
     view = QQuickView()
 
