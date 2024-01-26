@@ -19,8 +19,8 @@ def run(qml_file: Path, **context_properties: QObject):
     view.statusChanged.connect(_handle_errors)
     view.setResizeMode(QQuickView.ResizeMode.SizeRootObjectToView)
 
-    for context_property_name, context_property_object in context_properties.items():
-        view.engine().rootContext().setContextProperty(context_property_name, context_property_object)
+    for context_property_name, context_property in context_properties.items():
+        view.engine().rootContext().setContextProperty(context_property_name, context_property)
 
     view.setSource(QUrl.fromLocalFile(qml_file))
     view.show()
