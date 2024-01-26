@@ -9,16 +9,15 @@ from core.version import Version, Architecture
 
 SUPPORTED_ARCHITECTURES = {Architecture.X64, Architecture.X86}
 
-_versions: list[Version] = []
+_versions: tuple[Version, ...] = ()
 
 
 def get_versions_locally() -> tuple[Version, ...]:
     global _versions
     if _versions:
-        return tuple(_versions)
-    versions = _parse_versions_json_contents(_load_versions_json())
-    _versions = versions
-    return tuple(_versions)
+        return _versions
+    _versions = _parse_versions_json_contents(_load_versions_json())
+    return _versions
 
 
 def get_versions_remotely() -> tuple[Version, ...]:
@@ -27,11 +26,11 @@ def get_versions_remotely() -> tuple[Version, ...]:
     with open(ROOT / 'versions' / 'versions.json', 'w') as f:
         f.write(res.text)
     _versions = _parse_versions_json_contents(json.loads(res.text))
-    return tuple(_versions)
+    return _versions
 
 
-def _parse_versions_json_contents(contents: list[dict]) -> list[Version]:
-    return [
+def _parse_versions_json_contents(contents: list[dict]) -> tuple[Version, ...]:
+    return tuple(
         Version(
             item['name'],
             item['type'],
@@ -44,7 +43,7 @@ def _parse_versions_json_contents(contents: list[dict]) -> list[Version]:
                 for architecture, guids in item['guids'].items() if (architecture in SUPPORTED_ARCHITECTURES) and guids
             }
         ) for item in contents
-    ]
+    )
 
 
 def _load_versions_json() -> list[dict]:
