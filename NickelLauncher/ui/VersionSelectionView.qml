@@ -5,10 +5,10 @@ import QtQuick.Layouts
 ColumnLayout {
     Item {
         Layout.fillWidth: true
-        Layout.preferredHeight: rowLayout.implicitHeight
+        Layout.preferredHeight: topLayout.implicitHeight
 
         RowLayout {
-            id: rowLayout
+            id: topLayout
             anchors.fill: parent
 
             Item {implicitWidth: (parent.width - tabBar.width) / 2 - parent.spacing}
@@ -51,14 +51,52 @@ ColumnLayout {
             anchors.fill: parent
             currentIndex: tabBar.currentIndex
 
-            Rectangle {
-                color: 'teal'
-            }
-            Rectangle {
-                color: 'plum'
-            }
-            Rectangle {
-                color: 'orange'
+            Repeater {
+                readonly property list<ListModel> __subModels: [
+                    ListModel {
+                        ListElement {
+                            name: "1.18.12"
+                        }
+                        ListElement {
+                            name: "1.18.13"
+                        }
+                    },
+                    ListModel {
+                        ListElement {
+                            name: "1.19"
+                        }
+                    },
+                    ListModel {
+                        ListElement {
+                            name: "1.20"
+                        }
+                    }
+                ]
+
+                model: __subModels
+                delegate: ListView {
+                    id: lv
+                    model: modelData
+                    delegate: Item {
+                        implicitWidth: parent.width
+                        implicitHeight: delegateLayout.implicitHeight
+
+                        RowLayout {
+                            id: delegateLayout
+                            anchors.fill: parent
+
+                            Text {text: name}
+                            Item {Layout.fillWidth: true}
+                            Text {text: "x64 | x86"}
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: lv.currentIndex = index
+                        }
+                    }
+                    highlight: Rectangle {color: "lightsteelblue"}
+                }
             }
         }
     }
