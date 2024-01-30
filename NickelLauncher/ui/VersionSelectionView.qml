@@ -57,7 +57,7 @@ ColumnLayout {
                     ListElement {name: "1.18.13"; architectures: "x64 | x86"}
                 }
                 delegate: delegateComponent
-                highlight: Rectangle {color: "lightsteelblue"}
+                highlight: highlightComponent
             }
             ListView {
                 model: ListModel {
@@ -65,7 +65,7 @@ ColumnLayout {
                     ListElement {name: "1.18.13"; architectures: "x64 | x86"}
                 }
                 delegate: delegateComponent
-                highlight: Rectangle {color: "lightsteelblue"}
+                highlight: highlightComponent
             }
             ListView {
                 model: ListModel {
@@ -73,7 +73,7 @@ ColumnLayout {
                     ListElement {name: "1.18.13"; architectures: "x64 | x86"}
                 }
                 delegate: delegateComponent
-                highlight: Rectangle {color: "lightsteelblue"}
+                highlight: highlightComponent
             }
 
             Component {
@@ -99,6 +99,12 @@ ColumnLayout {
                         onClicked: __lv.currentIndex = index
                     }
                 }
+            }
+
+            Component {
+                id: highlightComponent
+
+                Rectangle {color: "lightsteelblue"}
             }
         }
     }
