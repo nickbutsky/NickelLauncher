@@ -51,51 +51,53 @@ ColumnLayout {
             anchors.fill: parent
             currentIndex: tabBar.currentIndex
 
-            Repeater {
-                readonly property list<ListModel> __subModels: [
-                    ListModel {
-                        ListElement {
-                            name: "1.18.12"
-                        }
-                        ListElement {
-                            name: "1.18.13"
-                        }
-                    },
-                    ListModel {
-                        ListElement {
-                            name: "1.19"
-                        }
-                    },
-                    ListModel {
-                        ListElement {
-                            name: "1.20"
-                        }
+            ListView {
+                model: ListModel {
+                    ListElement {name: "1.18.12"; architectures: "x64 | x86"}
+                    ListElement {name: "1.18.13"; architectures: "x64 | x86"}
+                }
+                delegate: delegateComponent
+                highlight: Rectangle {color: "lightsteelblue"}
+            }
+            ListView {
+                model: ListModel {
+                    ListElement { name: "1.18.12"; architectures: "x64 | x86"}
+                    ListElement {name: "1.18.13"; architectures: "x64 | x86"}
+                }
+                delegate: delegateComponent
+                highlight: Rectangle {color: "lightsteelblue"}
+            }
+            ListView {
+                model: ListModel {
+                    ListElement {name: "1.18.12"; architectures: "x64 | x86"}
+                    ListElement {name: "1.18.13"; architectures: "x64 | x86"}
+                }
+                delegate: delegateComponent
+                highlight: Rectangle {color: "lightsteelblue"}
+            }
+
+            Component {
+                id: delegateComponent
+
+                Item {
+                    readonly property ListView __lv: ListView.view
+
+                    implicitWidth: parent.width
+                    implicitHeight: delegateLayout.implicitHeight
+
+                    RowLayout {
+                        id: delegateLayout
+                        anchors.fill: parent
+
+                        Text {text: name}
+                        Item {Layout.fillWidth: true}
+                        Text {text: architectures}
                     }
-                ]
 
-                model: __subModels
-                delegate: ListView {
-                    id: lv
-                    model: modelData
-                    delegate: Item {
-                        implicitWidth: parent.width
-                        implicitHeight: delegateLayout.implicitHeight
-
-                        RowLayout {
-                            id: delegateLayout
-                            anchors.fill: parent
-
-                            Text {text: name}
-                            Item {Layout.fillWidth: true}
-                            Text {text: "x64 | x86"}
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: lv.currentIndex = index
-                        }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: __lv.currentIndex = index
                     }
-                    highlight: Rectangle {color: "lightsteelblue"}
                 }
             }
         }
