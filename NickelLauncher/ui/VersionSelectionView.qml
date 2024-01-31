@@ -52,54 +52,44 @@ ColumnLayout {
             anchors.fill: parent
             currentIndex: tabBar.currentIndex
 
-            ListView {
-                clip: true
-                model: _versionSelectionViewModel.releaseViewModel
-                delegate: delegateComponent
-                highlight: highlightComponent
+            VersionList {
+                viewModel: _versionSelectionViewModel.releaseViewModel
             }
-            ListView {
-                clip: true
-                model: _versionSelectionViewModel.betaViewModel
-                delegate: delegateComponent
-                highlight: highlightComponent
+            VersionList {
+                viewModel: _versionSelectionViewModel.releaseViewModel
             }
-            ListView {
-                clip: true
-                model: _versionSelectionViewModel.previewViewModel
-                delegate: delegateComponent
-                highlight: highlightComponent
+            VersionList {
+                viewModel: _versionSelectionViewModel.releaseViewModel
             }
 
-            Component {
-                id: delegateComponent
+            component VersionList: ListView {
+                required property var viewModel
 
-                Item {
-                    readonly property ListView __lv: ListView.view
+                clip: true
+                model: viewModel
+                delegate: Component {
+                    Item {
+                        readonly property ListView __lv: ListView.view
 
-                    implicitWidth: parent.width
-                    implicitHeight: delegateLayout.implicitHeight
+                        implicitWidth: parent.width
+                        implicitHeight: delegateLayout.implicitHeight
 
-                    RowLayout {
-                        id: delegateLayout
-                        anchors.fill: parent
+                        RowLayout {
+                            id: delegateLayout
+                            anchors.fill: parent
 
-                        Text {text: name}
-                        Item {Layout.fillWidth: true}
-                        Text {text: architectures}
-                    }
+                            Text {text: name}
+                            Item {Layout.fillWidth: true}
+                            Text {text: architectures}
+                        }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: __lv.currentIndex = index
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: __lv.currentIndex = index
+                        }
                     }
                 }
-            }
-
-            Component {
-                id: highlightComponent
-
-                Rectangle {color: "lightsteelblue"}
+                highlight: Component {Rectangle {color: "lightsteelblue"}}
             }
         }
     }
