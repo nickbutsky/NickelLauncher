@@ -65,12 +65,11 @@ ColumnLayout {
             component VersionList: ListView {
                 required property var viewModel
 
+                id: versionList
                 clip: true
                 model: viewModel
                 delegate: Component {
                     Item {
-                        readonly property ListView __lv: ListView.view
-
                         implicitWidth: parent.width
                         implicitHeight: delegateLayout.implicitHeight
 
@@ -85,7 +84,7 @@ ColumnLayout {
 
                         MouseArea {
                             anchors.fill: parent
-                            onClicked: __lv.currentIndex = index
+                            onClicked: versionList.currentIndex = index
                         }
                     }
                 }
@@ -93,10 +92,15 @@ ColumnLayout {
                 highlight: Component {
                     Rectangle {
                         color: "lightsteelblue"
-                        width: ListView.view.width
-                        height: ListView.view.currentItem.height
-                        y: ListView.view.currentItem.y
+                        width: versionList.width
+                        height: versionList.currentItem.height
+                        y: versionList.currentItem.y
                     }
+                }
+
+                Connections {
+                    target: viewModel
+                    onModelReset: versionList.currentIndex = 0
                 }
             }
         }
