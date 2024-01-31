@@ -92,8 +92,7 @@ ColumnLayout {
                 highlight: Component {
                     Rectangle {
                         color: "lightsteelblue"
-                        width: versionList.width
-                        height: versionList.currentItem.height
+                        anchors.fill: versionList.currentItem
                         y: versionList.currentItem.y
                     }
                 }
