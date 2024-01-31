@@ -56,10 +56,10 @@ ColumnLayout {
                 viewModel: _versionSelectionViewModel.releaseViewModel
             }
             VersionList {
-                viewModel: _versionSelectionViewModel.releaseViewModel
+                viewModel: _versionSelectionViewModel.betaViewModel
             }
             VersionList {
-                viewModel: _versionSelectionViewModel.releaseViewModel
+                viewModel: _versionSelectionViewModel.previewViewModel
             }
 
             component VersionList: ListView {
@@ -89,7 +89,15 @@ ColumnLayout {
                         }
                     }
                 }
-                highlight: Component {Rectangle {color: "lightsteelblue"}}
+                highlightFollowsCurrentItem: false
+                highlight: Component {
+                    Rectangle {
+                        color: "lightsteelblue"
+                        width: ListView.view.width
+                        height: ListView.view.currentItem.height
+                        y: ListView.view.currentItem.y
+                    }
+                }
             }
         }
     }
