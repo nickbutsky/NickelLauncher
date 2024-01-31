@@ -39,6 +39,7 @@ ColumnLayout {
 
             Button {
                 text: qsTr("⟳")
+                onClicked: _versionSelectionViewModel.refresh()
             }
         }
     }
@@ -52,26 +53,20 @@ ColumnLayout {
             currentIndex: tabBar.currentIndex
 
             ListView {
-                model: ListModel {
-                    ListElement {name: "1.18.12"; architectures: "x64 | x86"}
-                    ListElement {name: "1.18.13"; architectures: "x64 | x86"}
-                }
+                clip: true
+                model: _versionSelectionViewModel.releaseViewModel
                 delegate: delegateComponent
                 highlight: highlightComponent
             }
             ListView {
-                model: ListModel {
-                    ListElement { name: "1.18.12"; architectures: "x64 | x86"}
-                    ListElement {name: "1.18.13"; architectures: "x64 | x86"}
-                }
+                clip: true
+                model: _versionSelectionViewModel.betaViewModel
                 delegate: delegateComponent
                 highlight: highlightComponent
             }
             ListView {
-                model: ListModel {
-                    ListElement {name: "1.18.12"; architectures: "x64 | x86"}
-                    ListElement {name: "1.18.13"; architectures: "x64 | x86"}
-                }
+                clip: true
+                model: _versionSelectionViewModel.previewViewModel
                 delegate: delegateComponent
                 highlight: highlightComponent
             }
