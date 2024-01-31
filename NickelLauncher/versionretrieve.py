@@ -43,7 +43,7 @@ def _parse_versions_json_contents(contents: list[dict]) -> tuple[Version, ...]:
                 for architecture, guids in item['guids'].items() if (architecture in SUPPORTED_ARCHITECTURES) and guids
             }
         ) for item in contents
-    )
+    )[::-1]
 
 
 def _load_versions_json() -> list[dict]:
