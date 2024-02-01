@@ -69,7 +69,6 @@ ColumnLayout {
                     required property var viewModel
 
                     id: versionList
-                    anchors.fill: parent
                     clip: true
                     model: viewModel
                     delegate: Component {
