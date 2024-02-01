@@ -53,55 +53,49 @@ ColumnLayout {
             currentIndex: tabBar.currentIndex
 
             VersionList {
+                anchors.fill: parent
                 viewModel: _versionSelectionViewModel.releaseViewModel
             }
             VersionList {
+                anchors.fill: parent
                 viewModel: _versionSelectionViewModel.betaViewModel
             }
             VersionList {
+                anchors.fill: parent
                 viewModel: _versionSelectionViewModel.previewViewModel
             }
 
             component VersionList: ListView {
-                required property var viewModel
+                    required property var viewModel
 
-                id: versionList
-                clip: true
-                model: viewModel
-                delegate: Component {
-                    Item {
-                        implicitWidth: parent.width
-                        implicitHeight: delegateLayout.implicitHeight
+                    id: versionList
+                    anchors.fill: parent
+                    clip: true
+                    model: viewModel
+                    delegate: Component {
+                        ItemDelegate {
+                            implicitWidth: parent.width
+                            implicitHeight: delegateLayout.implicitHeight
 
-                        RowLayout {
-                            id: delegateLayout
-                            anchors.fill: parent
+                            highlighted: ListView.isCurrentItem
+                            onClicked: ListView.view.currentIndex = index
 
-                            Text {text: name}
-                            Item {Layout.fillWidth: true}
-                            Text {text: architectures}
-                        }
+                            RowLayout {
+                                id: delegateLayout
+                                anchors.fill: parent
 
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: versionList.currentIndex = index
+                                Text {text: name}
+                                Item {Layout.fillWidth: true}
+                                Text {text: architectures}
+                            }
                         }
                     }
-                }
-                highlightFollowsCurrentItem: false
-                highlight: Component {
-                    Rectangle {
-                        color: "lightsteelblue"
-                        anchors.fill: versionList.currentItem
-                        y: versionList.currentItem.y
+
+                    Connections {
+                        target: viewModel
+                        onModelReset: versionList.currentIndex = 0
                     }
                 }
-
-                Connections {
-                    target: viewModel
-                    onModelReset: versionList.currentIndex = 0
-                }
-            }
         }
     }
 }
