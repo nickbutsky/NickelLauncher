@@ -77,15 +77,15 @@ ColumnLayout {
                             implicitHeight: delegateLayout.implicitHeight
 
                             highlighted: ListView.isCurrentItem
-                            onClicked: versionList.currentIndex = index
+                            onClicked: versionList.currentIndex = model.index
 
                             RowLayout {
                                 id: delegateLayout
                                 anchors.fill: parent
 
-                                Text {text: name}
+                                Text {text: model.name}
                                 Item {Layout.fillWidth: true}
-                                Text {text: architectures}
+                                Text {text: model.architectures}
                             }
                         }
                     }
