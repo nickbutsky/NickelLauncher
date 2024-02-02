@@ -77,7 +77,7 @@ ColumnLayout {
                             implicitHeight: delegateLayout.implicitHeight
 
                             highlighted: ListView.isCurrentItem
-                            onClicked: ListView.view.currentIndex = index
+                            onClicked: versionList.currentIndex = index
 
                             RowLayout {
                                 id: delegateLayout
