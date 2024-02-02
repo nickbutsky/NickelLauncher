@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import sys
 
 from PySide6.QtCore import QUrl, QObject
@@ -7,6 +8,7 @@ from PySide6.QtQuick import QQuickView
 
 
 def run(qml_file: Path, **context_properties: QObject):
+    os.environ['QT_FORCE_STDERR_LOGGING'] = '1'
     app = QGuiApplication()
     view = QQuickView()
 
@@ -25,3 +27,7 @@ def run(qml_file: Path, **context_properties: QObject):
     view.setSource(QUrl.fromLocalFile(qml_file))
     view.show()
     sys.exit(app.exec())
+
+
+if __name__ == '__main__':
+    pass
