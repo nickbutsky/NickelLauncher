@@ -73,7 +73,7 @@ ColumnLayout {
                     model: viewModel
                     delegate: Component {
                         ItemDelegate {
-                            implicitWidth: parent.width
+                            implicitWidth: versionList.width
                             implicitHeight: delegateLayout.implicitHeight
 
                             highlighted: ListView.isCurrentItem
@@ -92,7 +92,9 @@ ColumnLayout {
 
                     Connections {
                         target: viewModel
-                        onModelReset: versionList.currentIndex = 0
+                        function onModelReset() {
+                            versionList.currentIndex = 0;
+                        }
                     }
                 }
         }
