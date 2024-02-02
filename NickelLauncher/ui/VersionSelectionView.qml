@@ -53,15 +53,18 @@ ColumnLayout {
             currentIndex: tabBar.currentIndex
 
             VersionList {
-                anchors.fill: parent
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 viewModel: _versionSelectionViewModel.releaseViewModel
             }
             VersionList {
-                anchors.fill: parent
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 viewModel: _versionSelectionViewModel.betaViewModel
             }
             VersionList {
-                anchors.fill: parent
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 viewModel: _versionSelectionViewModel.previewViewModel
             }
 
