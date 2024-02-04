@@ -7,7 +7,7 @@ import shell
 def find_packages(package_family_name: str) -> list[dict]:
     cmd = (
         'powershell',
-        f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | convertto-json'
+        f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json'
     )
     output = shell.run_command(cmd, False)
 
