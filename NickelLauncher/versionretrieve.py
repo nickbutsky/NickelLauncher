@@ -7,7 +7,7 @@ from env import ROOT
 from core.version import Version, Architecture
 
 
-SUPPORTED_ARCHITECTURES = {Architecture.X64, Architecture.X86}
+SUPPORTED_ARCHITECTURES = frozenset({Architecture.X64, Architecture.X86})
 
 _versions: tuple[Version, ...] = ()
 
