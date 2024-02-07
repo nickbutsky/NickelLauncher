@@ -19,7 +19,7 @@ class State:
         return self._directory
 
     @property
-    def last_instance(self) -> Instance:
+    def last_instance(self) -> Instance | None:
         return self._last_instance
 
     @last_instance.setter
@@ -71,7 +71,7 @@ class State:
         return {
             'format_version': 1,
             'groups': [group.to_dict() for group in self.instance_groups],
-            'last_instance': self.last_instance.directory.name
+            'last_instance': self.last_instance.directory.name if self.last_instance else None
         }
 
 
