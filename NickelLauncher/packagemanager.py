@@ -1,20 +1,21 @@
+from typing import Any
 from pathlib import Path
 import json
 
 import shell
 
 
-def find_packages(package_family_name: str) -> list[dict]:
+def find_packages(package_family_name: str) -> list[dict[Any, Any]]:
     cmd = (
         'powershell',
         f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json'
     )
     output = shell.run_command(cmd, False)
 
-    if output:
-        deserialized_output = json.loads(output)
-    else:
-        deserialized_output = []
+    if not output:
+        return []
+
+    deserialized_output = json.loads(output)
 
     if isinstance(deserialized_output, dict):
         return [deserialized_output]
@@ -22,7 +23,7 @@ def find_packages(package_family_name: str) -> list[dict]:
         return deserialized_output
 
 
-def remove_package(package_dict: dict):
+def remove_package(package_dict: dict[Any, Any]):
     package_fullname = package_dict['PackageFullName']
     cmd = 'powershell', f'Remove-AppxPackage -Package {package_fullname}'
     shell.run_command(cmd)
