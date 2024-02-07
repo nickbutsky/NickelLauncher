@@ -1,6 +1,6 @@
 import shutil
 
-import system
+import shell
 from state import State
 from core.instance import Instance
 from core.version import Version
@@ -9,7 +9,7 @@ from core.instancegroup import InstanceGroup
 
 def create_instance(name: str, instance_group_name: str, version: Version, state: State):
     instance = Instance(
-        name, version, version.available_architectures[0], system.create_subdirectory(name, state.directory)
+        name, version, version.available_architectures[0], shell.create_subdirectory(name, state.directory)
     )
     instance.populate_directory()
 
@@ -27,7 +27,7 @@ def copy_instance(instance: Instance, copy_worlds: bool, state: State):
         f'{instance.name}(copy)',
         instance.version,
         instance.architecture_choice,
-        system.create_subdirectory(instance.name, state.directory)
+        shell.create_subdirectory(instance.name, state.directory)
     )
     copied_instance.populate_directory()
     shutil.copytree(
