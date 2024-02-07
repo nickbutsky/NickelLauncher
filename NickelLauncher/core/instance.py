@@ -1,3 +1,4 @@
+from typing import Any
 from pathlib import Path
 import json
 
@@ -56,7 +57,7 @@ class Instance:
         with open(self.directory / 'config.json', 'w') as f:
             json.dump(self._to_dict(), f, indent=4)
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> dict[str, Any]:
         return {
             'format_version': 1,
             'name': self.name,
