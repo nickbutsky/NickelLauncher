@@ -1,3 +1,4 @@
+from typing import Any
 from pathlib import Path
 import json
 
@@ -67,7 +68,7 @@ class State:
         with open(self._directory / 'groups.json', 'w') as f:
             json.dump(self._to_dict(), f, indent=4)
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> dict[str, Any]:
         return {
             'format_version': 1,
             'groups': [group.to_dict() for group in self.instance_groups],
