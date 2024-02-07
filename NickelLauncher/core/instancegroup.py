@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, TypedDict, Sequence, Any
+from typing import Callable, Sequence, Any
 
 from ordered_set import OrderedSet
 
@@ -12,7 +12,7 @@ class InstanceGroup:
         self._hidden = hidden if not self.unnamed else False
         self._instances = list(instances)
 
-        self._subscribers: OrderedSet[Callable[[], Any]] = OrderedSet()
+        self._subscribers: OrderedSet[Callable[[], Any]] = OrderedSet({})
 
     @property
     def unnamed(self) -> bool:
@@ -58,7 +58,7 @@ class InstanceGroup:
         self._instances.remove(instance)
         self._notify_subscribers()
 
-    def to_dict(self) -> TypedDict('', {'name': str, 'hidden': bool, 'instances': list[str]}):
+    def to_dict(self) -> dict[str, Any]:
         return {
             'name': self.name,
             'hidden': self.hidden,
