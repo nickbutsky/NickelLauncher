@@ -1,10 +1,11 @@
+from typing import TypedDict
 import json
 
-from schema import Schema
+from schema import Schema  # type: ignore
 import requests
 
 from env import ROOT
-from core.version import Version, Architecture
+from core.version import Version, VersionType, Architecture
 
 
 SUPPORTED_ARCHITECTURES = frozenset({Architecture.X64, Architecture.X86})
@@ -29,13 +30,25 @@ def get_versions_remotely() -> tuple[Version, ...]:
     return _versions
 
 
-def _parse_versions_json_contents(contents: list[dict]) -> tuple[Version, ...]:
+class _Guids(TypedDict):
+    x64: list[str]
+    x86: list[str]
+    arm: list[str]
+
+
+class _VersionDict(TypedDict):
+    name: str
+    type: VersionType
+    guids: _Guids
+
+
+def _parse_versions_json_contents(contents: list[_VersionDict]) -> tuple[Version, ...]:
     return tuple(
         Version(
             item['name'],
             item['type'],
             {
-                architecture: guids for architecture, guids in item['guids'].items()
+                architecture: guids for architecture, guids in item['guids'].items()  # type: ignore
                 if (architecture in SUPPORTED_ARCHITECTURES) and guids
             },
             {
@@ -46,7 +59,7 @@ def _parse_versions_json_contents(contents: list[dict]) -> tuple[Version, ...]:
     )[::-1]
 
 
-def _load_versions_json() -> list[dict]:
+def _load_versions_json() -> list[_VersionDict]:
     try:
         with open(ROOT / 'versions' / 'versions.json') as f:
             contents = json.load(f)
@@ -65,6 +78,6 @@ def _load_versions_json() -> list[dict]:
                 }
             }
         ]
-    ).is_valid(contents):
+    ).is_valid(contents):  # type: ignore
         return []
     return contents
