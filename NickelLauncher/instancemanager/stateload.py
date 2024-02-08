@@ -1,8 +1,8 @@
-from typing import Iterable, TypedDict
+from typing import Iterable, Any
 from pathlib import Path
 import json
 
-from schema import Schema, Or
+from schema import Schema, Or  # type: ignore
 
 from state import State
 from core.instance import Instance
@@ -25,7 +25,7 @@ def load_state(directory: Path, versions: Iterable[Version]) -> State:
     return State(instance_groups, last_instance, directory)
 
 
-def _are_groups_json_contents_valid(contents: dict) -> bool:
+def _are_groups_json_contents_valid(contents: dict[Any, Any]) -> bool:
     if not Schema(
             {
                 'format_version': int,
@@ -38,11 +38,11 @@ def _are_groups_json_contents_valid(contents: dict) -> bool:
                 ],
                 'last_instance': Or(str, None)
             }
-    ).is_valid(contents):
+    ).is_valid(contents):  # type: ignore
         return False
 
-    group_names = []
-    instance_dir_names = []
+    group_names: list[str] = []
+    instance_dir_names: list[str] = []
     for group_dict in contents['groups']:
         group_names.append(group_dict['name'].strip())
         instance_dir_names += group_dict['instances']
@@ -51,9 +51,7 @@ def _are_groups_json_contents_valid(contents: dict) -> bool:
 
 
 def _load_instance_groups(
-        group_dicts: list[TypedDict('', {'name': str, 'hidden': bool, 'instances': list[str]})],
-        directory: Path,
-        versions: Iterable[Version]
+        group_dicts: list[dict[str, Any]], directory: Path, versions: Iterable[Version]
 ) -> list[InstanceGroup]:
     # The only unpacking way my typechecker recognises
     grouped_instance_dirs = [
@@ -72,7 +70,7 @@ def _load_instance_groups(
         ] if instance is not None
     ]
 
-    groups = []
+    groups: list[InstanceGroup] = []
     for group_dict in group_dicts:
         instances = [
             instance for instance in [
@@ -102,7 +100,7 @@ def _load_instance(instance_directory: Path, versions: Iterable[Version]) -> Ins
                     'architecture_choice': str
                 }
             }
-    ).is_valid(config):
+    ).is_valid(config):  # type: ignore
         return None
     try:
         version = next(
