@@ -19,7 +19,7 @@ def clear_directory(directory: Path):
 
 
 def create_subdirectory(desired_name: str, parent_directory: Path) -> Path:
-    sanitized_name = pathvalidate.sanitize_filename(desired_name.strip().replace(' ', '_'))
+    sanitized_name = str(pathvalidate.sanitize_filename(desired_name.strip().replace(' ', '_')))
     if not sanitized_name:
         sanitized_name = '1'
 
