@@ -28,17 +28,17 @@ def load_state(directory: Path, versions: Iterable[Version]) -> State:
 
 def _are_groups_json_contents_valid(contents: dict[Any, Any]) -> bool:
     if not Schema(
-            {
-                'format_version': int,
-                'groups': [
-                    {
-                        'name': str,
-                        'hidden': bool,
-                        'instances': [str]
-                    }
-                ],
-                'last_instance': Or(str, None)
-            }
+        {
+            'format_version': int,
+            'groups': [
+                {
+                    'name': str,
+                    'hidden': bool,
+                    'instances': [str]
+                }
+            ],
+            'last_instance': Or(str, None)
+        }
     ).is_valid(contents):  # type: ignore
         return False
 
@@ -90,14 +90,14 @@ def _load_instance(instance_directory: Path, versions: Iterable[Version]) -> Ins
     except (OSError, json.JSONDecodeError):
         return None
     if not Schema(
-            {
-                'format_version': int,
+        {
+            'format_version': int,
+            'name': str,
+            'version': {
                 'name': str,
-                'version': {
-                    'name': str,
-                    'architecture_choice': str
-                }
+                'architecture_choice': str
             }
+        }
     ).is_valid(config):  # type: ignore
         return None
     try:
