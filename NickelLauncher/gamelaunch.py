@@ -46,15 +46,19 @@ def _install(version: Version, architecture: Architecture, reporthook: Callable[
 
     logging.info(f'Installing Minecraft {version.name}...')
     if reporthook:
-        reporthook(Report(Report.PROGRESS, f'Installing the game'))
+        reporthook(Report(Report.PROGRESS, 'Installing the game'))
     packagemanager.add_package(version.packages[architecture])
 
 
 def _relink_game_files(instance: Instance):
     logging.debug(f'Relinking to a new game folder at "{instance.directory / "com.mojang"}"')
 
+    localappdata_path = os.getenv('LOCALAPPDATA')
+    if not localappdata_path:
+        raise FileNotFoundError
+
     default_game_directory_parent = (
-            Path(os.getenv('LOCALAPPDATA')) / 'Packages' / instance.version.pfn / 'LocalState' / 'games'
+        Path(localappdata_path) / 'Packages' / instance.version.pfn / 'LocalState' / 'games'
     )
 
     default_game_directory_parent.mkdir(parents=True, exist_ok=True)
