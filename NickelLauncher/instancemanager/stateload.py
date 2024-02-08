@@ -1,5 +1,6 @@
 from typing import Iterable, Any
 from pathlib import Path
+import itertools
 import json
 
 from schema import Schema, Or  # type: ignore
@@ -53,12 +54,9 @@ def _are_groups_json_contents_valid(contents: dict[Any, Any]) -> bool:
 def _load_instance_groups(
         group_dicts: list[dict[str, Any]], directory: Path, versions: Iterable[Version]
 ) -> list[InstanceGroup]:
-    # The only unpacking way my typechecker recognises
-    grouped_instance_dirs = [
-        directory for sublist in [
-            [directory / dir_name for dir_name in group_dict['instances']] for group_dict in group_dicts
-        ] for directory in sublist
-    ]
+    grouped_instance_dirs = itertools.chain.from_iterable(
+        [[directory / dir_name for dir_name in group_dict['instances']] for group_dict in group_dicts]
+    )
 
     ungrouped_instance_dirs = [
         item for item in directory.iterdir() if item.is_dir() and item not in grouped_instance_dirs
