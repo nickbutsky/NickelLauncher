@@ -3,7 +3,7 @@ from pathlib import Path
 import itertools
 import json
 
-from schema import Schema, Or  # type: ignore
+from schema import Schema, Or  # pyright: ignore [reportMissingTypeStubs]
 
 from state import State
 from core.instance import Instance
@@ -39,7 +39,7 @@ def _are_groups_json_contents_valid(contents: dict[Any, Any]) -> bool:
             ],
             'last_instance': Or(str, None)
         }
-    ).is_valid(contents):  # type: ignore
+    ).is_valid(contents):  # pyright: ignore [reportUnknownMemberType]
         return False
 
     group_names: list[str] = []
@@ -98,7 +98,7 @@ def _load_instance(instance_directory: Path, versions: Iterable[Version]) -> Ins
                 'architecture_choice': str
             }
         }
-    ).is_valid(config):  # type: ignore
+    ).is_valid(config):  # pyright: ignore [reportUnknownMemberType]
         return None
     try:
         version = next(

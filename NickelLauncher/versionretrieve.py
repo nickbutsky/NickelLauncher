@@ -1,7 +1,7 @@
 from typing import TypedDict
 import json
 
-from schema import Schema  # type: ignore
+from schema import Schema  # pyright: ignore [reportMissingTypeStubs]
 import requests
 
 from env import ROOT
@@ -48,7 +48,7 @@ def _parse_versions_json_contents(contents: list[_VersionDict]) -> tuple[Version
             item['name'],
             item['type'],
             {
-                architecture: guids for architecture, guids in item['guids'].items()  # type: ignore
+                architecture: guids for architecture, guids in item['guids'].items()  # pyright: ignore [reportArgumentType]  # noqa: E501
                 if (architecture in SUPPORTED_ARCHITECTURES) and guids
             },
             {
@@ -78,6 +78,6 @@ def _load_versions_json() -> list[_VersionDict]:
                 }
             }
         ]
-    ).is_valid(contents):  # type: ignore
+    ).is_valid(contents):  # pyright: ignore [reportUnknownMemberType]
         return []
     return contents
