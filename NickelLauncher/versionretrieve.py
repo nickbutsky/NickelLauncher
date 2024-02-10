@@ -26,7 +26,7 @@ def get_versions_remotely() -> tuple[Version, ...]:
     res = requests.get('https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/versions.json')
     with open(ROOT / 'versions' / 'versions.json', 'w') as f:
         f.write(res.text)
-    _versions = _parse_versions_json_contents(json.loads(res.text))
+    _versions = _parse_versions_json_contents(res.json())
     return _versions
 
 
