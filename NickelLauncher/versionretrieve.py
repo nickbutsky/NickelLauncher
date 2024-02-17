@@ -48,7 +48,7 @@ def _parse_versions_json_contents(contents: list[_VersionDict]) -> tuple[Version
             item['name'],
             item['type'],
             {
-                architecture: guids for architecture, guids in item['guids'].items()  # pyright: ignore [reportArgumentType]  # noqa: E501
+                architecture: guids for architecture, guids in item['guids'].items()  # pyright: ignore [reportArgumentType]
                 if (architecture in SUPPORTED_ARCHITECTURES) and guids
             },
             {
