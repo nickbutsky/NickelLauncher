@@ -4,10 +4,10 @@ import sys
 
 
 def _get_root() -> Path | None:
-    if '__compiled__' not in globals():
-        return Path(__file__).parent.parent / 'TestAppData' / 'NickelLauncher'
-    _appdata_path = os.getenv('APPDATA')
-    return Path(_appdata_path) / 'NickelLauncher' if _appdata_path else None
+    if "__compiled__" not in globals():
+        return Path(__file__).parent.parent / "TestAppData" / "NickelLauncher"
+    _appdata_path = os.getenv("APPDATA")
+    return Path(_appdata_path) / "NickelLauncher" if _appdata_path else None
 
 
 _root = _get_root()
