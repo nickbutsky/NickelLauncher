@@ -11,7 +11,10 @@
   },
   "linter": {
     "rules": {
-      "all": true
+      "all": true,
+      "nursery": {
+        "noUndeclaredDependencies": "off"
+      }
     }
   },
   "organizeImports": {
