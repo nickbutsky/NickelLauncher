@@ -1,11 +1,15 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+  "files": {
+    "ignore": [
+      "node_modules/",
+      "postcss.config.js",
+      "tailwind.config.js"
+    ]
+  },
   "formatter": {
     "indentStyle": "space",
     "lineWidth": 120
-  },
-  "files": {
-    "ignore": ["node_modules/", "postcss.config.js", "tailwind.config.js"]
   },
   "javascript": {
     "formatter": {
