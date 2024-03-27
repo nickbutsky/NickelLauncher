@@ -56,7 +56,8 @@ class _GroupsModel(BaseModel):
     @classmethod
     def _validate_last_instance_dirname(cls, last_instance_dirname: str | None) -> str | None:
         if (last_instance_dirname is not None) and (len(last_instance_dirname.split()) != 1):
-            raise ValidationError("Whitespace or empty strings is not allowed")  # noqa: EM101, TRY003
+            error_msg = "Whitespace or empty strings is not allowed"
+            raise ValueError(error_msg)
         return last_instance_dirname
 
     @model_validator(mode="after")
@@ -70,11 +71,13 @@ class _GroupsModel(BaseModel):
         if not (
             (len(group_names) == len(set(group_names))) and (len(instance_dirnames) == len(set(instance_dirnames)))
         ):
-            raise ValidationError("Group names and instance dirnames must be unique")  # noqa: EM101, TRY003
+            error_msg = "Group names and instance dirnames must be unique"
+            raise ValueError(error_msg)
 
         for i, group_model in enumerate(self.groups):
             if group_model.name == "" and i != 0:
-                raise ValidationError("The unnamed group must be at the top")  # noqa: EM101, TRY003
+                error_msg = "The unnamed group must be at the top"
+                raise ValueError(error_msg)
 
         return self
 
@@ -88,7 +91,8 @@ class _GroupModel(BaseModel):
     @classmethod
     def _validate_name(cls, name: str) -> str:
         if name.strip() != name:
-            raise ValidationError("Leading and trailing whitespace is not allowed")  # noqa: EM101, TRY003
+            error_msg = "Leading and trailing whitespace is not allowed"
+            raise ValueError(error_msg)
         return name
 
     @field_validator("instances")
@@ -96,7 +100,8 @@ class _GroupModel(BaseModel):
     def _validate_instance_dirnames(cls, instance_dirnames: list[str]) -> list[str]:
         for instance_dirname in instance_dirnames:
             if len(instance_dirname.split()) != 1:
-                raise ValidationError("Whitespace is not allowed")  # noqa: EM101, TRY003
+                error_msg = "Whitespace is not allowed"
+                raise ValueError(error_msg)
         return instance_dirnames
 
 
