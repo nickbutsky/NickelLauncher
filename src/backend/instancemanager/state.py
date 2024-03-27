@@ -66,7 +66,7 @@ class State:
 
     def _save(self) -> None:
         with (self._directory / "groups.json").open("w") as f:
-            json.dump(self._to_dict(), f, indent=4)
+            json.dump(self._to_dict(), f, indent=2)
 
     def _to_dict(self) -> dict[str, Any]:
         return {
