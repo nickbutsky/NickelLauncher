@@ -134,7 +134,7 @@ class _VersionModel(BaseModel):
 
 
 def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | None:
-    if len(directory.name.split()) != 1:
+    if (len(directory.name.split()) != 1) or (not (directory / "com.mojang").is_dir()):
         return None
 
     try:
@@ -148,8 +148,7 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
     except (OSError, ValidationError, StopIteration):
         return None
 
-    instance = Instance(instance_model.name, version, instance_model.version.architecture_choice, directory)  # pyright: ignore [reportArgumentType]
-    return instance if (directory / "com.mojang").is_dir() else None
+    return Instance(instance_model.name, version, instance_model.version.architecture_choice, directory)  # pyright: ignore [reportArgumentType]
 
 
 def _get_last_instance(instance_dirname: str | None, instance_groups: list[InstanceGroup]) -> Instance | None:
