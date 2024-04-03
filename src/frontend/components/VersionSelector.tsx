@@ -14,7 +14,7 @@ interface Props {
 export function VersionSelector({ versionsData }: Props) {
   return (
     <Tabs defaultValue={Object.keys(versionsData)[0]} className="w-[400px]">
-      <TabsList>
+      <TabsList className="grid w-full grid-cols-3">
         {Object.keys(versionsData).map((versionType) => (
           <TabsTrigger value={versionType}>{versionType.charAt(0).toUpperCase() + versionType.slice(1)}</TabsTrigger>
         ))}
@@ -44,8 +44,8 @@ function InnerVersionSelector({ versions }: Props["versionsData"]) {
       }}
     >
       {versions.map(({ name: versionName, availableArchitectures }) => (
-        <ToggleGroupItem value={versionName}>
-          {versionName} {JSON.stringify(availableArchitectures)}
+        <ToggleGroupItem className="w-full justify-between" value={versionName}>
+          <div>{versionName}</div> {availableArchitectures.join(" | ")}
         </ToggleGroupItem>
       ))}
     </ToggleGroup>
