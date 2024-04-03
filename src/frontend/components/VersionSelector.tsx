@@ -1,4 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useState } from "react";
 
 interface Props {
   readonly versionsData: {
@@ -14,14 +16,12 @@ export function VersionSelector({ versionsData }: Props) {
     <Tabs defaultValue={Object.keys(versionsData)[0]} className="w-[400px]">
       <TabsList>
         {Object.keys(versionsData).map((versionType) => (
-          <TabsTrigger value={versionType}>
-            {versionType.charAt(0).toUpperCase() + versionType.slice(1)}
-          </TabsTrigger>
+          <TabsTrigger value={versionType}>{versionType.charAt(0).toUpperCase() + versionType.slice(1)}</TabsTrigger>
         ))}
       </TabsList>
       {Object.keys(versionsData).map((versionType) => (
         <TabsContent value={versionType}>
-          <InnerVersionSelector versions={versionsData[versionType]}/>
+          <InnerVersionSelector versions={versionsData[versionType]} />
         </TabsContent>
       ))}
     </Tabs>
@@ -29,16 +29,25 @@ export function VersionSelector({ versionsData }: Props) {
 }
 
 function InnerVersionSelector({ versions }: Props["versionsData"]) {
+  const [value, setValue] = useState(versions[0].name);
+
   return (
-    <>
+    <ToggleGroup
+      className="flex-col"
+      type="single"
+      orientation="vertical"
+      value={value}
+      onValueChange={(value) => {
+        if (value) {
+          setValue(value);
+        }
+      }}
+    >
       {versions.map(({ name: versionName, availableArchitectures }) => (
-        <>
-          <b>
-            {versionName} {JSON.stringify(availableArchitectures)}
-          </b>
-          <br />
-        </>
+        <ToggleGroupItem value={versionName}>
+          {versionName} {JSON.stringify(availableArchitectures)}
+        </ToggleGroupItem>
       ))}
-    </>
+    </ToggleGroup>
   );
 }
