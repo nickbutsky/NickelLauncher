@@ -38,7 +38,7 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
   const [value, setValue] = useState(versions[0].name);
 
   return (
-    <ScrollArea className="h-[300px] p-4">
+    <ScrollArea className="h-[300px] pr-3">
       <ToggleGroup
         className="flex-col"
         type="single"
