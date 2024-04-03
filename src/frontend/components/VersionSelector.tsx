@@ -14,14 +14,16 @@ interface Props {
 }
 
 export function VersionSelector({ versionsData }: Props) {
+  const versionTypes = Object.keys(versionsData);
+
   return (
-    <Tabs defaultValue={Object.keys(versionsData)[0]} className="w-[400px]">
-      <TabsList className={`grid w-full grid-cols-${Object.keys(versionsData).length}`}>
-        {Object.keys(versionsData).map((versionType) => (
+    <Tabs defaultValue={versionTypes[0]} className="w-[400px]">
+      <TabsList className={`grid w-full grid-cols-${versionTypes.length}`}>
+        {versionTypes.map((versionType) => (
           <TabsTrigger value={versionType}>{versionType.charAt(0).toUpperCase() + versionType.slice(1)}</TabsTrigger>
         ))}
       </TabsList>
-      {Object.keys(versionsData).map((versionType) => (
+      {versionTypes.map((versionType) => (
         <TabsContent value={versionType}>
           <InnerVersionSelector versions={versionsData[versionType]} />
         </TabsContent>
