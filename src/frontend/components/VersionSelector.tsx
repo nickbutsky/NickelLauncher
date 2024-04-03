@@ -4,35 +4,37 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+const versionTypes = ["release", "beta", "preview"] as const;
+
 interface Props {
-  readonly versionsData: {
-    readonly [versionType: string]: readonly {
-      readonly name: string;
-      readonly availableArchitectures: readonly string[];
-    }[];
-  };
+  readonly release: readonly Version[];
+  readonly beta: readonly Version[];
+  readonly preview: readonly Version[];
 }
 
-export function VersionSelector({ versionsData }: Props) {
-  const versionTypes = Object.keys(versionsData);
+interface Version {
+  readonly name: string;
+  readonly availableArchitectures: readonly string[];
+}
 
+export function VersionSelector(props: Props) {
   return (
     <Tabs defaultValue={versionTypes[0]} className="w-[400px]">
-      <TabsList className={`grid w-full grid-cols-${versionTypes.length}`}>
+      <TabsList className="grid w-full grid-cols-3">
         {versionTypes.map((versionType) => (
           <TabsTrigger value={versionType}>{versionType.charAt(0).toUpperCase() + versionType.slice(1)}</TabsTrigger>
         ))}
       </TabsList>
       {versionTypes.map((versionType) => (
         <TabsContent value={versionType}>
-          <InnerVersionSelector versions={versionsData[versionType]} />
+          <InnerVersionSelector versions={props[versionType]} />
         </TabsContent>
       ))}
     </Tabs>
   );
 }
 
-function InnerVersionSelector({ versions }: Props["versionsData"]) {
+function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Props] }) {
   const [value, setValue] = useState(versions[0].name);
 
   return (
