@@ -34,7 +34,7 @@ function InnerVersionSelector({ versions }: Props["versionsData"]) {
   const [value, setValue] = useState(versions[0].name);
 
   return (
-    <ScrollArea className="h-[300px] flex-1 p-4">
+    <ScrollArea className="h-[300px] p-4">
       <ToggleGroup
         className="flex-col"
         type="single"
