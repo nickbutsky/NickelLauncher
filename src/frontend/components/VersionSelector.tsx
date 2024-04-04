@@ -47,8 +47,8 @@ export function VersionSelector(props: Props) {
 }
 
 const SelectedVersionNameContext = createContext<{
-  selectedVersionName: string | undefined;
-  setSelectedVersionName: (selectedVersionName: string) => void;
+  readonly selectedVersionName: string | undefined;
+  readonly setSelectedVersionName: (selectedVersionName: string) => void;
 }>({
   selectedVersionName: undefined,
   setSelectedVersionName: () => undefined
