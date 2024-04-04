@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -18,6 +18,16 @@ interface Version {
 }
 
 export function VersionSelector(props: Props) {
+  const [selectedReleaseVersionName, setSelectedReleaseVersionName] = useState(props.release[0].name);
+  const [selectedBetaVersionName, setSelectedBetaVersionName] = useState(props.beta[0].name);
+  const [selectedPreviewVersionName, setSelectedPreviewVersionName] = useState(props.preview[0].name);
+
+  const selectedVersionNameHandlers = {
+    release: { selectedVersionName: selectedReleaseVersionName, setSelectedVersionName: setSelectedReleaseVersionName },
+    beta: { selectedVersionName: selectedBetaVersionName, setSelectedVersionName: setSelectedBetaVersionName },
+    preview: { selectedVersionName: selectedPreviewVersionName, setSelectedVersionName: setSelectedPreviewVersionName }
+  };
+
   return (
     <Tabs defaultValue={versionTypes[0]} className="w-[400px]">
       <TabsList className="grid w-full grid-cols-3">
@@ -27,15 +37,25 @@ export function VersionSelector(props: Props) {
       </TabsList>
       {versionTypes.map((versionType) => (
         <TabsContent value={versionType}>
-          <InnerVersionSelector versions={props[versionType]} />
+          <SelectedVersionNameContext.Provider value={selectedVersionNameHandlers[versionType]}>
+            <InnerVersionSelector versions={props[versionType]} />
+          </SelectedVersionNameContext.Provider>
         </TabsContent>
       ))}
     </Tabs>
   );
 }
 
+const SelectedVersionNameContext = createContext<{
+  selectedVersionName: string;
+  setSelectedVersionName: (selectedVersionName: string) => void;
+}>({
+  selectedVersionName: "",
+  setSelectedVersionName: () => undefined
+});
+
 function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Props] }) {
-  const [value, setValue] = useState(versions[0].name);
+  const {selectedVersionName, setSelectedVersionName} = useContext(SelectedVersionNameContext);
 
   return (
     <ScrollArea className="h-[300px] pr-3">
@@ -43,10 +63,10 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
         className="flex-col"
         type="single"
         orientation="vertical"
-        value={value}
+        value={selectedVersionName}
         onValueChange={(value) => {
           if (value) {
-            setValue(value);
+            setSelectedVersionName(value);
           }
         }}
       >
