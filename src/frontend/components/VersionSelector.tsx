@@ -55,7 +55,7 @@ const SelectedVersionNameContext = createContext<{
 });
 
 function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Props] }) {
-  const {selectedVersionName, setSelectedVersionName} = useContext(SelectedVersionNameContext);
+  const { selectedVersionName, setSelectedVersionName } = useContext(SelectedVersionNameContext);
 
   return (
     <ScrollArea className="h-[300px] pr-3">
