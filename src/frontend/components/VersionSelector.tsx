@@ -18,9 +18,9 @@ interface Version {
 }
 
 export function VersionSelector(props: Props) {
-  const [selectedReleaseVersionName, setSelectedReleaseVersionName] = useState(props.release[0].name);
-  const [selectedBetaVersionName, setSelectedBetaVersionName] = useState(props.beta[0].name);
-  const [selectedPreviewVersionName, setSelectedPreviewVersionName] = useState(props.preview[0].name);
+  const [selectedReleaseVersionName, setSelectedReleaseVersionName] = useState(props.release[0]?.name);
+  const [selectedBetaVersionName, setSelectedBetaVersionName] = useState(props.beta[0]?.name);
+  const [selectedPreviewVersionName, setSelectedPreviewVersionName] = useState(props.preview[0]?.name);
 
   const selectedVersionNameHandlers = {
     release: { selectedVersionName: selectedReleaseVersionName, setSelectedVersionName: setSelectedReleaseVersionName },
@@ -47,10 +47,10 @@ export function VersionSelector(props: Props) {
 }
 
 const SelectedVersionNameContext = createContext<{
-  selectedVersionName: string;
+  selectedVersionName: string | undefined;
   setSelectedVersionName: (selectedVersionName: string) => void;
 }>({
-  selectedVersionName: "",
+  selectedVersionName: undefined,
   setSelectedVersionName: () => undefined
 });
 
