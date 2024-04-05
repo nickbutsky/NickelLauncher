@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from "react";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollAreaViewport } from "@/components/ui/scroll-area";
 
 const versionTypes = ["release", "beta", "preview"] as const;
 
@@ -22,10 +22,20 @@ export function VersionSelector(props: Props) {
   const [selectedBetaVersionName, setSelectedBetaVersionName] = useState(props.beta[0]?.name);
   const [selectedPreviewVersionName, setSelectedPreviewVersionName] = useState(props.preview[0]?.name);
 
+  const [releaseScrollPosition, setReleaseScrollPosition] = useState(0);
+  const [betaScrollPosition, setBetaScrollPosition] = useState(0);
+  const [previewScrollPosition, setPreviewScrollPosition] = useState(0);
+
   const selectedVersionNameHandlers = {
     release: { selectedVersionName: selectedReleaseVersionName, setSelectedVersionName: setSelectedReleaseVersionName },
     beta: { selectedVersionName: selectedBetaVersionName, setSelectedVersionName: setSelectedBetaVersionName },
     preview: { selectedVersionName: selectedPreviewVersionName, setSelectedVersionName: setSelectedPreviewVersionName }
+  };
+
+  const scrollPositionHandlers = {
+    release: { scrollPosition: releaseScrollPosition, setScrollPosition: setReleaseScrollPosition },
+    beta: { scrollPosition: betaScrollPosition, setScrollPosition: setBetaScrollPosition },
+    preview: { scrollPosition: previewScrollPosition, setScrollPosition: setPreviewScrollPosition }
   };
 
   return (
@@ -38,7 +48,9 @@ export function VersionSelector(props: Props) {
       {versionTypes.map((versionType) => (
         <TabsContent value={versionType}>
           <SelectedVersionNameContext.Provider value={selectedVersionNameHandlers[versionType]}>
-            <InnerVersionSelector versions={props[versionType]} />
+            <ScrollPositionContext.Provider value={scrollPositionHandlers[versionType]}>
+              <InnerVersionSelector versions={props[versionType]} />
+            </ScrollPositionContext.Provider>
           </SelectedVersionNameContext.Provider>
         </TabsContent>
       ))}
@@ -54,28 +66,39 @@ const SelectedVersionNameContext = createContext<{
   setSelectedVersionName: () => undefined
 });
 
+const ScrollPositionContext = createContext<{
+  readonly scrollPosition: number;
+  readonly setScrollPosition: (scrollPosition: number) => void;
+}>({
+  scrollPosition: 0,
+  setScrollPosition: () => undefined
+});
+
 function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Props] }) {
   const { selectedVersionName, setSelectedVersionName } = useContext(SelectedVersionNameContext);
+  const { scrollPosition, setScrollPosition } = useContext(ScrollPositionContext);
 
   return (
     <ScrollArea className="h-[300px] pr-3">
-      <ToggleGroup
-        className="flex-col"
-        type="single"
-        orientation="vertical"
-        value={selectedVersionName}
-        onValueChange={(value) => {
-          if (value) {
-            setSelectedVersionName(value);
-          }
-        }}
-      >
-        {versions.map(({ name: versionName, availableArchitectures }) => (
-          <ToggleGroupItem className="w-full justify-between" value={versionName}>
-            <div>{versionName}</div> {availableArchitectures.join(" | ")}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
+      <ScrollAreaViewport onScroll={(event) => setScrollPosition(event.currentTarget.scrollTop)}>
+        <ToggleGroup
+          className="flex-col"
+          type="single"
+          orientation="vertical"
+          value={selectedVersionName}
+          onValueChange={(value) => {
+            if (value) {
+              setSelectedVersionName(value);
+            }
+          }}
+        >
+          {versions.map(({ name: versionName, availableArchitectures }) => (
+            <ToggleGroupItem className="w-full justify-between" value={versionName}>
+              <div>{versionName}</div> {availableArchitectures.join(" | ")}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </ScrollAreaViewport>
     </ScrollArea>
   );
 }
