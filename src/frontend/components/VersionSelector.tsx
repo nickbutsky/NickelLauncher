@@ -26,18 +26,6 @@ export function VersionSelector(props: Props) {
   const [betaScrollPosition, setBetaScrollPosition] = useState(0);
   const [previewScrollPosition, setPreviewScrollPosition] = useState(0);
 
-  const selectedVersionNameHandlers = {
-    release: { selectedVersionName: selectedReleaseVersionName, setSelectedVersionName: setSelectedReleaseVersionName },
-    beta: { selectedVersionName: selectedBetaVersionName, setSelectedVersionName: setSelectedBetaVersionName },
-    preview: { selectedVersionName: selectedPreviewVersionName, setSelectedVersionName: setSelectedPreviewVersionName }
-  };
-
-  const scrollPositionHandlers = {
-    release: { scrollPosition: releaseScrollPosition, setScrollPosition: setReleaseScrollPosition },
-    beta: { scrollPosition: betaScrollPosition, setScrollPosition: setBetaScrollPosition },
-    preview: { scrollPosition: previewScrollPosition, setScrollPosition: setPreviewScrollPosition }
-  };
-
   return (
     <Tabs defaultValue={versionTypes[0]} className="w-[400px]">
       <TabsList className="grid w-full grid-cols-3">
@@ -47,8 +35,33 @@ export function VersionSelector(props: Props) {
       </TabsList>
       {versionTypes.map((versionType) => (
         <TabsContent value={versionType}>
-          <SelectedVersionNameContext.Provider value={selectedVersionNameHandlers[versionType]}>
-            <ScrollPositionContext.Provider value={scrollPositionHandlers[versionType]}>
+          <SelectedVersionNameContext.Provider
+            value={
+              {
+                release: {
+                  selectedVersionName: selectedReleaseVersionName,
+                  setSelectedVersionName: setSelectedReleaseVersionName
+                },
+                beta: {
+                  selectedVersionName: selectedBetaVersionName,
+                  setSelectedVersionName: setSelectedBetaVersionName
+                },
+                preview: {
+                  selectedVersionName: selectedPreviewVersionName,
+                  setSelectedVersionName: setSelectedPreviewVersionName
+                }
+              }[versionType]
+            }
+          >
+            <ScrollPositionContext.Provider
+              value={
+                {
+                  release: { scrollPosition: releaseScrollPosition, setScrollPosition: setReleaseScrollPosition },
+                  beta: { scrollPosition: betaScrollPosition, setScrollPosition: setBetaScrollPosition },
+                  preview: { scrollPosition: previewScrollPosition, setScrollPosition: setPreviewScrollPosition }
+                }[versionType]
+              }
+            >
               <InnerVersionSelector versions={props[versionType]} />
             </ScrollPositionContext.Provider>
           </SelectedVersionNameContext.Provider>
