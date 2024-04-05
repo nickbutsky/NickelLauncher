@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -91,9 +91,15 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
   const { selectedVersionName, setSelectedVersionName } = useContext(SelectedVersionNameContext);
   const { scrollPosition, setScrollPosition } = useContext(ScrollPositionContext);
 
+  const viewportRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    viewportRef.current?.scrollTo(0, scrollPosition);
+  }, []);
+
   return (
     <ScrollArea className="h-[300px] pr-3">
-      <ScrollAreaViewport onScroll={(event) => setScrollPosition(event.currentTarget.scrollTop)}>
+      <ScrollAreaViewport ref={viewportRef} onScroll={(event) => setScrollPosition(event.currentTarget.scrollTop)}>
         <ToggleGroup
           className="flex-col"
           type="single"
