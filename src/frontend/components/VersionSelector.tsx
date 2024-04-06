@@ -114,7 +114,8 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
         >
           {versions.map(({ name: versionName, availableArchitectures }) => (
             <ToggleGroupItem className="w-full justify-between" value={versionName}>
-              <div>{versionName}</div> {availableArchitectures.join(" | ")}
+              <div>{versionName}</div>
+              <div>{availableArchitectures.join(" | ")}</div>
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
