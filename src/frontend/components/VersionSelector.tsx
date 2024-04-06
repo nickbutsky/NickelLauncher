@@ -99,7 +99,7 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
   }, []);
 
   return (
-    <ScrollArea className="h-[300px] pr-3">
+    <ScrollArea className="h-[300px] pr-3" type="always">
       <ScrollAreaViewport ref={viewportRef} onScroll={(event) => setScrollPosition(event.currentTarget.scrollTop)}>
         <ToggleGroup
           className="flex-col"
