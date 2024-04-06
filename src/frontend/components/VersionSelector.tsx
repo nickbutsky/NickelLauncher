@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { RefObject, createContext, useContext, useEffect, useRef, useState } from "react";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -93,6 +93,7 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
 
   const viewportRef = useRef<HTMLDivElement>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   useEffect(() => {
     viewportRef.current?.scrollTo(0, scrollPosition);
   }, []);
