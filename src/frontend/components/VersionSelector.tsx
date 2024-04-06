@@ -102,7 +102,7 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
     <ScrollArea className="h-[300px] pr-3" type="always">
       <ScrollAreaViewport ref={viewportRef} onScroll={(event) => setScrollPosition(event.currentTarget.scrollTop)}>
         <ToggleGroup
-          className="flex-col"
+          className="flex-col gap-0"
           type="single"
           orientation="vertical"
           value={selectedVersionName}
@@ -113,7 +113,7 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
           }}
         >
           {versions.map(({ name: versionName, availableArchitectures }) => (
-            <ToggleGroupItem className="w-full justify-between" value={versionName}>
+            <ToggleGroupItem className="w-full justify-between rounded-none" value={versionName}>
               <div>{versionName}</div>
               <div>{availableArchitectures.join(" | ")}</div>
             </ToggleGroupItem>
