@@ -13,7 +13,7 @@ interface Props {
 }
 
 interface Version {
-  readonly name: string;
+  readonly displayName: string;
   readonly availableArchitectures: readonly string[];
 }
 
@@ -41,7 +41,7 @@ export function VersionSelector(props: Props) {
 }
 
 function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Props] }) {
-  const [selectedVersionName, setSelectedVersionName] = React.useState(versions[0]?.name);
+  const [displayName, setDisplayName] = React.useState(versions[0]?.displayName);
 
   return (
     <ScrollArea className="h-[300px] pr-3" type="always">
@@ -49,16 +49,16 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
         className="flex-col gap-0"
         type="single"
         orientation="vertical"
-        value={selectedVersionName}
+        value={displayName}
         onValueChange={(value) => {
           if (value) {
-            setSelectedVersionName(value);
+            setDisplayName(value);
           }
         }}
       >
-        {versions.map(({ name: versionName, availableArchitectures }) => (
-          <ToggleGroupItem className="w-full justify-between rounded-none" value={versionName}>
-            <div>{versionName}</div>
+        {versions.map(({ displayName, availableArchitectures }) => (
+          <ToggleGroupItem className="w-full justify-between rounded-none" value={displayName}>
+            <div>{displayName}</div>
             <div>{availableArchitectures.join(" | ")}</div>
           </ToggleGroupItem>
         ))}
