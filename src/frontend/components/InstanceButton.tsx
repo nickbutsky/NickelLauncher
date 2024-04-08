@@ -1,16 +1,24 @@
-import * as React from "react";
-
 import { Button } from "@/components/ui/button";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger
+} from "@/components/ui/context-menu";
 
 import defaultLogo from "@/assets/default.png";
 
 interface Props {
   readonly name: string;
   readonly displayVersionName: string;
+  readonly architectureChoice: string;
+  readonly availableArchitectures: readonly string[];
 }
 
-export function InstanceButton({ name, displayVersionName }: Props) {
+export function InstanceButton({ name, displayVersionName, architectureChoice, availableArchitectures }: Props) {
   return (
     <ContextMenu>
       <ContextMenuTrigger className="inline-block">
@@ -24,11 +32,20 @@ export function InstanceButton({ name, displayVersionName }: Props) {
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuItem>Launch</ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuRadioGroup value={architectureChoice}>
+          {availableArchitectures.map((architecture) => (
+            <ContextMenuRadioItem value={architecture}>{architecture}</ContextMenuRadioItem>
+          ))}
+        </ContextMenuRadioGroup>
+        <ContextMenuSeparator />
         <ContextMenuItem>Rename</ContextMenuItem>
         <ContextMenuItem>Change Group</ContextMenuItem>
         <ContextMenuItem>Change Version</ContextMenuItem>
+        <ContextMenuSeparator />
         <ContextMenuItem>Minecraft Folder</ContextMenuItem>
         <ContextMenuItem>Instance Folder</ContextMenuItem>
+        <ContextMenuSeparator />
         <ContextMenuItem>Copy Instance</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
