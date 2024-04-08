@@ -1,3 +1,5 @@
+import * as React from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   ContextMenu,
@@ -9,6 +11,7 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
+import { EditableLabel } from "@/components/EditableLabel";
 
 import defaultLogo from "@/assets/default.png";
 
@@ -20,13 +23,15 @@ interface Props {
 }
 
 export function InstanceButton({ name, displayVersionName, architectureChoice, availableArchitectures }: Props) {
+  const nameEditableLabelRef = React.useRef<{ readonly enterEditMode: () => void }>(null);
+
   return (
     <ContextMenu>
       <ContextMenuTrigger className="inline-block">
         <Button className="grid grid-cols-[max-content_1fr] gap-3 w-48 h-16" variant="outline">
           <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
           <div className="grid grid-rows-2 text-left">
-            <div>{name}</div>
+            <EditableLabel ref={nameEditableLabelRef} initialText={name} />
             <div>{displayVersionName}</div>
           </div>
         </Button>
@@ -40,7 +45,7 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
           ))}
         </ContextMenuRadioGroup>
         <ContextMenuSeparator />
-        <ContextMenuItem>
+        <ContextMenuItem onSelect={nameEditableLabelRef.current?.enterEditMode}>
           Rename
           <ContextMenuShortcut>F2</ContextMenuShortcut>
         </ContextMenuItem>
