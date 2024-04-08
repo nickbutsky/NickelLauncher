@@ -6,6 +6,7 @@ import {
   ContextMenuRadioGroup,
   ContextMenuRadioItem,
   ContextMenuSeparator,
+  ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
 
@@ -39,7 +40,10 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
           ))}
         </ContextMenuRadioGroup>
         <ContextMenuSeparator />
-        <ContextMenuItem>Rename</ContextMenuItem>
+        <ContextMenuItem>
+          Rename
+          <ContextMenuShortcut>F2</ContextMenuShortcut>
+        </ContextMenuItem>
         <ContextMenuItem>Change Group</ContextMenuItem>
         <ContextMenuItem>Change Version</ContextMenuItem>
         <ContextMenuSeparator />
