@@ -10,8 +10,13 @@ interface Props {
 }
 
 export const EditableLabel = React.forwardRef(
-  ({ initialText, applyOnAboutToSave, isAllowedToSave, onSave }: Props, ref: React.ForwardedRef<unknown>) => {
-    React.useImperativeHandle(ref, () => enterEditMode);
+  (
+    { initialText, applyOnAboutToSave, isAllowedToSave, onSave }: Props,
+    ref: React.ForwardedRef<{ readonly enterEditMode: () => void }>
+  ) => {
+    React.useImperativeHandle(ref, () => {
+      return { enterEditMode };
+    });
 
     const [editMode, setEditMode] = React.useState(false);
 
