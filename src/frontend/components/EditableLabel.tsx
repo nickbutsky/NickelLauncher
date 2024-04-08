@@ -30,6 +30,10 @@ export const EditableLabel = React.forwardRef(
           <Input
             defaultValue={initialText}
             onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                setEditMode(false);
+                return;
+              }
               if (!(event.key === "Enter")) {
                 return;
               }
