@@ -3,21 +3,24 @@ import * as React from "react";
 import { Input } from "@/components/ui/input";
 
 interface Props {
-  readonly initialText?: string;
-  readonly applyOnAboutToSave?: (textAboutToBeSaved: string) => string;
-  readonly isAllowedToSave?: (textToBeSaved: string) => boolean;
-  readonly onSave?: (newText: string) => void;
+  readonly defaultValue: string;
+  readonly validateInput?: (value: string) => boolean;
+  readonly applyOnAboutToSave?: (value: string) => string;
+  readonly isAllowedToSave?: (value: string) => boolean;
+  readonly onSave?: (value: string) => void;
 }
 
 export const EditableLabel = React.forwardRef(
   (
-    { initialText, applyOnAboutToSave, isAllowedToSave, onSave }: Props,
+    { defaultValue, validateInput, applyOnAboutToSave, isAllowedToSave, onSave }: Props,
     ref: React.ForwardedRef<{ readonly enterEditMode: () => void }>
   ) => {
     React.useImperativeHandle(ref, () => {
       return { enterEditMode };
     });
 
+    const [labelValue, setLabelValue] = React.useState(defaultValue);
+    const [inputValue, setInputValue] = React.useState(defaultValue);
     const [editMode, setEditMode] = React.useState(false);
 
     function enterEditMode() {
@@ -28,7 +31,14 @@ export const EditableLabel = React.forwardRef(
       <>
         {editMode ? (
           <Input
-            defaultValue={initialText}
+            defaultValue={inputValue}
+            onInput={(event) => {
+              if (validateInput && !validateInput(event.currentTarget.value)) {
+                event.currentTarget.value = inputValue;
+              } else {
+                setInputValue(event.currentTarget.value);
+              }
+            }}
             onKeyDown={(event) => {
               if (event.key === "Escape") {
                 setEditMode(false);
@@ -37,15 +47,18 @@ export const EditableLabel = React.forwardRef(
               if (!(event.key === "Enter")) {
                 return;
               }
-              const newText = applyOnAboutToSave?.(event.currentTarget.textContent ?? "") ?? "";
-              if (isAllowedToSave && !isAllowedToSave(newText)) {
+              const newValue = applyOnAboutToSave?.(event.currentTarget.value ?? "") ?? event.currentTarget.value ?? "";
+              if (isAllowedToSave && !isAllowedToSave(newValue)) {
                 return;
               }
-              onSave?.(newText);
+              onSave?.(newValue);
+              setLabelValue(newValue);
+              setEditMode(false);
+              setInputValue(newValue);
             }}
           />
         ) : (
-          <div>{initialText}</div>
+          <div>{labelValue}</div>
         )}
       </>
     );
