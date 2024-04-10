@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 
 interface Props {
   readonly defaultValue: string;
-  readonly validateInput?: (value: string) => boolean;
   readonly applyOnAboutToSave?: (value: string) => string;
   readonly isAllowedToSave?: (value: string) => boolean;
   readonly onSave?: (value: string) => void;
@@ -12,7 +11,7 @@ interface Props {
 
 export const EditableLabel = React.forwardRef(
   (
-    { defaultValue, validateInput, applyOnAboutToSave, isAllowedToSave, onSave }: Props,
+    { defaultValue, applyOnAboutToSave, isAllowedToSave, onSave }: Props,
     ref: React.ForwardedRef<{ readonly enterEditMode: () => void }>
   ) => {
     React.useImperativeHandle(ref, () => {
@@ -32,13 +31,6 @@ export const EditableLabel = React.forwardRef(
         {editMode ? (
           <Input
             defaultValue={inputValue}
-            onInput={(event) => {
-              if (validateInput && !validateInput(event.currentTarget.value)) {
-                event.currentTarget.value = inputValue;
-              } else {
-                setInputValue(event.currentTarget.value);
-              }
-            }}
             onKeyDown={(event) => {
               if (event.key === "Escape") {
                 setEditMode(false);
