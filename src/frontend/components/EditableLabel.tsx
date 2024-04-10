@@ -41,8 +41,12 @@ export const EditableLabel = React.forwardRef(
           defaultValue={value}
           onContextMenu={(event) => event.stopPropagation()}
           onKeyDown={(event) => {
-            if (event.key === "Escape") {
+            function discardChanges() {
               setEditMode(false);
+              event.currentTarget.value = value;
+            }
+            if (event.key === "Escape") {
+              discardChanges();
               return;
             }
             if (!(event.key === "Enter")) {
@@ -52,9 +56,14 @@ export const EditableLabel = React.forwardRef(
             if (isAllowedToSave && !isAllowedToSave(newValue)) {
               return;
             }
+            if (newValue === value) {
+              discardChanges();
+              return;
+            }
             onSave?.(newValue);
             setValue(newValue);
             setEditMode(false);
+            event.currentTarget.value = newValue;
           }}
         />
       </>
