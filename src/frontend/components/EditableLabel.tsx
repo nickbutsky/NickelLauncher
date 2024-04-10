@@ -34,6 +34,7 @@ export const EditableLabel = React.forwardRef(
         <Input
           className={cn("h-5", !editMode && "hidden")}
           defaultValue={value}
+          onContextMenu={(event) => event.stopPropagation()}
           onKeyDown={(event) => {
             if (event.key === "Escape") {
               setEditMode(false);
