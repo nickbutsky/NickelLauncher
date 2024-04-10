@@ -33,7 +33,6 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
             <EditableLabel
               ref={nameEditableLabelRef}
               defaultValue={name}
-              validateInput={(value) => !/^\s/.test(value)}
               applyOnAboutToSave={(value) => value.trim()}
               isAllowedToSave={(value) => value.length > 0}
             />
