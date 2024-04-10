@@ -16,15 +16,19 @@ export const EditableLabel = React.forwardRef(
     ref: React.ForwardedRef<{ readonly enterEditMode: () => void }>
   ) => {
     React.useImperativeHandle(ref, () => {
-      return { enterEditMode };
+      return { enterEditMode: () => setEditMode(true) };
     });
 
     const [value, setValue] = React.useState(defaultValue);
     const [editMode, setEditMode] = React.useState(false);
 
-    function enterEditMode() {
-      setEditMode(true);
-    }
+    const inputRef = React.useRef<HTMLInputElement>(null);
+
+    React.useEffect(() => {
+      if (editMode) {
+        inputRef.current?.focus();
+      }
+    }, [editMode]);
 
     return (
       <>
@@ -33,6 +37,7 @@ export const EditableLabel = React.forwardRef(
         </div>
         <Input
           className={cn("h-5", !editMode && "hidden")}
+          ref={inputRef}
           defaultValue={value}
           onContextMenu={(event) => event.stopPropagation()}
           onKeyDown={(event) => {
