@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { Input } from "@/components/ui/input";
+import { cn } from "@/utils";
 
 interface Props {
   readonly defaultValue: string;
@@ -27,30 +28,29 @@ export const EditableLabel = React.forwardRef(
 
     return (
       <>
-        {editMode ? (
-          <Input
-            className="h-5"
-            defaultValue={value}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") {
-                setEditMode(false);
-                return;
-              }
-              if (!(event.key === "Enter")) {
-                return;
-              }
-              const newValue = applyOnAboutToSave?.(event.currentTarget.value ?? "") ?? event.currentTarget.value ?? "";
-              if (isAllowedToSave && !isAllowedToSave(newValue)) {
-                return;
-              }
-              onSave?.(newValue);
-              setValue(newValue);
+        <div className="whitespace-pre" hidden={editMode}>
+          {value}
+        </div>
+        <Input
+          className={cn("h-5", !editMode && "hidden")}
+          defaultValue={value}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
               setEditMode(false);
-            }}
-          />
-        ) : (
-          <div className="whitespace-pre">{value}</div>
-        )}
+              return;
+            }
+            if (!(event.key === "Enter")) {
+              return;
+            }
+            const newValue = applyOnAboutToSave?.(event.currentTarget.value ?? "") ?? event.currentTarget.value ?? "";
+            if (isAllowedToSave && !isAllowedToSave(newValue)) {
+              return;
+            }
+            onSave?.(newValue);
+            setValue(newValue);
+            setEditMode(false);
+          }}
+        />
       </>
     );
   }
