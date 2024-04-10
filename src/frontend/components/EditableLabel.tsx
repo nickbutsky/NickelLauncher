@@ -27,6 +27,7 @@ export const EditableLabel = React.forwardRef(
     React.useEffect(() => {
       if (editMode) {
         inputRef.current?.focus();
+        inputRef.current?.select();
       }
     }, [editMode]);
 
