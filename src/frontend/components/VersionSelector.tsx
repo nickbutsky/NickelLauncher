@@ -28,11 +28,18 @@ export function VersionSelector(props: Props) {
     >
       <TabsList className="grid w-full grid-cols-3">
         {versionTypes.map((versionType) => (
-          <TabsTrigger value={versionType}>{versionType.charAt(0).toUpperCase() + versionType.slice(1)}</TabsTrigger>
+          <TabsTrigger key={versionType} value={versionType}>
+            {versionType.charAt(0).toUpperCase() + versionType.slice(1)}
+          </TabsTrigger>
         ))}
       </TabsList>
       {versionTypes.map((versionType) => (
-        <TabsContent value={versionType} forceMount={true} hidden={currentVersionType !== versionType}>
+        <TabsContent
+          key={versionType}
+          value={versionType}
+          forceMount={true}
+          hidden={currentVersionType !== versionType}
+        >
           <InnerVersionSelector versions={props[versionType]} />
         </TabsContent>
       ))}
@@ -57,7 +64,7 @@ function InnerVersionSelector({ versions }: { readonly versions: Props[keyof Pro
         }}
       >
         {versions.map(({ displayName, availableArchitectures }) => (
-          <ToggleGroupItem className="w-full justify-between rounded-none" value={displayName}>
+          <ToggleGroupItem className="w-full justify-between rounded-none" key={displayName} value={displayName}>
             <div>{displayName}</div>
             <div>{availableArchitectures.join(" | ")}</div>
           </ToggleGroupItem>
