@@ -18,8 +18,7 @@ export const EditableLabel = React.forwardRef(
       return { enterEditMode };
     });
 
-    const [labelValue, setLabelValue] = React.useState(defaultValue);
-    const [inputValue, setInputValue] = React.useState(defaultValue);
+    const [value, setValue] = React.useState(defaultValue);
     const [editMode, setEditMode] = React.useState(false);
 
     function enterEditMode() {
@@ -30,7 +29,8 @@ export const EditableLabel = React.forwardRef(
       <>
         {editMode ? (
           <Input
-            defaultValue={inputValue}
+            className="h-5"
+            defaultValue={value}
             onKeyDown={(event) => {
               if (event.key === "Escape") {
                 setEditMode(false);
@@ -44,13 +44,12 @@ export const EditableLabel = React.forwardRef(
                 return;
               }
               onSave?.(newValue);
-              setLabelValue(newValue);
+              setValue(newValue);
               setEditMode(false);
-              setInputValue(newValue);
             }}
           />
         ) : (
-          <div>{labelValue}</div>
+          <div className="whitespace-pre">{value}</div>
         )}
       </>
     );

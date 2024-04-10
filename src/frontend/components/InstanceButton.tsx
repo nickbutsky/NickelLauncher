@@ -45,7 +45,7 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
         <ContextMenuSeparator />
         <ContextMenuRadioGroup value={architectureChoice}>
           {availableArchitectures.map((architecture) => (
-            <ContextMenuRadioItem value={architecture}>{architecture}</ContextMenuRadioItem>
+            <ContextMenuRadioItem key={architecture} value={architecture}>{architecture}</ContextMenuRadioItem>
           ))}
         </ContextMenuRadioGroup>
         <ContextMenuSeparator />
