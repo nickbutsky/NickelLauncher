@@ -22,8 +22,8 @@ interface Props {
 }
 
 export function InstanceButton({ name, displayVersionName, architectureChoice, availableArchitectures }: Props) {
-  const nameEditableLabelRef = React.useRef<{ readonly enterEditMode: () => void }>(null);
-  const renameContextMenuItemRef = React.useRef<HTMLDivElement>(null);
+  const nameEditableLabelRef = React.useRef<React.ComponentRef<typeof EditableLabel>>(null);
+  const renameContextMenuItemRef = React.useRef<React.ComponentRef<typeof ContextMenuItem>>(null);
 
   return (
     <ContextMenu>

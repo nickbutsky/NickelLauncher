@@ -22,7 +22,7 @@ export const EditableLabel = React.forwardRef(
     const [value, setValue] = React.useState(defaultValue);
     const [editMode, setEditMode] = React.useState(false);
 
-    const inputRef = React.useRef<HTMLInputElement>(null);
+    const inputRef = React.useRef<React.ComponentRef<typeof Input>>(null);
 
     React.useEffect(() => {
       if (editMode) {
