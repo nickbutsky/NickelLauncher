@@ -23,6 +23,7 @@ interface Props {
 
 export function InstanceButton({ name, displayVersionName, architectureChoice, availableArchitectures }: Props) {
   const nameEditableLabelRef = React.useRef<{ readonly enterEditMode: () => void }>(null);
+  const renameContextMenuItemRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <ContextMenu>
@@ -45,11 +46,25 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
         <ContextMenuSeparator />
         <ContextMenuRadioGroup value={architectureChoice}>
           {availableArchitectures.map((architecture) => (
-            <ContextMenuRadioItem key={architecture} value={architecture}>{architecture}</ContextMenuRadioItem>
+            <ContextMenuRadioItem key={architecture} value={architecture}>
+              {architecture}
+            </ContextMenuRadioItem>
           ))}
         </ContextMenuRadioGroup>
         <ContextMenuSeparator />
-        <ContextMenuItem onSelect={() => nameEditableLabelRef.current?.enterEditMode()}>
+        <ContextMenuItem
+          ref={renameContextMenuItemRef}
+          // this is a hack
+          onSelect={() => {
+            (function wait() {
+              if (renameContextMenuItemRef.current) {
+                setTimeout(() => wait(), 10);
+                return;
+              }
+              nameEditableLabelRef.current?.enterEditMode();
+            })();
+          }}
+        >
           Rename
           <ContextMenuShortcut>F2</ContextMenuShortcut>
         </ContextMenuItem>
