@@ -31,6 +31,13 @@ export const EditableLabel = React.forwardRef(
       }
     }, [editMode]);
 
+    function discardChanges() {
+      setEditMode(false);
+      if (inputRef.current) {
+        inputRef.current.value = value;
+      }
+    }
+
     return (
       <>
         <div className="whitespace-pre" hidden={editMode}>
@@ -40,12 +47,9 @@ export const EditableLabel = React.forwardRef(
           className={cn("h-5", !editMode && "hidden")}
           ref={inputRef}
           defaultValue={value}
+          onBlur={() => discardChanges()}
           onContextMenu={(event) => event.stopPropagation()}
           onKeyDown={(event) => {
-            function discardChanges() {
-              setEditMode(false);
-              event.currentTarget.value = value;
-            }
             if (event.key === "Escape") {
               discardChanges();
               return;
