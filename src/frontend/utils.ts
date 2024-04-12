@@ -8,3 +8,13 @@ export type Prettify<T> = {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export function runWhenTrue(conditionFunction: () => boolean, functionToRun: () => void, interval = 10) {
+  (function wait() {
+    if (!conditionFunction()) {
+      setTimeout(() => wait(), interval);
+      return;
+    }
+    functionToRun();
+  })();
+}
