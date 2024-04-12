@@ -18,14 +18,8 @@ interface Version {
 }
 
 export function VersionSelector(props: Props) {
-  const [currentVersionType, setCurrentVersionType] = React.useState<(typeof versionTypes)[number]>(versionTypes[0]);
-
   return (
-    <Tabs
-      className="w-[400px]"
-      defaultValue={currentVersionType}
-      onValueChange={(value) => setCurrentVersionType(value as (typeof versionTypes)[number])}
-    >
+    <Tabs className="w-[400px]" defaultValue={versionTypes[0]}>
       <TabsList className="grid w-full grid-cols-3">
         {versionTypes.map((versionType) => (
           <TabsTrigger key={versionType} value={versionType}>
@@ -34,12 +28,7 @@ export function VersionSelector(props: Props) {
         ))}
       </TabsList>
       {versionTypes.map((versionType) => (
-        <TabsContent
-          key={versionType}
-          value={versionType}
-          forceMount={true}
-          hidden={currentVersionType !== versionType}
-        >
+        <TabsContent className="data-[state=inactive]:hidden" key={versionType} value={versionType} forceMount={true}>
           <InnerVersionSelector versions={props[versionType]} />
         </TabsContent>
       ))}
