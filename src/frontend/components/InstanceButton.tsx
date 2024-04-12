@@ -27,7 +27,7 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="inline-block">
+      <ContextMenuTrigger asChild={true}>
         <Button className="grid grid-cols-[max-content_1fr] gap-3 w-48 h-16" variant="outline">
           <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
           <div className="grid grid-rows-2 text-left">
