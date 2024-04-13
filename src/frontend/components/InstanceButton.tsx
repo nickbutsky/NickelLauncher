@@ -23,7 +23,7 @@ interface Props {
 }
 
 export function InstanceButton({ name, displayVersionName, architectureChoice, availableArchitectures }: Props) {
-  const nameEditableLabelRef = React.useRef<React.ComponentRef<typeof EditableLabel>>(null);
+  const editableLabelRef = React.useRef<React.ComponentRef<typeof EditableLabel>>(null);
   const renameContextMenuItemRef = React.useRef<React.ComponentRef<typeof ContextMenuItem>>(null);
 
   return (
@@ -33,7 +33,7 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
           <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
           <div className="grid grid-rows-2 text-left">
             <EditableLabel
-              ref={nameEditableLabelRef}
+              ref={editableLabelRef}
               defaultValue={name}
               applyOnAboutToSave={(value) => value.trim()}
               isAllowedToSave={(value) => value.length > 0}
@@ -56,9 +56,7 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
         <ContextMenuItem
           ref={renameContextMenuItemRef}
           onSelect={() =>
-            waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
-              nameEditableLabelRef.current?.enterEditMode()
-            )
+            waitUntilTrue(() => !renameContextMenuItemRef.current).then(() => editableLabelRef.current?.enterEditMode())
           }
         >
           Rename
