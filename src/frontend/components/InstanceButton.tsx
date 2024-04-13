@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/context-menu";
 import { EditableLabel } from "@/components/EditableLabel";
 import defaultLogo from "@/assets/default.png";
+import { waitUntilTrue } from "@/utils";
 
 interface Props {
   readonly name: string;
@@ -54,16 +55,11 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
         <ContextMenuSeparator />
         <ContextMenuItem
           ref={renameContextMenuItemRef}
-          // this is a hack
-          onSelect={() => {
-            (function wait() {
-              if (renameContextMenuItemRef.current) {
-                setTimeout(() => wait(), 10);
-                return;
-              }
-              nameEditableLabelRef.current?.enterEditMode();
-            })();
-          }}
+          onSelect={() =>
+            waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
+              nameEditableLabelRef.current?.enterEditMode()
+            )
+          }
         >
           Rename
           <ContextMenuShortcut>F2</ContextMenuShortcut>
