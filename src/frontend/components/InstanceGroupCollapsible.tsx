@@ -39,7 +39,12 @@ export function InstanceGroupCollapsible({ name, hidden, instances }: Props) {
           <ContextMenu>
             <ContextMenuTrigger asChild={true}>
               <div>
-                <EditableLabel ref={editableLabelRef} defaultValue={name} />
+                <EditableLabel
+                  ref={editableLabelRef}
+                  defaultValue={name}
+                  applyOnAboutToSave={(value) => value.trim()}
+                  isAllowedToSave={(value) => value.length > 0}
+                />
               </div>
             </ContextMenuTrigger>
             <ContextMenuContent>
