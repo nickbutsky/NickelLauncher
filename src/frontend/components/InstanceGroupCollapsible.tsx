@@ -35,26 +35,30 @@ export function InstanceGroupCollapsible({ name, hidden, instances }: Props) {
             {state ? <CaretDownIcon /> : <CaretRightIcon />}
           </Button>
         </CollapsibleTrigger>
-        <ContextMenu>
-          <ContextMenuTrigger asChild={true}>
-            <div>
-              <EditableLabel ref={editableLabelRef} defaultValue={name} />
-            </div>
-          </ContextMenuTrigger>
-          <ContextMenuContent>
-            <ContextMenuItem
-              ref={renameContextMenuItemRef}
-              onSelect={() =>
-                waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
-                  editableLabelRef.current?.enterEditMode()
-                )
-              }
-            >
-              Rename
-              <ContextMenuShortcut>F2</ContextMenuShortcut>
-            </ContextMenuItem>
-          </ContextMenuContent>
-        </ContextMenu>
+        {name ? (
+          <ContextMenu>
+            <ContextMenuTrigger asChild={true}>
+              <div>
+                <EditableLabel ref={editableLabelRef} defaultValue={name} />
+              </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              <ContextMenuItem
+                ref={renameContextMenuItemRef}
+                onSelect={() =>
+                  waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
+                    editableLabelRef.current?.enterEditMode()
+                  )
+                }
+              >
+                Rename
+                <ContextMenuShortcut>F2</ContextMenuShortcut>
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+        ) : (
+          <div>{name}</div>
+        )}
       </div>
       <CollapsibleContent className="data-[state=closed]:hidden" forceMount={true}>
         {instances.map((instance) => (
