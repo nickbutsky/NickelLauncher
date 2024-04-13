@@ -21,7 +21,9 @@ export const EditableLabel = React.forwardRef(
 
     const [value, setValue] = React.useState(defaultValue);
     const [editMode, setEditMode] = React.useState(false);
+    const [height, setHeight] = React.useState(0);
 
+    const labelRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<React.ComponentRef<typeof Input>>(null);
 
     React.useEffect(() => {
@@ -30,6 +32,12 @@ export const EditableLabel = React.forwardRef(
         inputRef.current?.select();
       }
     }, [editMode]);
+
+    React.useEffect(() => {
+      if (labelRef.current) {
+        setHeight(labelRef.current.clientHeight);
+      }
+    }, []);
 
     function discardChanges() {
       setEditMode(false);
@@ -40,11 +48,12 @@ export const EditableLabel = React.forwardRef(
 
     return (
       <>
-        <div className="whitespace-pre" hidden={editMode}>
+        <div className="whitespace-pre" ref={labelRef} hidden={editMode}>
           {value}
         </div>
         <Input
-          className={cn("h-5", !editMode && "hidden")}
+          className={cn(!editMode && "hidden")}
+          style={{ height: height }}
           ref={inputRef}
           defaultValue={value}
           onBlur={() => discardChanges()}
