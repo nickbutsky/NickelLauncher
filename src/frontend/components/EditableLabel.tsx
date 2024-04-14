@@ -4,7 +4,7 @@ import { cn } from "@/utils";
 
 interface Props {
   readonly defaultValue: string;
-  maxLength?: number;
+  readonly maxLength?: number;
   readonly applyOnAboutToSave?: (value: string) => string;
   readonly isAllowedToSave?: (value: string) => boolean;
   readonly onSave?: (value: string) => void;
@@ -19,7 +19,7 @@ export const EditableLabel = React.forwardRef(
       return { enterEditMode: () => setEditMode(true) };
     });
 
-    const [value, setValue] = React.useState(defaultValue);
+    const [value, setValue] = React.useState(maxLength === undefined ? defaultValue : defaultValue.slice(0, maxLength));
     const [editMode, setEditMode] = React.useState(false);
     const [height, setHeight] = React.useState(0);
 
@@ -49,7 +49,7 @@ export const EditableLabel = React.forwardRef(
     return (
       <>
         <div className="whitespace-pre text-ellipsis overflow-hidden" ref={labelRef} hidden={editMode}>
-          {maxLength === undefined ? value : value.slice(0, maxLength)}
+          {value}
         </div>
         <input
           className={cn("w-full bg-transparent", !editMode && "hidden")}
