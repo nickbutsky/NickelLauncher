@@ -48,8 +48,8 @@ export const EditableLabel = React.forwardRef(
 
     return (
       <>
-        <div className="whitespace-pre" ref={labelRef} hidden={editMode}>
-          {value}
+        <div className="whitespace-pre text-ellipsis overflow-hidden" ref={labelRef} hidden={editMode}>
+          {maxLength === undefined ? value : value.slice(0, maxLength)}
         </div>
         <input
           className={cn("w-full bg-transparent", !editMode && "hidden")}
