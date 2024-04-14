@@ -35,6 +35,7 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
             <EditableLabel
               ref={editableLabelRef}
               defaultValue={name}
+              maxLength={20}
               applyOnAboutToSave={(value) => value.trim()}
               isAllowedToSave={(value) => value.length > 0}
             />
