@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { Input } from "@/components/ui/input";
 import { cn } from "@/utils";
 
 interface Props {
@@ -24,7 +23,7 @@ export const EditableLabel = React.forwardRef(
     const [height, setHeight] = React.useState(0);
 
     const labelRef = React.useRef<HTMLDivElement>(null);
-    const inputRef = React.useRef<React.ComponentRef<typeof Input>>(null);
+    const inputRef = React.useRef<HTMLInputElement>(null);
 
     React.useEffect(() => {
       if (editMode) {
@@ -51,8 +50,8 @@ export const EditableLabel = React.forwardRef(
         <div className="whitespace-pre" ref={labelRef} hidden={editMode}>
           {value}
         </div>
-        <Input
-          className={cn(!editMode && "hidden")}
+        <input
+          className={cn("w-full bg-transparent", !editMode && "hidden")}
           style={{ height: height }}
           ref={inputRef}
           defaultValue={value}
