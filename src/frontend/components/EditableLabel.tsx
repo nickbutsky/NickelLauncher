@@ -4,6 +4,7 @@ import { cn } from "@/utils";
 
 interface Props {
   readonly defaultValue: string;
+  maxLength?: number;
   readonly applyOnAboutToSave?: (value: string) => string;
   readonly isAllowedToSave?: (value: string) => boolean;
   readonly onSave?: (value: string) => void;
@@ -11,7 +12,7 @@ interface Props {
 
 export const EditableLabel = React.forwardRef(
   (
-    { defaultValue, applyOnAboutToSave, isAllowedToSave, onSave }: Props,
+    { defaultValue, maxLength, applyOnAboutToSave, isAllowedToSave, onSave }: Props,
     forwardedRef: React.ForwardedRef<{ readonly enterEditMode: () => void }>
   ) => {
     React.useImperativeHandle(forwardedRef, () => {
@@ -55,6 +56,7 @@ export const EditableLabel = React.forwardRef(
           style={{ height: height }}
           ref={inputRef}
           defaultValue={value}
+          maxLength={maxLength}
           onBlur={() => discardChanges()}
           onContextMenu={(event) => event.stopPropagation()}
           onKeyDown={(event) => {
