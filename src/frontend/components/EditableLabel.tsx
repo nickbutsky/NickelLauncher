@@ -29,17 +29,17 @@ export const EditableLabel = React.forwardRef(
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     React.useEffect(() => {
+      if (labelRef.current) {
+        setHeight(labelRef.current.clientHeight);
+      }
+    }, []);
+
+    React.useEffect(() => {
       if (editMode) {
         inputRef.current?.focus();
         inputRef.current?.select();
       }
     }, [editMode]);
-
-    React.useEffect(() => {
-      if (labelRef.current) {
-        setHeight(labelRef.current.clientHeight);
-      }
-    }, []);
 
     function discardChanges() {
       setEditMode(false);
