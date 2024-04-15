@@ -52,7 +52,7 @@ export const EditableLabel = React.forwardRef(
           {value}
         </div>
         <DynamicInput
-          className={cn("w-full bg-transparent", !editMode && "hidden")}
+          className={cn(!editMode && "hidden")}
           style={{ height: height }}
           ref={inputRef}
           defaultValue={value}
@@ -107,4 +107,4 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
       />
     );
   }
-)
+);

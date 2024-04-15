@@ -42,6 +42,7 @@ export function InstanceGroupCollapsible({ name, hidden, instances }: Props) {
                 <EditableLabel
                   ref={editableLabelRef}
                   defaultValue={name}
+                  maxLength={50}
                   applyOnAboutToSave={(value) => value.trim()}
                   isAllowedToSave={(value) => value.length > 0}
                 />
