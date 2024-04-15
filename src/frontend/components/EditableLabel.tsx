@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import * as Portal from "@radix-ui/react-portal";
+
 import { cn } from "@/utils";
 
 interface Props {
@@ -48,37 +50,53 @@ export const EditableLabel = React.forwardRef(
 
     return (
       <>
-        <div className="whitespace-pre text-ellipsis overflow-hidden" ref={labelRef} hidden={editMode}>
-          {value}
+        <div className="whitespace-pre text-ellipsis overflow-hidden" ref={labelRef}>
+          {editMode ? "" : value}
         </div>
-        <DynamicInput
-          className={cn(!editMode && "hidden")}
-          style={{ height: height }}
-          ref={inputRef}
-          defaultValue={value}
-          maxLength={maxLength}
-          onBlur={() => discardChanges()}
-          onContextMenu={(event) => event.stopPropagation()}
-          onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              return discardChanges();
-            }
-            if (!(event.key === "Enter")) {
-              return;
-            }
-            const newValue = applyOnAboutToSave?.(event.currentTarget.value ?? "") ?? event.currentTarget.value ?? "";
-            if (isAllowedToSave && !isAllowedToSave(newValue)) {
-              return;
-            }
-            if (newValue === value) {
-              return discardChanges();
-            }
-            onSave?.(newValue);
-            setValue(newValue);
-            setEditMode(false);
-            event.currentTarget.value = newValue;
-          }}
-        />
+        {editMode && (
+          <Portal.Root
+            asChild={true}
+            className="absolute"
+            style={{
+              left: (labelRef.current?.getBoundingClientRect().left as number) - 4,
+              top: labelRef.current?.getBoundingClientRect().top
+            }}
+          >
+            <DynamicInput
+              style={{
+                height: height,
+                font: window
+                  .getComputedStyle(labelRef.current as Exclude<null, typeof labelRef.current>)
+                  .getPropertyValue("font")
+              }}
+              ref={inputRef}
+              defaultValue={value}
+              maxLength={maxLength}
+              onBlur={() => discardChanges()}
+              onContextMenu={(event) => event.stopPropagation()}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  return discardChanges();
+                }
+                if (!(event.key === "Enter")) {
+                  return;
+                }
+                const newValue =
+                  applyOnAboutToSave?.(event.currentTarget.value ?? "") ?? event.currentTarget.value ?? "";
+                if (isAllowedToSave && !isAllowedToSave(newValue)) {
+                  return;
+                }
+                if (newValue === value) {
+                  return discardChanges();
+                }
+                onSave?.(newValue);
+                setValue(newValue);
+                setEditMode(false);
+                event.currentTarget.value = newValue;
+              }}
+            />
+          </Portal.Root>
+        )}
       </>
     );
   }
