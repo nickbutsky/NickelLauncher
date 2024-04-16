@@ -13,28 +13,36 @@ import {
 } from "@/components/ui/context-menu";
 import { EditableLabel } from "@/components/EditableLabel";
 import defaultLogo from "@/assets/default.png";
-import { waitUntilTrue } from "@/utils";
+import { cn, waitUntilTrue } from "@/utils";
 
-interface Props {
+export interface InstanceProps {
   readonly name: string;
   readonly displayVersionName: string;
   readonly architectureChoice: string;
   readonly availableArchitectures: readonly string[];
 }
 
-export function InstanceButton({ name, displayVersionName, architectureChoice, availableArchitectures }: Props) {
-  const editableLabelRef = React.useRef<React.ComponentRef<typeof EditableLabel>>(null);
-  const renameContextMenuItemRef = React.useRef<React.ComponentRef<typeof ContextMenuItem>>(null);
+export const InstanceButton = React.forwardRef<
+  React.ElementRef<typeof Button>,
+  React.ComponentPropsWithoutRef<typeof Button> & InstanceProps
+>(({ className, variant, name, displayVersionName, architectureChoice, availableArchitectures, ...props }, ref) => {
+  const editableLabelRef = React.useRef<React.ElementRef<typeof EditableLabel>>(null);
+  const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
 
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild={true}>
-        <Button className="grid grid-cols-[max-content_1fr] gap-3 w-48 h-16" variant="outline">
+        <Button
+          className={cn("grid grid-cols-[max-content_1fr] gap-3 w-48 h-16", className)}
+          ref={ref}
+          variant="outline"
+          {...props}
+        >
           <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
           <div className="grid grid-rows-2 text-left">
             <EditableLabel
               ref={editableLabelRef}
-              defaultValue={name}
+              initialValue={name}
               maxLength={20}
               applyOnAboutToSave={(value) => value.trim()}
               isAllowedToSave={(value) => value.length > 0}
@@ -73,4 +81,4 @@ export function InstanceButton({ name, displayVersionName, architectureChoice, a
       </ContextMenuContent>
     </ContextMenu>
   );
-}
+});
