@@ -19,20 +19,19 @@ interface Props {
   readonly name: string;
   readonly initialCollapsed: boolean;
   readonly instances: readonly InstanceProps[];
-  readonly onToggled?: () => void;
 }
 
 export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
   React.ComponentPropsWithoutRef<typeof Collapsible> & Props
->(({ defaultOpen, name, initialCollapsed, instances, onToggled, ...props }, ref) => {
+>(({ defaultOpen, name, initialCollapsed, instances, ...props }, ref) => {
   const editableLabelRef = React.useRef<React.ElementRef<typeof EditableLabel>>(null);
   const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
 
   return (
     <Collapsible ref={ref} defaultOpen={!initialCollapsed} {...props}>
       <div className="flex items-center gap-2">
-        <CollapsibleTrigger asChild={true} onClick={() => onToggled?.()}>
+        <CollapsibleTrigger asChild={true}>
           <Button className="data-[state=closed]:-rotate-90" variant="ghost" size="icon">
             <CaretDownIcon />
           </Button>
