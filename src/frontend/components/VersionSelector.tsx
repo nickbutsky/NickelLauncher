@@ -26,10 +26,7 @@ export const VersionSelector = React.forwardRef<
 >(({ className, defaultValue, release, beta, preview, ...props }, ref) => {
   return (
     <Tabs className={cn("w-[400px]", className)} ref={ref} defaultValue={defaultValue || versionTypes[0]} {...props}>
-      <div className="grid grid-cols-[minmax(0,1fr),auto,minmax(0,1fr)] items-center">
-        <RefreshButton classname="mr-auto" />
-        <VersionTypeSelector />
-      </div>
+      <TopBar />
       {versionTypes.map((versionType) => (
         <TabsContent className="data-[state=inactive]:hidden" key={versionType} value={versionType} forceMount={true}>
           <InnerVersionSelector
@@ -47,7 +44,7 @@ export const VersionSelector = React.forwardRef<
   );
 });
 
-function TopBar({ variant }: { readonly variant: "lr" | "rl" | "cr" | "cl" }) {
+function TopBar({ variant = "lr" }: { readonly variant?: "lr" | "rl" | "cr" | "cl" }) {
   return (
     <div
       className={
