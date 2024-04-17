@@ -44,7 +44,7 @@ export const VersionSelector = React.forwardRef<
   );
 });
 
-function TopBar({ variant = "lr" }: { readonly variant?: "lr" | "rl" | "cr" | "cl" }) {
+function TopBar({ variant = "cl" }: { readonly variant?: "lr" | "rl" | "cr" | "cl" }) {
   return (
     <div
       className={
