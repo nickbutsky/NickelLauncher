@@ -8,18 +8,20 @@ import { VersionSelector } from "@/components/VersionSelector";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const FormSchema = z.object({
+const formSchema = z.object({
   instanceName: z.string().trim().min(1, {
     message: "Instance name must be at least 1 character long."
   }),
-  groupName: z.string().trim()
+  groupName: z.string().trim(),
+  versionDisplayName: z.string()
 });
 
 export function InstanceCreationDialogContent() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      instanceName: ""
+      instanceName: "",
+      groupName: ""
     }
   });
 
@@ -51,7 +53,6 @@ export function InstanceCreationDialogContent() {
               <FormControl>
                 <Input {...field} />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
