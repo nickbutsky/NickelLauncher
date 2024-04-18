@@ -5,7 +5,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { UpdateIcon } from "@radix-ui/react-icons";
-import { cn } from "@/utils";
 
 const versionTypes = ["release", "beta", "preview"] as const;
 
@@ -23,9 +22,9 @@ interface VersionProps {
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
   React.ComponentPropsWithoutRef<typeof Tabs> & VersionsProps
->(({ className, defaultValue, release, beta, preview, ...props }, ref) => {
+>(({ defaultValue, release, beta, preview, ...props }, ref) => {
   return (
-    <Tabs className={cn("w-[400px]", className)} ref={ref} defaultValue={defaultValue || versionTypes[0]} {...props}>
+    <Tabs ref={ref} defaultValue={defaultValue || versionTypes[0]} {...props}>
       <TopBar />
       {versionTypes.map((versionType) => (
         <TabsContent className="data-[state=inactive]:hidden" key={versionType} value={versionType} forceMount={true}>
