@@ -1,3 +1,9 @@
+import { ThemeProvider } from "@/components/ui/theme-provider";
+
 export function App() {
-  return <></>;
+  return (
+    <ThemeProvider defaultTheme="dark">
+      <div />
+    </ThemeProvider>
+  );
 }
