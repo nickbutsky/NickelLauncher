@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { VersionSelector } from "@/components/VersionSelector";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 const FormSchema = z.object({
@@ -38,13 +38,25 @@ export function InstanceCreationDialogContent() {
               <FormControl>
                 <Input placeholder="None" {...field} />
               </FormControl>
-              <FormDescription />
               <FormMessage />
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="groupName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Group name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <VersionSelector />
       </Form>
-      <VersionSelector />
     </DialogContent>
   );
 }
