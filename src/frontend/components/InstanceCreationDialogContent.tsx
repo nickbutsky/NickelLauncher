@@ -4,9 +4,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { VersionSelector } from "@/components/VersionSelector";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { VersionSelector } from "@/components/VersionSelector";
 
 const formSchema = z.object({
   instanceName: z.string().trim().min(1, {
@@ -38,7 +38,7 @@ export function InstanceCreationDialogContent() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="None" {...field} />
+                <Input placeholder="None" maxLength={20} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -51,7 +51,7 @@ export function InstanceCreationDialogContent() {
             <FormItem>
               <FormLabel>Group name</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input maxLength={50} {...field} />
               </FormControl>
             </FormItem>
           )}
