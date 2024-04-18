@@ -7,6 +7,7 @@ import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { VersionSelector } from "@/components/VersionSelector";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   instanceName: z.string().trim().min(1, {
@@ -31,32 +32,35 @@ export function InstanceCreationDialogContent() {
         <DialogTitle>Create new instance</DialogTitle>
       </DialogHeader>
       <Form {...form}>
-        <FormField
-          control={form.control}
-          name="instanceName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="None" maxLength={20} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="groupName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Group name</FormLabel>
-              <FormControl>
-                <Input maxLength={50} {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <VersionSelector />
+        <form onSubmit={form.handleSubmit((data) => console.log(JSON.stringify(data, undefined, 2)))}>
+          <FormField
+            control={form.control}
+            name="instanceName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="None" maxLength={20} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="groupName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Group name</FormLabel>
+                <FormControl>
+                  <Input maxLength={50} {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <VersionSelector />
+          <Button type="submit">Create</Button>
+        </form>
       </Form>
     </DialogContent>
   );
