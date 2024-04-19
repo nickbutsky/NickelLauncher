@@ -137,8 +137,8 @@ function InnerVersionSelector({
   const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);
 
   React.useEffect(() => {
-    selectedItemRef.current?.scrollIntoView();
-  });
+    selectedItemRef.current?.scrollIntoView({ block: "center" });
+  }, []);
 
   return (
     <ScrollArea className="h-[300px] pr-3" type="always">
