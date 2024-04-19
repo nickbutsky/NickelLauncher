@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +21,8 @@ export function InstanceCreationDialogContent() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       instanceName: "",
-      groupName: ""
+      groupName: "",
+      versionDisplayName: undefined
     }
   });
 
@@ -61,8 +61,20 @@ export function InstanceCreationDialogContent() {
               </FormItem>
             )}
           />
-          <VersionSelector />
-          <Button className="float-right" type="submit">Create</Button>
+          <FormField
+            control={form.control}
+            name="versionDisplayName"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <VersionSelector defaultValue={field.value} onValueChange={field.onChange} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <Button className="float-right" type="submit">
+            Create
+          </Button>
         </form>
       </Form>
     </DialogContent>

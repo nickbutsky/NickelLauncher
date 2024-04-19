@@ -1,10 +1,11 @@
 import * as React from "react";
 
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
 import { UpdateIcon } from "@radix-ui/react-icons";
+
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Button } from "@/components/ui/button";
 
 const versionTypes = ["release", "beta", "preview"] as const;
 
@@ -22,9 +23,19 @@ interface VersionProps {
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
   React.ComponentPropsWithoutRef<typeof Tabs> & VersionsProps
->(({ defaultValue, release, beta, preview, ...props }, ref) => {
+>(({ defaultValue, onValueChange, release, beta, preview, ...props }, ref) => {
   return (
-    <Tabs ref={ref} defaultValue={defaultValue || versionTypes[0]} {...props}>
+    <Tabs
+      ref={ref}
+      defaultValue={
+        versionTypes.find((versionType) => {
+          return { release, beta, preview }[versionType].find(
+            (versionProp) => versionProp.displayName === defaultValue
+          );
+        }) ?? versionTypes[0]
+      }
+      {...props}
+    >
       <TopBar />
       {versionTypes.map((versionType) => (
         <TabsContent
@@ -35,13 +46,9 @@ export const VersionSelector = React.forwardRef<
           forceMount={true}
         >
           <InnerVersionSelector
-            versions={
-              {
-                release: release,
-                beta: beta,
-                preview: preview
-              }[versionType]
-            }
+            defaultValue={defaultValue}
+            onValueChange={onValueChange}
+            versions={{ release, beta, preview }[versionType]}
           />
         </TabsContent>
       ))}
@@ -114,8 +121,18 @@ function RefreshButton({ classname }: { readonly classname?: string }) {
   );
 }
 
-function InnerVersionSelector({ versions }: { readonly versions: VersionsProps[keyof VersionsProps] }) {
-  const [displayName, setDisplayName] = React.useState(versions[0]?.displayName);
+function InnerVersionSelector({
+  defaultValue,
+  onValueChange,
+  versions
+}: {
+  readonly defaultValue?: string;
+  readonly onValueChange?: (value: string) => void;
+  readonly versions: VersionsProps[keyof VersionsProps];
+}) {
+  const [displayName, setDisplayName] = React.useState(
+    versions.find((versionProp) => versionProp.displayName === defaultValue)?.displayName ?? versions[0]?.displayName
+  );
 
   return (
     <ScrollArea className="h-[300px] pr-3" type="always">
@@ -127,6 +144,7 @@ function InnerVersionSelector({ versions }: { readonly versions: VersionsProps[k
         onValueChange={(value) => {
           if (value) {
             setDisplayName(value);
+            onValueChange?.(value);
           }
         }}
       >
