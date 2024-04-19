@@ -1,3 +1,5 @@
+import { vd } from "@/testing-data";
+
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -32,7 +34,10 @@ export function InstanceCreationDialogContent() {
         <DialogTitle>Create new instance</DialogTitle>
       </DialogHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit((data) => console.log(JSON.stringify(data, undefined, 2)))}>
+        <form
+          className="space-y-4"
+          onSubmit={form.handleSubmit((data) => console.log(JSON.stringify(data, undefined, 2)))}
+        >
           <FormField
             control={form.control}
             name="instanceName"
@@ -58,7 +63,7 @@ export function InstanceCreationDialogContent() {
               </FormItem>
             )}
           />
-          <VersionSelector />
+          <VersionSelector {...vd} />
           <Button type="submit">Create</Button>
         </form>
       </Form>
