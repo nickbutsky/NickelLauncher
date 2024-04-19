@@ -27,7 +27,13 @@ export const VersionSelector = React.forwardRef<
     <Tabs ref={ref} defaultValue={defaultValue || versionTypes[0]} {...props}>
       <TopBar />
       {versionTypes.map((versionType) => (
-        <TabsContent className="data-[state=inactive]:hidden" key={versionType} value={versionType} forceMount={true}>
+        <TabsContent
+          className="data-[state=inactive]:hidden"
+          tabIndex={-1}
+          key={versionType}
+          value={versionType}
+          forceMount={true}
+        >
           <InnerVersionSelector
             versions={
               {

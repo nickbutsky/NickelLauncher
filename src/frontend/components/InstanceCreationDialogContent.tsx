@@ -1,5 +1,3 @@
-import { vd } from "@/testing-data";
-
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -63,8 +61,8 @@ export function InstanceCreationDialogContent() {
               </FormItem>
             )}
           />
-          <VersionSelector {...vd} />
-          <Button type="submit">Create</Button>
+          <VersionSelector />
+          <Button className="float-right" type="submit">Create</Button>
         </form>
       </Form>
     </DialogContent>
