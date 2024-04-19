@@ -130,9 +130,15 @@ function InnerVersionSelector({
   readonly onValueChange?: (value: string) => void;
   readonly versions: VersionsProps[keyof VersionsProps];
 }) {
-  const [displayName, setDisplayName] = React.useState(
+  const [currentDisplayName, setCurrentDisplayName] = React.useState(
     versions.find((versionProp) => versionProp.displayName === defaultValue)?.displayName ?? versions[0]?.displayName
   );
+
+  const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);
+
+  React.useEffect(() => {
+    selectedItemRef.current?.scrollIntoView();
+  });
 
   return (
     <ScrollArea className="h-[300px] pr-3" type="always">
@@ -140,16 +146,21 @@ function InnerVersionSelector({
         className="flex-col gap-0"
         type="single"
         orientation="vertical"
-        value={displayName}
+        value={currentDisplayName}
         onValueChange={(value) => {
           if (value) {
-            setDisplayName(value);
+            setCurrentDisplayName(value);
             onValueChange?.(value);
           }
         }}
       >
         {versions.map(({ displayName, availableArchitectures }) => (
-          <ToggleGroupItem className="w-full justify-between rounded-none" key={displayName} value={displayName}>
+          <ToggleGroupItem
+            className="w-full justify-between rounded-none"
+            ref={displayName === currentDisplayName ? selectedItemRef : undefined}
+            key={displayName}
+            value={displayName}
+          >
             <div>{displayName}</div>
             <div>{availableArchitectures.join(" | ")}</div>
           </ToggleGroupItem>
