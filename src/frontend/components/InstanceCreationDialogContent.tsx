@@ -1,6 +1,5 @@
 import { vd } from "@/testing-data";
 
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,8 +17,6 @@ const formSchema = z.object({
 });
 
 export function InstanceCreationDialogContent() {
-  const [currentVersionDisplayName, setCurrentVersionDisplayName] = React.useState(vd.beta[5]?.displayName);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,7 +43,7 @@ export function InstanceCreationDialogContent() {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder={currentVersionDisplayName} maxLength={20} {...field} />
+                  <Input maxLength={20} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -70,14 +67,7 @@ export function InstanceCreationDialogContent() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <VersionSelector
-                    defaultValue={field.value}
-                    onValueChange={(value) => {
-                      setCurrentVersionDisplayName(value);
-                      field.onChange(value);
-                    }}
-                    {...vd}
-                  />
+                  <VersionSelector defaultValue={field.value} onValueChange={field.onChange} {...vd} />
                 </FormControl>
               </FormItem>
             )}
