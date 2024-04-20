@@ -1,3 +1,5 @@
+import { vd } from "@/testing-data";
+
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,9 +12,7 @@ import { VersionSelector } from "@/components/VersionSelector";
 import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
-  instanceName: z.string().trim().min(1, {
-    message: "Instance name must be at least 1 character long."
-  }),
+  instanceName: z.string().trim(),
   groupName: z.string().trim(),
   versionDisplayName: z.string()
 });
@@ -76,6 +76,7 @@ export function InstanceCreationDialogContent() {
                       setCurrentVersionDisplayName(value);
                       field.onChange(value);
                     }}
+                    {...vd}
                   />
                 </FormControl>
               </FormItem>
