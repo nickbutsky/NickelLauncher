@@ -120,6 +120,7 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
           onFocus?.(event);
         }}
         onChange={(event) => {
+          event.currentTarget.value = event.currentTarget.value.trimStart();
           resize(event);
           onChange?.(event);
         }}
