@@ -11,7 +11,7 @@ import { VersionSelector } from "@/components/VersionSelector";
 import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
-  instanceName: z.string().trim(),
+  instanceName: z.string().trim().min(1, "Instance name must be at least 1 character long."),
   groupName: z.string().trim(),
   versionDisplayName: z.string()
 });
