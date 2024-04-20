@@ -19,6 +19,7 @@ const formSchema = z.object({
 export function InstanceCreationDialogContent() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    reValidateMode: "onSubmit",
     defaultValues: {
       instanceName: "",
       groupName: "",
