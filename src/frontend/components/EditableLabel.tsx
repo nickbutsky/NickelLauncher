@@ -14,7 +14,7 @@ interface Props {
 
 export const EditableLabel = React.forwardRef<
   HTMLDivElement & { readonly enterEditMode: () => void },
-  React.ComponentPropsWithoutRef<"div"> & Props
+  React.HTMLAttributes<HTMLDivElement> & Props
 >(({ className, initialValue, maxLength, applyOnAboutToSave, isAllowedToSave, onSave, ...props }, ref) => {
   React.useImperativeHandle(
     ref,
@@ -70,7 +70,7 @@ export const EditableLabel = React.forwardRef<
             style={{
               height: height,
               font: window
-                .getComputedStyle(labelRef.current as Exclude<null, typeof labelRef.current>)
+                .getComputedStyle(labelRef.current as Exclude<typeof labelRef.current, null>)
                 .getPropertyValue("font")
             }}
             ref={inputRef}
@@ -113,7 +113,7 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
 
     return (
       <input
-        className={cn("px-1 bg-transparent", className)}
+        className={cn("px-1 bg-inherit", className)}
         ref={ref}
         onFocus={(event) => {
           resize(event);

@@ -5,8 +5,7 @@
       "node_modules/",
       "postcss.config.js",
       "tailwind.config.js",
-      "src/frontend/components/ui",
-      "ThemeProvider.tsx"
+      "src/frontend/components/ui"
     ]
   },
   "formatter": {
