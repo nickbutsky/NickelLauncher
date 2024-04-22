@@ -62,7 +62,7 @@ export const VersionSelector = React.forwardRef<
 function TopBar({
   variant = "cl",
   onRefreshRequest
-}: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Omit<Props, "versions">) {
+}: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Pick<Props, "onRefreshRequest">) {
   const versionTypeSelector = (
     <TabsList className="grid grid-cols-3">
       {versionTypes.map((versionType) => (
