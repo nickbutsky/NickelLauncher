@@ -1,4 +1,4 @@
-import { vd } from "@/testing-data";
+import * as testData from "@/test-data";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { InputWithOptions } from "@/components/InputWithOptions";
 import { VersionSelector } from "@/components/VersionSelector";
 import { Button } from "@/components/ui/button";
 
@@ -23,7 +24,7 @@ export function InstanceCreationDialogContent() {
     defaultValues: {
       instanceName: "",
       groupName: "",
-      versionDisplayName: "1.16.10004.0"
+      versionDisplayName: testData.versions.release[14]?.displayName
     }
   });
 
@@ -57,7 +58,11 @@ export function InstanceCreationDialogContent() {
               <FormItem>
                 <FormLabel>Group name</FormLabel>
                 <FormControl>
-                  <Input maxLength={50} {...field} />
+                  <InputWithOptions
+                    maxLength={50}
+                    options={testData.instanceGroups.map((instanceGroup) => instanceGroup.name)}
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -68,7 +73,7 @@ export function InstanceCreationDialogContent() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <VersionSelector defaultValue={field.value} onValueChange={field.onChange} {...vd} />
+                  <VersionSelector defaultValue={field.value} onValueChange={field.onChange} {...testData.versions} />
                 </FormControl>
               </FormItem>
             )}

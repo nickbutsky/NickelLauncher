@@ -115,7 +115,7 @@ function VersionTypeSelector() {
 
 function RefreshButton({ classname }: { readonly classname?: string }) {
   return (
-    <Button className={classname} size="icon" variant="secondary">
+    <Button className={classname} type="button" size="icon" variant="secondary">
       <UpdateIcon />
     </Button>
   );
