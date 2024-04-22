@@ -38,6 +38,14 @@ export const InputWithOptions = React.forwardRef<
           Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(inputRef.current, value);
           inputRef.current.dispatchEvent(new Event("input", { bubbles: true }));
         }}
+        onOpenChange={(open) => {
+          if (!open) {
+            setTimeout(() => {
+              inputRef.current?.focus();
+              inputRef.current?.select();
+            }, 0);
+          }
+        }}
       >
         <SelectTrigger className="w-min rounded-l-none" />
         <SelectContent>
