@@ -9,34 +9,37 @@ import { Button } from "@/components/ui/button";
 
 const versionTypes = ["release", "beta", "preview"] as const;
 
-interface VersionsProps {
-  readonly release: readonly VersionProps[];
-  readonly beta: readonly VersionProps[];
-  readonly preview: readonly VersionProps[];
+interface Props {
+  readonly versions: Versions;
+  readonly onRefreshRequest: () => void;
 }
 
-interface VersionProps {
+interface Versions {
+  readonly release: readonly Version[];
+  readonly beta: readonly Version[];
+  readonly preview: readonly Version[];
+}
+
+interface Version {
   readonly displayName: string;
   readonly availableArchitectures: readonly string[];
 }
 
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
-  React.ComponentPropsWithoutRef<typeof Tabs> & VersionsProps
->(({ defaultValue, onValueChange, release, beta, preview, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof Tabs> & Props
+>(({ defaultValue, onValueChange, versions, onRefreshRequest, ...props }, ref) => {
   return (
     <Tabs
       ref={ref}
       defaultValue={
-        versionTypes.find((versionType) => {
-          return { release, beta, preview }[versionType].find(
-            (versionProp) => versionProp.displayName === defaultValue
-          );
-        }) ?? versionTypes[0]
+        versionTypes.find((versionType) =>
+          versions[versionType].find((version) => version.displayName === defaultValue)
+        ) ?? versionTypes[0]
       }
       {...props}
     >
-      <TopBar />
+      <TopBar onRefreshRequest={onRefreshRequest} />
       {versionTypes.map((versionType) => (
         <TabsContent
           className="data-[state=inactive]:hidden"
@@ -48,7 +51,7 @@ export const VersionSelector = React.forwardRef<
           <InnerVersionSelector
             defaultValue={defaultValue}
             onValueChange={onValueChange}
-            versions={{ release, beta, preview }[versionType]}
+            versions={versions[versionType]}
           />
         </TabsContent>
       ))}
@@ -56,7 +59,32 @@ export const VersionSelector = React.forwardRef<
   );
 });
 
-function TopBar({ variant = "cl" }: { readonly variant?: "lr" | "rl" | "cr" | "cl" }) {
+function TopBar({
+  variant = "cl",
+  onRefreshRequest
+}: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Omit<Props, "versions">) {
+  const versionTypeSelector = (
+    <TabsList className="grid grid-cols-3">
+      {versionTypes.map((versionType) => (
+        <TabsTrigger key={versionType} value={versionType}>
+          {versionType.charAt(0).toUpperCase() + versionType.slice(1)}
+        </TabsTrigger>
+      ))}
+    </TabsList>
+  );
+
+  const refreshButton = (
+    <Button
+      className={{ lr: "", rl: "", cr: "ml-auto", cl: "mr-auto" }[variant]}
+      type="button"
+      size="icon"
+      variant="secondary"
+      onClick={() => onRefreshRequest()}
+    >
+      <UpdateIcon />
+    </Button>
+  );
+
   return (
     <div
       className={
@@ -72,52 +100,32 @@ function TopBar({ variant = "cl" }: { readonly variant?: "lr" | "rl" | "cr" | "c
         {
           lr: (
             <>
-              <VersionTypeSelector />
-              <RefreshButton />
+              {versionTypeSelector}
+              {refreshButton}
             </>
           ),
           rl: (
             <>
-              <RefreshButton />
-              <VersionTypeSelector />
+              {refreshButton}
+              {versionTypeSelector}
             </>
           ),
           cr: (
             <>
               <div />
-              <VersionTypeSelector />
-              <RefreshButton classname="ml-auto" />
+              {versionTypeSelector}
+              {refreshButton}
             </>
           ),
           cl: (
             <>
-              <RefreshButton classname="mr-auto" />
-              <VersionTypeSelector />
+              {refreshButton}
+              {versionTypeSelector}
             </>
           )
         }[variant]
       }
     </div>
-  );
-}
-
-function VersionTypeSelector() {
-  return (
-    <TabsList className="grid grid-cols-3">
-      {versionTypes.map((versionType) => (
-        <TabsTrigger key={versionType} value={versionType}>
-          {versionType.charAt(0).toUpperCase() + versionType.slice(1)}
-        </TabsTrigger>
-      ))}
-    </TabsList>
-  );
-}
-
-function RefreshButton({ classname }: { readonly classname?: string }) {
-  return (
-    <Button className={classname} type="button" size="icon" variant="secondary">
-      <UpdateIcon />
-    </Button>
   );
 }
 
@@ -128,10 +136,10 @@ function InnerVersionSelector({
 }: {
   readonly defaultValue?: string;
   readonly onValueChange?: (value: string) => void;
-  readonly versions: VersionsProps[keyof VersionsProps];
+  readonly versions: readonly Version[];
 }) {
   const [currentDisplayName, setCurrentDisplayName] = React.useState(
-    versions.find((versionProp) => versionProp.displayName === defaultValue)?.displayName ?? versions[0]?.displayName
+    versions.find((version) => version.displayName === defaultValue)?.displayName ?? versions[0]?.displayName
   );
 
   const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);

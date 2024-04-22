@@ -73,7 +73,12 @@ export function InstanceCreationDialogContent() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <VersionSelector defaultValue={field.value} onValueChange={field.onChange} {...testData.versions} />
+                  <VersionSelector
+                    defaultValue={field.value}
+                    onValueChange={field.onChange}
+                    versions={testData.versions}
+                    onRefreshRequest={() => undefined}
+                  />
                 </FormControl>
               </FormItem>
             )}
