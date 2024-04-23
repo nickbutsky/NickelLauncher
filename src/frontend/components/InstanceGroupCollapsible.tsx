@@ -41,7 +41,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
             <ContextMenuTrigger asChild={true}>
               <EditableLabel
                 ref={editableLabelRef}
-                initialValue={name}
+                defaultValue={name}
                 maxLength={50}
                 applyOnAboutToSave={(value) => value.trim()}
                 isAllowedToSave={(value) => value.length > 0}

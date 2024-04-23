@@ -5,7 +5,7 @@ import * as Portal from "@radix-ui/react-portal";
 import { cn } from "@/utils";
 
 interface Props {
-  readonly initialValue: string;
+  readonly defaultValue: string;
   readonly maxLength?: number;
   readonly applyOnAboutToSave?: (value: string) => string;
   readonly isAllowedToSave?: (value: string) => boolean;
@@ -14,8 +14,8 @@ interface Props {
 
 export const EditableLabel = React.forwardRef<
   HTMLDivElement & { readonly enterEditMode: () => void },
-  React.HTMLAttributes<HTMLDivElement> & Props
->(({ className, initialValue, maxLength, applyOnAboutToSave, isAllowedToSave, onSave, ...props }, ref) => {
+  Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> & Props
+>(({ className, defaultValue, maxLength, applyOnAboutToSave, isAllowedToSave, onSave, ...props }, ref) => {
   React.useImperativeHandle(
     ref,
     () =>
@@ -25,7 +25,7 @@ export const EditableLabel = React.forwardRef<
     []
   );
 
-  const [value, setValue] = React.useState(maxLength === undefined ? initialValue : initialValue.slice(0, maxLength));
+  const [value, setValue] = React.useState(maxLength === undefined ? defaultValue : defaultValue.slice(0, maxLength));
   const [editMode, setEditMode] = React.useState(false);
   const [height, setHeight] = React.useState(0);
 

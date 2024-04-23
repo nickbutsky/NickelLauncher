@@ -12,6 +12,8 @@ const versionTypes = ["release", "beta", "preview"] as const;
 interface Props {
   readonly versions: Versions;
   readonly onRefreshRequest: () => void;
+  readonly defaultDisplayName?: string;
+  readonly onDisplayNameChange?: (displayName: string) => void;
 }
 
 interface Versions {
@@ -28,13 +30,13 @@ interface Version {
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
   React.ComponentPropsWithoutRef<typeof Tabs> & Props
->(({ defaultValue, onValueChange, versions, onRefreshRequest, ...props }, ref) => {
+>(({ defaultValue, versions, onRefreshRequest, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
   return (
     <Tabs
       ref={ref}
       defaultValue={
         versionTypes.find((versionType) =>
-          versions[versionType].find((version) => version.displayName === defaultValue)
+          versions[versionType].find((version) => version.displayName === defaultDisplayName)
         ) ?? versionTypes[0]
       }
       {...props}
@@ -49,9 +51,9 @@ export const VersionSelector = React.forwardRef<
           forceMount={true}
         >
           <InnerVersionSelector
-            defaultValue={defaultValue}
-            onValueChange={onValueChange}
             versions={versions[versionType]}
+            defaultDisplayName={defaultDisplayName}
+            onDisplayNameChange={onDisplayNameChange}
           />
         </TabsContent>
       ))}
@@ -130,16 +132,16 @@ function TopBar({
 }
 
 function InnerVersionSelector({
-  defaultValue,
-  onValueChange,
-  versions
+  versions,
+  defaultDisplayName,
+  onDisplayNameChange
 }: {
-  readonly defaultValue?: string;
-  readonly onValueChange?: (value: string) => void;
   readonly versions: readonly Version[];
+  readonly defaultDisplayName?: string;
+  readonly onDisplayNameChange?: (displayName: string) => void;
 }) {
   const [currentDisplayName, setCurrentDisplayName] = React.useState(
-    versions.find((version) => version.displayName === defaultValue)?.displayName ?? versions[0]?.displayName
+    versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName
   );
 
   const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);
@@ -158,7 +160,7 @@ function InnerVersionSelector({
         onValueChange={(value) => {
           if (value) {
             setCurrentDisplayName(value);
-            onValueChange?.(value);
+            onDisplayNameChange?.(value);
           }
         }}
       >
