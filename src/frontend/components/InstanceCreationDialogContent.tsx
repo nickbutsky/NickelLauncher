@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { InputWithOptions } from "@/components/InputWithOptions";
@@ -83,9 +83,9 @@ export function InstanceCreationDialogContent() {
               </FormItem>
             )}
           />
-          <Button className="float-right" type="submit">
-            Create
-          </Button>
+          <DialogFooter>
+            <Button type="submit">Create</Button>
+          </DialogFooter>
         </form>
       </Form>
     </DialogContent>
