@@ -18,16 +18,12 @@ export async function waitUntilTrue(
   let timePassed = 0;
   return new Promise<void>(function poll(resolve, reject) {
     if (timePassed >= timeout) {
-      if (throwOnTimeout) {
-        return reject();
-      }
+      return throwOnTimeout ? reject() : resolve();
+    }
+    if (conditionFunction()) {
       return resolve();
     }
-    if (!conditionFunction()) {
-      timePassed += interval;
-      setTimeout(() => poll(resolve, reject), interval);
-      return;
-    }
-    resolve();
+    timePassed += interval;
+    setTimeout(() => poll(resolve, reject), interval);
   });
 }
