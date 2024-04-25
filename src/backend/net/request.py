@@ -24,4 +24,5 @@ def _download_reporthook_wrapper(reporthook: Callable[[Report], object]) -> Call
         if read_so_far > rounded_total_size:
             read_so_far = rounded_total_size
         reporthook(Report(Report.PROGRESS, "Downloading", ProgressDetails(read_so_far, rounded_total_size, "MB")))
+
     return download_reporthook

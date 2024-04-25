@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 def find_packages(package_family_name: str) -> list[dict[object, object]]:
     cmd = (
         "powershell",
-        f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json'
+        f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json',
     )
     output = shell.run_command(cmd, False)
 

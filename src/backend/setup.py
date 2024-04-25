@@ -7,7 +7,6 @@ from logging.handlers import RotatingFileHandler
 from tendo.singleton import SingleInstance
 
 from env import INSTANCES_DIR_PATH, LOGS_DIR_PATH, TEMP_DIR_PATH, VERSIONS_DIR_PATH
-from ui.app import App
 
 
 class Setup:
@@ -46,8 +45,6 @@ def main():
 
     Setup().run()
 
-    app = App()
-    app.exec()
 
 
 if __name__ == '__main__':

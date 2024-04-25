@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 
 
 def download(
-    version: Version, architecture: Architecture, reporthook: Callable[[Report], object] | None = None
+    version: Version,
+    architecture: Architecture,
+    reporthook: Callable[[Report], object] | None = None,
 ) -> None:
     logging.debug("Retrieving a download link...")
     if reporthook:
@@ -47,7 +49,7 @@ def _get_link(guid: str) -> str:
 
 def _extract_link(response_envelope: Element) -> str:
     file_locations = response_envelope.find(
-        "./{*}Body/{*}GetExtendedUpdateInfo2Response/{*}GetExtendedUpdateInfo2Result/{*}FileLocations"
+        "./{*}Body/{*}GetExtendedUpdateInfo2Response/{*}GetExtendedUpdateInfo2Result/{*}FileLocations",
     )
     if not file_locations:
         return ""

@@ -50,7 +50,7 @@ def run_command(command: str | bytes | Sequence[str | bytes], log_stdout: bool =
         creationflags=subprocess.CREATE_NO_WINDOW,
         capture_output=True,
         check=False,
-        text=True
+        text=True,
     )
     if result.stderr:
         logging.error(result.stderr)

@@ -13,7 +13,7 @@ def post_envelope(url: str, envelope: Envelope) -> Element:
         ElementTree.tostring(envelope),
         headers={"content-type": "application/soap+xml; charset=utf-8"},
         timeout=10,
-        verify=False  # noqa: S501
+        verify=False,  # noqa: S501
     )
 
     if res.status_code != 200:
@@ -30,7 +30,7 @@ class Envelope(Element):
     def __init__(self, url: str, element: Element) -> None:
         super().__init__(
             "s:Envelope",
-            {"xmlns:a": "http://www.w3.org/2005/08/addressing", "xmlns:s": "http://www.w3.org/2003/05/soap-envelope"}
+            {"xmlns:a": "http://www.w3.org/2005/08/addressing", "xmlns:s": "http://www.w3.org/2003/05/soap-envelope"},
         )
 
         self.append(_Header(url, element.tag))
@@ -64,8 +64,8 @@ class _Header(Element):
             "o:Security",
             {
                 "s:mustUnderstand": "1",
-                "xmlns:o": "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
-            }
+                "xmlns:o": "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
+            },
         )
         timestamp = SubElement(security, "Timestamp", {"xmlns": _WSU})
         created = SubElement(timestamp, "Created")
@@ -78,9 +78,9 @@ class _Header(Element):
             {
                 "wsu:id": "ClientMSA",
                 "xmlns:wsu": _WSU,
-                "xmlns:wuws": "http://schemas.microsoft.com/msus/2014/10/WindowsUpdateAuthorization"
-            }
+                "xmlns:wuws": "http://schemas.microsoft.com/msus/2014/10/WindowsUpdateAuthorization",
+            },
         )
         windows_update_tickets_token.append(
-            Element("TicketType", {"Name": "AAD", "Version": "1.0", "Policy": "MBI_SSL"})
+            Element("TicketType", {"Name": "AAD", "Version": "1.0", "Policy": "MBI_SSL"}),
         )

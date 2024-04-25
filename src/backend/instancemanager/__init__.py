@@ -25,7 +25,7 @@ def create_instance(name: str, instance_group_name: str, version_name: str) -> N
         name,
         instance_group_name,
         next(iter(v for v in versionretrieve.get_versions_locally() if v.name == version_name)),
-        _state
+        _state,
     )
     # _watchdog.ignore_dir_created_event = False
 

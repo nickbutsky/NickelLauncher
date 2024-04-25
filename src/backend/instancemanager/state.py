@@ -66,7 +66,9 @@ class State:
         else:
             unnamed_instance_group = self.instance_groups[0]
             instance_group.move_instances(
-                len(unnamed_instance_group.instances), unnamed_instance_group, instance_group.instances
+                len(unnamed_instance_group.instances),
+                unnamed_instance_group,
+                instance_group.instances,
             )
 
     def _save(self) -> None:
@@ -77,7 +79,7 @@ class State:
         return {
             "format_version": 1,
             "groups": [group.to_dict() for group in self.instance_groups],
-            "last_instance": self.last_instance.directory.name if self.last_instance else None
+            "last_instance": self.last_instance.directory.name if self.last_instance else None,
         }
 
 

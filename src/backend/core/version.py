@@ -41,7 +41,7 @@ class Version:
         return {
             VersionType.RELEASE: "Microsoft.MinecraftUWP_8wekyb3d8bbwe",
             VersionType.BETA: "Microsoft.MinecraftUWP_8wekyb3d8bbwe",
-            VersionType.PREVIEW: "Microsoft.MinecraftWindowsBeta_8wekyb3d8bbwe"
+            VersionType.PREVIEW: "Microsoft.MinecraftWindowsBeta_8wekyb3d8bbwe",
         }[self.type]
 
     @property
@@ -49,7 +49,7 @@ class Version:
         return {
             VersionType.RELEASE: "S-1-15-2-1958404141-86561845-1752920682-3514627264-368642714-62675701-733520436",
             VersionType.BETA: "S-1-15-2-1958404141-86561845-1752920682-3514627264-368642714-62675701-733520436",
-            VersionType.PREVIEW: "S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476"
+            VersionType.PREVIEW: "S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476",
         }[self.type]
 
     def is_downloaded(self, architecture: Architecture) -> bool:

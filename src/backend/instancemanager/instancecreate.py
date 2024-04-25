@@ -15,7 +15,10 @@ if TYPE_CHECKING:
 
 def create_instance(name: str, instance_group_name: str, version: Version, state: State) -> None:
     instance = Instance(
-        name, version, version.available_architectures[0], shell.create_subdirectory(name, state.directory)
+        name,
+        version,
+        version.available_architectures[0],
+        shell.create_subdirectory(name, state.directory),
     )
     instance.populate_directory()
 
@@ -33,13 +36,13 @@ def copy_instance(instance: Instance, copy_worlds: bool, state: State) -> None:
         f"{instance.name}(copy)",
         instance.version,
         instance.architecture_choice,
-        shell.create_subdirectory(instance.name, state.directory)
+        shell.create_subdirectory(instance.name, state.directory),
     )
     copied_instance.populate_directory()
     shutil.copytree(
         instance.directory / "com.mojang",
         copied_instance.directory / "com.mojang",
-        ignore=lambda src, _: ["minecraftWorlds"] if (src == str(instance.directory)) and (not copy_worlds) else []
+        ignore=lambda src, _: ["minecraftWorlds"] if (src == str(instance.directory)) and (not copy_worlds) else [],
     )
     (copied_instance.directory / "com.mojang" / "minecraftWorlds").mkdir(exist_ok=True)
 

@@ -65,13 +65,15 @@ def _get_versions_from_json(data: str) -> tuple[Version, ...]:
             version_model.name,
             version_model.type,
             {
-                architecture: guids for architecture, guids in version_model.guids.model_dump().items()
+                architecture: guids
+                for architecture, guids in version_model.guids.model_dump().items()
                 if (architecture in SUPPORTED_ARCHITECTURES) and guids
             },
             {
                 architecture: ROOT / "versions" / f"{version_model.name}_{architecture}.Appx"
                 for architecture, guids in version_model.guids.model_dump().items()
                 if (architecture in SUPPORTED_ARCHITECTURES) and guids
-            }
-        ) for version_model in version_models
+            },
+        )
+        for version_model in version_models
     )[::-1]

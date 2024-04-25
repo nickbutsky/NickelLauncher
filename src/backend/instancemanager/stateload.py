@@ -112,14 +112,16 @@ class _GroupModel(BaseModel):
 
 
 def _load_instance_groups(
-        group_models: list[_GroupModel], directory: Path, versions: Iterable[Version]
+    group_models: list[_GroupModel],
+    directory: Path,
+    versions: Iterable[Version],
 ) -> list[InstanceGroup]:
     groups: list[InstanceGroup] = []
     for group_model in group_models:
         instances = [
-            instance for instance in [
-                _load_instance(directory / dirname, versions) for dirname in group_model.instances
-            ] if instance is not None
+            instance
+            for instance in [_load_instance(directory / dirname, versions) for dirname in group_model.instances]
+            if instance is not None
         ]
         if not instances:
             break
@@ -148,7 +150,9 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
             data = f.read()
         instance_model = _InstanceModel.model_validate_json(data, strict=True)
         version = next(
-            v for v in versions if (v.name == instance_model.version.name)
+            v
+            for v in versions
+            if (v.name == instance_model.version.name)
             and (instance_model.version.architecture_choice in v.available_architectures)
         )
     except (OSError, ValidationError, StopIteration):

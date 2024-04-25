@@ -45,7 +45,9 @@ def _grant_access(directory: Path, user_sid: str) -> None:
 
 
 def _install(
-    version: Version, architecture: Architecture, reporthook: Callable[[Report], object] | None = None
+    version: Version,
+    architecture: Architecture,
+    reporthook: Callable[[Report], object] | None = None,
 ) -> None:
     if reporthook:
         reporthook(Report(Report.PROGRESS, "Unlinking the old version"))
@@ -65,9 +67,7 @@ def _relink_game_files(instance: Instance) -> None:
     if not localappdata_path:
         raise FileNotFoundError
 
-    default_game_directory_parent = (
-        Path(localappdata_path) / "Packages" / instance.version.pfn / "LocalState" / "games"
-    )
+    default_game_directory_parent = Path(localappdata_path) / "Packages" / instance.version.pfn / "LocalState" / "games"
 
     default_game_directory_parent.mkdir(parents=True, exist_ok=True)
     shell.clear_directory(default_game_directory_parent)

@@ -38,7 +38,7 @@ class WatchdogThread(QThread):
         observer = Observer()
         observer.schedule(self._event_handler, str(self._directory))
         observer.start()
-        logging.debug('Watchdog thread started.')
+        logging.debug("Watchdog thread started.")
 
     def _callback(self):
         self.changed.emit()

@@ -67,8 +67,5 @@ class Instance:
         return {
             "format_version": 1,
             "name": self.name,
-            "version": {
-                "name": self.version.name,
-                "architecture_choice": self.architecture_choice
-            }
+            "version": {"name": self.version.name, "architecture_choice": self.architecture_choice},
         }

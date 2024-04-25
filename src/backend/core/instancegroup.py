@@ -66,7 +66,7 @@ class InstanceGroup:
         return {
             "name": self.name,
             "hidden": self.hidden,
-            "instances": [instance.directory.name for instance in self.instances]
+            "instances": [instance.directory.name for instance in self.instances],
         }
 
     def subscribe_to_change(self, subscriber: Callable[[], object]) -> None:
