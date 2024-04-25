@@ -1,0 +1,5 @@
+[project]
+name = "nickel-launcher"
+
+[tool.ruff]
+src = ["src/backend", "src"]
