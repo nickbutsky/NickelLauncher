@@ -7,10 +7,9 @@ import shell
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from typing import Any
 
 
-def find_packages(package_family_name: str) -> list[dict[Any, Any]]:
+def find_packages(package_family_name: str) -> list[dict[object, object]]:
     cmd = (
         "powershell",
         f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json'
@@ -27,7 +26,7 @@ def find_packages(package_family_name: str) -> list[dict[Any, Any]]:
     return deserialized_output
 
 
-def remove_package(package_dict: dict[Any, Any]) -> None:
+def remove_package(package_dict: dict[object, object]) -> None:
     package_fullname = package_dict["PackageFullName"]
     cmd = "powershell", f"Remove-AppxPackage -Package {package_fullname}"
     shell.run_command(cmd)

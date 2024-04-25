@@ -7,7 +7,6 @@ from core.version import UnavailableArchitectureError
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from typing import Any
 
     from core.version import Architecture, Version
 
@@ -64,7 +63,7 @@ class Instance:
         with (self.directory / "config.json").open("w") as f:
             json.dump(self._to_dict(), f, indent=2)
 
-    def _to_dict(self) -> dict[str, Any]:
+    def _to_dict(self) -> dict[str, object]:
         return {
             "format_version": 1,
             "name": self.name,

@@ -7,7 +7,6 @@ from core.instancegroup import InstanceGroup
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from typing import Any
 
     from core.instance import Instance
 
@@ -74,7 +73,7 @@ class State:
         with (self._directory / "groups.json").open("w") as f:
             json.dump(self._to_dict(), f, indent=2)
 
-    def _to_dict(self) -> dict[str, Any]:
+    def _to_dict(self) -> dict[str, object]:
         return {
             "format_version": 1,
             "groups": [group.to_dict() for group in self.instance_groups],

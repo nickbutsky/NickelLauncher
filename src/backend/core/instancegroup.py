@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from ordered_set import OrderedSet
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Sequence
+    from typing import Callable, Sequence
 
     from core.instance import Instance
 
@@ -16,7 +16,7 @@ class InstanceGroup:
         self._hidden = hidden if not self.unnamed else False
         self._instances = list(instances)
 
-        self._subscribers: OrderedSet[Callable[[], Any]] = OrderedSet({})
+        self._subscribers: OrderedSet[Callable[[], object]] = OrderedSet({})
 
     @property
     def unnamed(self) -> bool:
@@ -62,14 +62,14 @@ class InstanceGroup:
         self._instances.remove(instance)
         self._notify_subscribers()
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         return {
             "name": self.name,
             "hidden": self.hidden,
             "instances": [instance.directory.name for instance in self.instances]
         }
 
-    def subscribe_to_change(self, subscriber: Callable[[], Any]) -> None:
+    def subscribe_to_change(self, subscriber: Callable[[], object]) -> None:
         self._subscribers.add(subscriber)
 
     def _notify_subscribers(self) -> None:

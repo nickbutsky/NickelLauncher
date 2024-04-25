@@ -11,13 +11,13 @@ import shell
 from report import Report
 
 if TYPE_CHECKING:
-    from typing import Any, Callable
+    from typing import Callable
 
     from core.instance import Instance
     from core.version import Architecture, Version
 
 
-def launch(instance: Instance, reporthook: Callable[[Report], Any] | None = None) -> None:
+def launch(instance: Instance, reporthook: Callable[[Report], object] | None = None) -> None:
     logging.info('Launching the instance "%s" at "%s"...', instance.name, instance.directory)
     if reporthook:
         reporthook(Report(Report.PROGRESS, "Checking game files"))
@@ -44,7 +44,9 @@ def _grant_access(directory: Path, user_sid: str) -> None:
     shell.run_command(cmd, False)
 
 
-def _install(version: Version, architecture: Architecture, reporthook: Callable[[Report], Any] | None = None) -> None:
+def _install(
+    version: Version, architecture: Architecture, reporthook: Callable[[Report], object] | None = None
+) -> None:
     if reporthook:
         reporthook(Report(Report.PROGRESS, "Unlinking the old version"))
     for package_dict in packagemanager.find_packages(version.pfn):

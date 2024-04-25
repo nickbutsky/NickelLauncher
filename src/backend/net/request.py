@@ -7,14 +7,14 @@ from report import ProgressDetails, Report
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from typing import Any, Callable
+    from typing import Callable
 
 
-def download_file(url: str, destination: Path, reporthook: Callable[[Report], Any] | None = None) -> None:
+def download_file(url: str, destination: Path, reporthook: Callable[[Report], object] | None = None) -> None:
     request.urlretrieve(url, destination, _download_reporthook_wrapper(reporthook) if reporthook else None)  # noqa: S310
 
 
-def _download_reporthook_wrapper(reporthook: Callable[[Report], Any]) -> Callable[[int, int, int], Any]:
+def _download_reporthook_wrapper(reporthook: Callable[[Report], object]) -> Callable[[int, int, int], object]:
     def download_reporthook(block_num: int, block_size: int, total_size: int) -> None:
         if total_size <= 0:
             reporthook(Report(Report.PROGRESS, "Downloading"))

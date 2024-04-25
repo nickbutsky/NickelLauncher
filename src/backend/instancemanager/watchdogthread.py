@@ -10,7 +10,7 @@ from watchdog.observers import Observer
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from typing import Any, Callable
+    from typing import Callable
 
 
 class WatchdogThread(QThread):
@@ -45,7 +45,7 @@ class WatchdogThread(QThread):
 
 
 class _EventHandler(FileSystemEventHandler):
-    def __init__(self, callback: Callable[[], Any]):
+    def __init__(self, callback: Callable[[], object]):
         super().__init__()
 
         self.ignore_dir_created_event = False

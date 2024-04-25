@@ -11,12 +11,14 @@ from net import request, soap
 from report import Report
 
 if TYPE_CHECKING:
-    from typing import Any, Callable
+    from typing import Callable
 
     from core.version import Architecture, Version
 
 
-def download(version: Version, architecture: Architecture, reporthook: Callable[[Report], Any] | None = None) -> None:
+def download(
+    version: Version, architecture: Architecture, reporthook: Callable[[Report], object] | None = None
+) -> None:
     logging.debug("Retrieving a download link...")
     if reporthook:
         reporthook(Report(Report.PROGRESS, "Retrieving a download link"))
