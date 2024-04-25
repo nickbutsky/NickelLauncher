@@ -4,10 +4,10 @@ from pathlib import Path
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
-from .state import State
 from core.instance import Instance
 from core.instancegroup import InstanceGroup
 from core.version import Version
+from .state import State
 
 
 def load_state(directory: Path, versions: Iterable[Version]) -> State:

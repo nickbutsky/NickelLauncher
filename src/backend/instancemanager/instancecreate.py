@@ -1,10 +1,10 @@
 import shutil
 
 import shell
-from .state import State
 from core.instance import Instance
 from core.version import Version
 from core.instancegroup import InstanceGroup
+from .state import State
 
 
 def create_instance(name: str, instance_group_name: str, version: Version, state: State) -> None:

@@ -6,9 +6,9 @@ import logging
 import shell
 import packagemanager
 from report import Report
+import gamedownload
 from core.instance import Instance
 from core.version import Version, Architecture
-import gamedownload
 
 
 def launch(instance: Instance, reporthook: Callable[[Report], Any] | None = None) -> None:

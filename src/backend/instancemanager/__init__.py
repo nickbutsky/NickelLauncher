@@ -1,7 +1,7 @@
 from env import ROOT
+import versionretrieve
 from core.instance import Instance
 from core.instancegroup import InstanceGroup
-import versionretrieve
 from . import stateload as _stateload
 from . import instancecreate as _instancecreate
 # from .watchdogthread import WatchdogThread
