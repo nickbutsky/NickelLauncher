@@ -1,12 +1,15 @@
 from __future__ import annotations
-from typing import Any, Callable
-from pathlib import Path
+from typing import TYPE_CHECKING
 import time
 import logging
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileSystemEvent, DirCreatedEvent, FileDeletedEvent, DirMovedEvent
 from PySide6.QtCore import QThread, Signal
+
+if TYPE_CHECKING:
+    from typing import Any, Callable
+    from pathlib import Path
 
 
 class WatchdogThread(QThread):

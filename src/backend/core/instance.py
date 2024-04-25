@@ -1,9 +1,14 @@
 from __future__ import annotations
-from typing import Any
-from pathlib import Path
+from typing import TYPE_CHECKING
 import json
 
-from core.version import Version, Architecture, UnavailableArchitectureError
+from core.version import UnavailableArchitectureError
+
+if TYPE_CHECKING:
+    from typing import Any
+    from pathlib import Path
+
+    from core.version import Version, Architecture
 
 
 class Instance:

@@ -1,9 +1,12 @@
 from __future__ import annotations
-from typing import Any
-from pathlib import Path
+from typing import TYPE_CHECKING
 import json
 
 import shell
+
+if TYPE_CHECKING:
+    from typing import Any
+    from pathlib import Path
 
 
 def find_packages(package_family_name: str) -> list[dict[Any, Any]]:

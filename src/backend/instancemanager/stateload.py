@@ -1,13 +1,16 @@
 from __future__ import annotations
-from typing import Iterable, Self
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
 from core.instance import Instance
 from core.instancegroup import InstanceGroup
-from core.version import Version
 from .state import State
+
+if TYPE_CHECKING:
+    from core.version import Version
+    from typing import Iterable, Self
+    from pathlib import Path
 
 
 def load_state(directory: Path, versions: Iterable[Version]) -> State:

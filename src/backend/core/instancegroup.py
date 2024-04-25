@@ -1,9 +1,12 @@
 from __future__ import annotations
-from typing import Callable, Sequence, Any
+from typing import TYPE_CHECKING
 
 from ordered_set import OrderedSet
 
-from core.instance import Instance
+if TYPE_CHECKING:
+    from typing import Callable, Sequence, Any
+
+    from core.instance import Instance
 
 
 class InstanceGroup:

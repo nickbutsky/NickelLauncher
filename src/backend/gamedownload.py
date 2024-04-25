@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Callable
+from typing import TYPE_CHECKING
 from xml.etree.ElementTree import Element, SubElement
 from uuid import uuid4
 import secrets
@@ -8,7 +8,10 @@ import logging
 from env import ROOT
 from report import Report
 from net import request, soap
-from core.version import Version, Architecture
+
+if TYPE_CHECKING:
+    from typing import Any, Callable
+    from core.version import Version, Architecture
 
 
 class LinkRetrievalError(Exception):

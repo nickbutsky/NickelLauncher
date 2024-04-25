@@ -1,11 +1,14 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 import shutil
 
 import shell
 from core.instance import Instance
-from core.version import Version
 from core.instancegroup import InstanceGroup
-from .state import State
+
+if TYPE_CHECKING:
+    from core.version import Version
+    from .state import State
 
 
 def create_instance(name: str, instance_group_name: str, version: Version, state: State) -> None:

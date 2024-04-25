@@ -1,12 +1,15 @@
 from __future__ import annotations
-from typing import Sequence, Mapping
+from typing import TYPE_CHECKING
 from enum import StrEnum, auto
 from dataclasses import dataclass
-from pathlib import Path
 
 from ordered_set import OrderedSet
 
 import packagemanager
+
+if TYPE_CHECKING:
+    from typing import Sequence, Mapping
+    from pathlib import Path
 
 
 class VersionType(StrEnum):

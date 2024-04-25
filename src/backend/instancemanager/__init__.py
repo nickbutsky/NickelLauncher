@@ -1,10 +1,16 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
+
 from env import ROOT
 import versionretrieve
-from core.instance import Instance
-from core.instancegroup import InstanceGroup
 from . import stateload as _stateload
 from . import instancecreate as _instancecreate
+
+if TYPE_CHECKING:
+    from core.instancegroup import InstanceGroup
+    from core.instance import Instance
+
+
 # from .watchdogthread import WatchdogThread
 
 
