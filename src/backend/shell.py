@@ -1,14 +1,15 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
+import logging
 import shutil
 import subprocess
-import logging
+from typing import TYPE_CHECKING
 
 import pathvalidate
 
 if TYPE_CHECKING:
-    from typing import Sequence
     from pathlib import Path
+    from typing import Sequence
 
 
 def clear_directory(directory: Path) -> None:

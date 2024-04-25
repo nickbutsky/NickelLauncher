@@ -1,7 +1,8 @@
 from __future__ import annotations
+
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 
 
 def _get_root() -> Path | None:

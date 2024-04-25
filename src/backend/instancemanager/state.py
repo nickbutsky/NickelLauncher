@@ -1,12 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
 import json
+from typing import TYPE_CHECKING
 
 from core.instancegroup import InstanceGroup
 
 if TYPE_CHECKING:
-    from typing import Any
     from pathlib import Path
+    from typing import Any
 
     from core.instance import Instance
 

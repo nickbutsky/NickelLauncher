@@ -1,11 +1,12 @@
 from __future__ import annotations
-import os
+
 import logging
+import os
 from logging.handlers import RotatingFileHandler
 
 from tendo.singleton import SingleInstance
 
-from env import VERSIONS_DIR_PATH, INSTANCES_DIR_PATH, TEMP_DIR_PATH, LOGS_DIR_PATH
+from env import INSTANCES_DIR_PATH, LOGS_DIR_PATH, TEMP_DIR_PATH, VERSIONS_DIR_PATH
 from ui.app import App
 
 

@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from ordered_set import OrderedSet
 
 if TYPE_CHECKING:
-    from typing import Callable, Sequence, Any
+    from typing import Any, Callable, Sequence
 
     from core.instance import Instance
 

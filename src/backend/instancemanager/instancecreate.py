@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
 import shutil
+from typing import TYPE_CHECKING
 
 import shell
 from core.instance import Instance
@@ -8,6 +9,7 @@ from core.instancegroup import InstanceGroup
 
 if TYPE_CHECKING:
     from core.version import Version
+
     from .state import State
 
 

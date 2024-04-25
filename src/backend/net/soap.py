@@ -1,7 +1,8 @@
 from __future__ import annotations
+
+from datetime import UTC, datetime, timedelta
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
-from datetime import datetime, timedelta, UTC
 
 import requests
 

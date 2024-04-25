@@ -1,15 +1,18 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from env import ROOT
 import versionretrieve
-from . import stateload as _stateload
+from env import ROOT
+
 from . import instancecreate as _instancecreate
+from . import stateload as _stateload
+
 # from .watchdogthread import WatchdogThread
 
 if TYPE_CHECKING:
-    from core.instancegroup import InstanceGroup
     from core.instance import Instance
+    from core.instancegroup import InstanceGroup
 
 
 def get_instance_groups() -> tuple[InstanceGroup, ...]:

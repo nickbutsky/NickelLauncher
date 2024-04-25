@@ -1,19 +1,20 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from pathlib import Path
-import os
-import logging
 
-import shell
-import packagemanager
-from report import Report
+import logging
+import os
+from pathlib import Path
+from typing import TYPE_CHECKING
+
 import gamedownload
+import packagemanager
+import shell
+from report import Report
 
 if TYPE_CHECKING:
-    from typing import Callable, Any
+    from typing import Any, Callable
 
     from core.instance import Instance
-    from core.version import Version, Architecture
+    from core.version import Architecture, Version
 
 
 def launch(instance: Instance, reporthook: Callable[[Report], Any] | None = None) -> None:

@@ -1,12 +1,13 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 from urllib import request
 
-from report import Report, ProgressDetails
+from report import ProgressDetails, Report
 
 if TYPE_CHECKING:
-    from typing import Any, Callable
     from pathlib import Path
+    from typing import Any, Callable
 
 
 def download_file(url: str, destination: Path, reporthook: Callable[[Report], Any] | None = None) -> None:

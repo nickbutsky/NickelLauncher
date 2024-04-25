@@ -1,11 +1,12 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from pydantic import BaseModel, TypeAdapter, ValidationError
 import requests
+from pydantic import BaseModel, TypeAdapter, ValidationError
 
+from core.version import Architecture, Version
 from env import ROOT
-from core.version import Version, Architecture
 
 if TYPE_CHECKING:
     from core.version import VersionType
