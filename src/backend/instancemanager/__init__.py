@@ -5,19 +5,11 @@ from env import ROOT
 import versionretrieve
 from . import stateload as _stateload
 from . import instancecreate as _instancecreate
+# from .watchdogthread import WatchdogThread
 
 if TYPE_CHECKING:
     from core.instancegroup import InstanceGroup
     from core.instance import Instance
-
-
-# from .watchdogthread import WatchdogThread
-
-
-_state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
-# _watchdog = WatchdogThread(ROOT / "instances")
-
-# _watchdog.start()
 
 
 def get_instance_groups() -> tuple[InstanceGroup, ...]:
@@ -47,3 +39,9 @@ def change_instance_group(instance: Instance, instance_group_name: str) -> None:
     if old_instance_group == new_instance_group:
         return
     old_instance_group.move_instances(len(new_instance_group.instances), new_instance_group, [instance])
+
+
+_state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
+# _watchdog = WatchdogThread(ROOT / "instances")
+
+# _watchdog.start()

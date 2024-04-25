@@ -13,8 +13,6 @@ if TYPE_CHECKING:
 
 SUPPORTED_ARCHITECTURES = frozenset({Architecture.X64, Architecture.X86})
 
-_versions: tuple[Version, ...] = ()
-
 
 def get_versions_locally() -> tuple[Version, ...]:
     global _versions  # noqa: PLW0603
@@ -38,6 +36,9 @@ def get_versions_remotely() -> tuple[Version, ...]:
         f.write(res.text)
     _versions = _get_versions_from_json(res.text)
     return _versions
+
+
+_versions: tuple[Version, ...] = ()
 
 
 class _VersionModel(BaseModel):

@@ -6,14 +6,6 @@ from datetime import datetime, timedelta, UTC
 import requests
 
 
-_WUCLIENT = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService"
-_WSU = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-
-
-class SOAPError(Exception):
-    pass
-
-
 def post_envelope(url: str, envelope: Envelope) -> Element:
     res = requests.post(
         url,
@@ -46,6 +38,14 @@ class Envelope(Element):
         body.append(element)
 
         element.set("xmlns", _WUCLIENT)
+
+
+class SOAPError(Exception):
+    pass
+
+
+_WUCLIENT = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService"
+_WSU = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
 
 
 class _Header(Element):

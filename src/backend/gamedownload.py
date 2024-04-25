@@ -14,10 +14,6 @@ if TYPE_CHECKING:
     from core.version import Version, Architecture
 
 
-class LinkRetrievalError(Exception):
-    pass
-
-
 def download(version: Version, architecture: Architecture, reporthook: Callable[[Report], Any] | None = None) -> None:
     logging.debug("Retrieving a download link...")
     if reporthook:
@@ -32,6 +28,10 @@ def download(version: Version, architecture: Architecture, reporthook: Callable[
     temp_file = ROOT / "temp" / str(uuid4())
     request.download_file(link, temp_file)
     temp_file.replace(version.packages[architecture])
+
+
+class LinkRetrievalError(Exception):
+    pass
 
 
 def _get_link(guid: str) -> str:
