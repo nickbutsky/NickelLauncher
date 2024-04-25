@@ -1,7 +1,7 @@
 import shutil
 
 import shell
-from state import State
+from .state import State
 from core.instance import Instance
 from core.version import Version
 from core.instancegroup import InstanceGroup
