@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Any, Callable
 from xml.etree.ElementTree import Element, SubElement
 from uuid import uuid4

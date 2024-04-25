@@ -1,3 +1,4 @@
+from __future__ import annotations
 from env import ROOT
 import versionretrieve
 from core.instance import Instance

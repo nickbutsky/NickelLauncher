@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Sequence, Mapping
 from enum import StrEnum, auto
 from dataclasses import dataclass
