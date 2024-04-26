@@ -1,5 +1,5 @@
-TestAppData/
-**/.vscode/
+/.vscode/
+/src/bundled-frontend/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
