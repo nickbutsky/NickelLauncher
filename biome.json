@@ -12,20 +12,14 @@
     "indentStyle": "space",
     "lineWidth": 120
   },
-  "javascript": {
-    "formatter": {
-      "trailingComma": "none"
-    }
-  },
   "linter": {
     "rules": {
       "all": true,
       "nursery": {
+        "all": true,
+        "noNamespaceImport": "off",
         "noUndeclaredDependencies": "off"
       }
     }
-  },
-  "organizeImports": {
-    "enabled": true
   }
 }

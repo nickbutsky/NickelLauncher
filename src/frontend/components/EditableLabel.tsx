@@ -20,9 +20,9 @@ export const EditableLabel = React.forwardRef<
     ref,
     () =>
       Object.assign(labelRef.current as Exclude<typeof labelRef.current, null>, {
-        enterEditMode: () => setEditMode(true)
+        enterEditMode: () => setEditMode(true),
       }),
-    []
+    [],
   );
 
   const [value, setValue] = React.useState(maxLength === undefined ? defaultValue : defaultValue.slice(0, maxLength));
@@ -54,7 +54,7 @@ export const EditableLabel = React.forwardRef<
 
   return (
     <>
-      <div className={cn("whitespace-pre text-ellipsis overflow-hidden", className)} ref={labelRef} {...props}>
+      <div className={cn("overflow-hidden text-ellipsis whitespace-pre", className)} ref={labelRef} {...props}>
         {editMode ? "" : value}
       </div>
       {editMode && (
@@ -63,7 +63,7 @@ export const EditableLabel = React.forwardRef<
           className="absolute"
           style={{
             left: (labelRef.current?.getBoundingClientRect().left as number) - 4,
-            top: labelRef.current?.getBoundingClientRect().top
+            top: labelRef.current?.getBoundingClientRect().top,
           }}
         >
           <DynamicInput
@@ -71,7 +71,7 @@ export const EditableLabel = React.forwardRef<
               height: height,
               font: window
                 .getComputedStyle(labelRef.current as Exclude<typeof labelRef.current, null>)
-                .getPropertyValue("font")
+                .getPropertyValue("font"),
             }}
             ref={inputRef}
             defaultValue={value}
@@ -113,7 +113,7 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
 
     return (
       <input
-        className={cn("px-1 bg-inherit", className)}
+        className={cn("bg-inherit px-1", className)}
         ref={ref}
         onFocus={(event) => {
           resize(event);
@@ -127,5 +127,5 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
         {...props}
       />
     );
-  }
+  },
 );

@@ -2,16 +2,16 @@ import * as React from "react";
 
 import { CaretDownIcon } from "@radix-ui/react-icons";
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
-import { type InstanceProps, InstanceButton } from "@/components/InstanceButton";
 import { EditableLabel } from "@/components/EditableLabel";
+import { InstanceButton, type InstanceProps } from "@/components/InstanceButton";
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuShortcut,
-  ContextMenuTrigger
+  ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { waitUntilTrue } from "@/utils";
 
@@ -52,7 +52,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
                 ref={renameContextMenuItemRef}
                 onSelect={() =>
                   waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
-                    editableLabelRef.current?.enterEditMode()
+                    editableLabelRef.current?.enterEditMode(),
                   )
                 }
               >
@@ -65,7 +65,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
           <div>{name}</div>
         )}
       </div>
-      <CollapsibleContent className="flex flex-wrap gap-3 mt-1 data-[state=closed]:hidden" forceMount={true}>
+      <CollapsibleContent className="mt-1 flex flex-wrap gap-3 data-[state=closed]:hidden" forceMount={true}>
         {instances.map((instance) => (
           <InstanceButton
             key={instance.name}

@@ -1,20 +1,20 @@
 import * as testData from "@/test-data";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 
-import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { InputWithOptions } from "@/components/InputWithOptions";
 import { VersionSelector } from "@/components/VersionSelector";
 import { Button } from "@/components/ui/button";
+import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   instanceName: z.string().trim().min(1, "Instance name must be at least 1 character long."),
   groupName: z.string().trim(),
-  versionDisplayName: z.string()
+  versionDisplayName: z.string(),
 });
 
 export function InstanceCreationDialogContent() {
@@ -24,8 +24,8 @@ export function InstanceCreationDialogContent() {
     defaultValues: {
       instanceName: "",
       groupName: "",
-      versionDisplayName: testData.versions.release[14]?.displayName
-    }
+      versionDisplayName: testData.versions.release[14]?.displayName,
+    },
   });
 
   return (

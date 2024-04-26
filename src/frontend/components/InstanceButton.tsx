@@ -1,7 +1,10 @@
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
+import defaultLogo from "@/assets/default.png";
 import { EditableLabel } from "@/components/EditableLabel";
+import { InputWithOptions } from "@/components/InputWithOptions";
+import { VersionSelector } from "@/components/VersionSelector";
+import { Button } from "@/components/ui/button";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -10,12 +13,9 @@ import {
   ContextMenuRadioItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
-  ContextMenuTrigger
+  ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { InputWithOptions } from "@/components/InputWithOptions";
-import { VersionSelector } from "@/components/VersionSelector";
-import defaultLogo from "@/assets/default.png";
 import { cn, waitUntilTrue } from "@/utils";
 
 import { versions } from "@/test-data";
@@ -41,7 +41,7 @@ export const InstanceButton = React.forwardRef<
       <ContextMenu>
         <ContextMenuTrigger asChild={true}>
           <Button
-            className={cn("grid grid-cols-[max-content_1fr] gap-3 w-48 h-16", className)}
+            className={cn("grid h-16 w-48 grid-cols-[max-content_1fr] gap-3", className)}
             ref={ref}
             variant="outline"
             {...props}
@@ -74,7 +74,7 @@ export const InstanceButton = React.forwardRef<
             ref={renameContextMenuItemRef}
             onSelect={() =>
               waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
-                editableLabelRef.current?.enterEditMode()
+                editableLabelRef.current?.enterEditMode(),
               )
             }
           >
@@ -99,7 +99,7 @@ export const InstanceButton = React.forwardRef<
           {
             cg: <ChangeGroupDialogContent />,
             cv: <ChangeVersionDialogContent currentVersionDisplayName={displayVersionName} />,
-            ci: <CopyInstanceDialogContent />
+            ci: <CopyInstanceDialogContent />,
           }[dialogContentId]
         }
       </ContextMenu>

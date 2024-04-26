@@ -13,7 +13,7 @@ export async function waitUntilTrue(
   conditionFunction: () => boolean,
   interval = 10,
   timeout = 10000,
-  throwOnTimeout = false
+  throwOnTimeout = false,
 ) {
   let timePassed = 0;
   return new Promise<void>(function poll(resolve, reject) {

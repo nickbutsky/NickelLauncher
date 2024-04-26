@@ -2,10 +2,10 @@ import * as React from "react";
 
 import { UpdateIcon } from "@radix-ui/react-icons";
 
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const versionTypes = ["release", "beta", "preview"] as const;
 
@@ -36,7 +36,7 @@ export const VersionSelector = React.forwardRef<
       ref={ref}
       defaultValue={
         versionTypes.find((versionType) =>
-          versions[versionType].find((version) => version.displayName === defaultDisplayName)
+          versions[versionType].find((version) => version.displayName === defaultDisplayName),
         ) ?? versionTypes[0]
       }
       {...props}
@@ -63,7 +63,7 @@ export const VersionSelector = React.forwardRef<
 
 function TopBar({
   variant = "cl",
-  onRefreshRequest
+  onRefreshRequest,
 }: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Pick<Props, "onRefreshRequest">) {
   const versionTypeSelector = (
     <TabsList className="grid grid-cols-3">
@@ -94,7 +94,7 @@ function TopBar({
           lr: "flex justify-between",
           rl: "flex justify-between",
           cr: "grid grid-cols-[minmax(0,1fr),auto,minmax(0,1fr)] items-center",
-          cl: "grid grid-cols-[minmax(0,1fr),auto,minmax(0,1fr)] items-center"
+          cl: "grid grid-cols-[minmax(0,1fr),auto,minmax(0,1fr)] items-center",
         }[variant]
       }
     >
@@ -124,7 +124,7 @@ function TopBar({
               {refreshButton}
               {versionTypeSelector}
             </>
-          )
+          ),
         }[variant]
       }
     </div>
@@ -134,14 +134,14 @@ function TopBar({
 function InnerVersionSelector({
   versions,
   defaultDisplayName,
-  onDisplayNameChange
+  onDisplayNameChange,
 }: {
   readonly versions: readonly Version[];
   readonly defaultDisplayName?: string;
   readonly onDisplayNameChange?: (displayName: string) => void;
 }) {
   const [currentDisplayName, setCurrentDisplayName] = React.useState(
-    versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName
+    versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
   );
 
   const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);
