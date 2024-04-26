@@ -1,16 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import requests
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
-from core.version import Architecture, Version
+from core.version import Architecture, Version, VersionType
 from env import ROOT
-
-if TYPE_CHECKING:
-    from core.version import VersionType
-
 
 SUPPORTED_ARCHITECTURES = frozenset({Architecture.X64, Architecture.X86})
 
