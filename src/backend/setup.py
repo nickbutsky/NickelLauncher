@@ -3,49 +3,42 @@ from __future__ import annotations
 import logging
 import os
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
-from tendo.singleton import SingleInstance
-
-from env import INSTANCES_DIR_PATH, LOGS_DIR_PATH, TEMP_DIR_PATH, VERSIONS_DIR_PATH
-
-
-class Setup:
-    def run(self):
-        self._create_dirs()
-        self._setup_rotating_logger(LOGS_DIR_PATH, 'nl')
-
-    @staticmethod
-    def _create_dirs():
-        os.makedirs(VERSIONS_DIR_PATH, exist_ok=True)
-        os.makedirs(INSTANCES_DIR_PATH, exist_ok=True)
-        os.makedirs(TEMP_DIR_PATH, exist_ok=True)
-        os.makedirs(LOGS_DIR_PATH, exist_ok=True)
-
-    @staticmethod
-    def _setup_rotating_logger(log_path: str, base_filename: str):
-        def namer(name: str) -> str:
-            parent_dir_path, filename = os.path.split(name)
-            filename = (filename.replace('.log', '') + '.log').lstrip('.')
-            return os.path.join(parent_dir_path, filename)
-
-        handler = RotatingFileHandler(
-            os.path.join(log_path, base_filename + '.log'), maxBytes=1024 * 200, backupCount=15
-        )
-        handler.namer = namer
-
-        logging.basicConfig(
-            format='%(asctime)s | %(threadName)-10s | %(levelname)-5s | %(name)-22s | %(lineno)06d | %(message)s',
-            level=logging.DEBUG,
-            handlers=[handler]
-        )
+from env import ROOT
 
 
-def main():
-    me = SingleInstance()
-
-    Setup().run()
-
+def setup() -> None:
+    _create_dirs()
+    _setup_rotating_logger(ROOT / "logs", "nl")
 
 
-if __name__ == '__main__':
+def _create_dirs() -> None:
+    (ROOT / "versions").mkdir(parents=True)
+    (ROOT / "instances").mkdir(parents=True)
+    (ROOT / "temp").mkdir(parents=True)
+    (ROOT / "logs").mkdir(parents=True)
+
+
+def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
+    def namer(name: str) -> str:
+        parent_directory_path, filename = os.path.split(name)
+        filename = (filename.replace(".log", "") + ".log").lstrip(".")
+        return str(Path(parent_directory_path) / filename)
+
+    handler = RotatingFileHandler(
+        str(logs_directory / (filename_base + ".log")),
+        maxBytes=1024 * 200,
+        backupCount=15,
+    )
+    handler.namer = namer
+
+    logging.basicConfig(
+        format="%(asctime)s | %(threadName)-10s | %(levelname)-5s | %(name)-22s | %(lineno)06d | %(message)s",
+        level=logging.DEBUG,
+        handlers=[handler],
+    )
+
+
+if __name__ == "__main__":
     main()
