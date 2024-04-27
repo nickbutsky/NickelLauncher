@@ -74,7 +74,7 @@ export function InstanceCreationDialogContent() {
               <FormItem>
                 <FormControl>
                   <VersionSelector
-                    versions={testData.versions}
+                    versionsByType={testData.versions}
                     onRefreshRequest={() => undefined}
                     defaultDisplayName={field.value}
                     onDisplayNameChange={field.onChange}
