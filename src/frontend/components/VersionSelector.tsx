@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { type Version, versionTypes } from "@/core-types";
+import { type Version, type VersionsByType, versionTypes } from "@/core-types";
 
 interface Props
   extends DeepReadonly<{
-    versionsByType: { [K in (typeof versionTypes)[number]]: Version[] };
+    versionsByType: VersionsByType;
     onRefreshRequest: () => void;
     defaultDisplayName?: string;
     onDisplayNameChange?: (displayName: string) => void;

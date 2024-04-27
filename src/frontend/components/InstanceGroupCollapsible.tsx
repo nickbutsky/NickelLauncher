@@ -3,7 +3,7 @@ import * as React from "react";
 import { CaretDownIcon } from "@radix-ui/react-icons";
 
 import { EditableLabel } from "@/components/EditableLabel";
-import { InstanceButton, type InstanceProps } from "@/components/InstanceButton";
+import { InstanceButton } from "@/components/InstanceButton";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -13,35 +13,30 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { waitUntilTrue } from "@/utils";
-
-interface Props {
-  readonly name: string;
-  readonly initialCollapsed: boolean;
-  readonly instances: readonly InstanceProps[];
-}
+import type { InstanceGroup } from "@/core-types";
+import { type DeepestReadonly, waitUntilTrue } from "@/utils";
 
 export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
-  React.ComponentPropsWithoutRef<typeof Collapsible> & Props
->(({ defaultOpen, name, initialCollapsed, instances, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof Collapsible> & DeepestReadonly<{ initialState: InstanceGroup }>
+>(({ defaultOpen, initialState, ...props }, ref) => {
   const editableLabelRef = React.useRef<React.ElementRef<typeof EditableLabel>>(null);
   const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
 
   return (
-    <Collapsible ref={ref} defaultOpen={!initialCollapsed} {...props}>
+    <Collapsible ref={ref} defaultOpen={!initialState.hidden} {...props}>
       <div className="flex items-center gap-2">
         <CollapsibleTrigger asChild={true}>
           <Button className="data-[state=closed]:-rotate-90" variant="ghost" size="icon">
             <CaretDownIcon />
           </Button>
         </CollapsibleTrigger>
-        {name ? (
+        {initialState.name ? (
           <ContextMenu>
             <ContextMenuTrigger asChild={true}>
               <EditableLabel
                 ref={editableLabelRef}
-                defaultValue={name}
+                defaultValue={initialState.name}
                 maxLength={50}
                 applyOnAboutToSave={(value) => value.trim()}
                 isAllowedToSave={(value) => value.length > 0}
@@ -62,18 +57,12 @@ export const InstanceGroupCollapsible = React.forwardRef<
             </ContextMenuContent>
           </ContextMenu>
         ) : (
-          <div>{name}</div>
+          <div>{initialState.name}</div>
         )}
       </div>
       <CollapsibleContent className="mt-1 flex flex-wrap gap-3 data-[state=closed]:hidden" forceMount={true}>
-        {instances.map((instance) => (
-          <InstanceButton
-            key={instance.name}
-            name={instance.name}
-            displayVersionName={instance.displayVersionName}
-            architectureChoice={instance.architectureChoice}
-            availableArchitectures={instance.availableArchitectures}
-          />
+        {initialState.instances.map((instance) => (
+          <InstanceButton key={instance.name} initialState={instance} />
         ))}
       </CollapsibleContent>
     </Collapsible>

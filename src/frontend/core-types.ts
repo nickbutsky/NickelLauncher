@@ -12,6 +12,8 @@ export interface Version extends DeepestReadonly<{ displayName: string; availabl
 
 export const versionTypes = ["release", "beta", "preview"] as const;
 
+export type VersionsByType = DeepestReadonly<{ [K in (typeof versionTypes)[number]]: Version[] }>;
+
 export interface InstanceGroup
   extends DeepestReadonly<{
     name: string;

@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { DeepReadonly } from "ts-essentials";
 
 import defaultLogo from "@/assets/default.png";
 import { EditableLabel } from "@/components/EditableLabel";
@@ -16,21 +17,13 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { cn, waitUntilTrue } from "@/utils";
-
-import { versions } from "@/test-data";
-
-export interface InstanceProps {
-  readonly name: string;
-  readonly displayVersionName: string;
-  readonly architectureChoice: string;
-  readonly availableArchitectures: readonly string[];
-}
+import type { Instance } from "@/core-types";
+import { type DeepestReadonly, cn, waitUntilTrue } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
-  React.ComponentPropsWithoutRef<typeof Button> & InstanceProps
->(({ className, variant, name, displayVersionName, architectureChoice, availableArchitectures, ...props }, ref) => {
+  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepestReadonly<{ initialState: Instance }>
+>(({ className, variant, initialState, ...props }, ref) => {
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci">("cg");
 
   const editableLabelRef = React.useRef<React.ElementRef<typeof EditableLabel>>(null);
@@ -50,20 +43,20 @@ export const InstanceButton = React.forwardRef<
             <div className="grid grid-rows-2 text-left">
               <EditableLabel
                 ref={editableLabelRef}
-                defaultValue={name}
+                defaultValue={initialState.name}
                 maxLength={20}
                 applyOnAboutToSave={(value) => value.trim()}
                 isAllowedToSave={(value) => value.length > 0}
               />
-              <div>{displayVersionName}</div>
+              <div>{initialState.version.displayName}</div>
             </div>
           </Button>
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem>Launch</ContextMenuItem>
           <ContextMenuSeparator />
-          <ContextMenuRadioGroup value={architectureChoice}>
-            {availableArchitectures.map((architecture) => (
+          <ContextMenuRadioGroup value={initialState.architectureChoice}>
+            {initialState.version.availableArchitectures.map((architecture) => (
               <ContextMenuRadioItem key={architecture} value={architecture}>
                 {architecture}
               </ContextMenuRadioItem>
@@ -98,7 +91,7 @@ export const InstanceButton = React.forwardRef<
         {
           {
             cg: <ChangeGroupDialogContent />,
-            cv: <ChangeVersionDialogContent currentVersionDisplayName={displayVersionName} />,
+            cv: <ChangeVersionDialogContent currentVersionDisplayName={initialState.version.displayName} />,
             ci: <CopyInstanceDialogContent />,
           }[dialogContentId]
         }
@@ -121,14 +114,16 @@ function ChangeGroupDialogContent() {
   );
 }
 
-function ChangeVersionDialogContent({ currentVersionDisplayName }: { readonly currentVersionDisplayName: string }) {
+function ChangeVersionDialogContent({
+  currentVersionDisplayName,
+}: DeepReadonly<{ currentVersionDisplayName: string }>) {
   return (
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Change version</DialogTitle>
       </DialogHeader>
       <VersionSelector
-        versions={versions}
+        versionsByType={pywebview.api.get_versions_by_type()}
         onRefreshRequest={() => undefined}
         defaultDisplayName={currentVersionDisplayName}
       />
