@@ -10,7 +10,7 @@ export interface Instance
 
 export interface Version extends DeepestReadonly<{ displayName: string; availableArchitectures: string[] }> {}
 
-export type VersionType = "release" | "beta" | "release";
+export type VersionType = "release" | "beta" | "preview";
 
 export interface InstanceGroup
   extends DeepestReadonly<{
