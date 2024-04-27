@@ -1,19 +1,21 @@
 import * as React from "react";
 
 import * as Portal from "@radix-ui/react-portal";
+import type { DeepReadonly } from "ts-essentials";
 
 import { cn } from "@/utils";
 
-interface Props {
-  readonly defaultValue: string;
-  readonly maxLength?: number;
-  readonly applyOnAboutToSave?: (value: string) => string;
-  readonly isAllowedToSave?: (value: string) => boolean;
-  readonly onSave?: (value: string) => void;
-}
+interface Props
+  extends DeepReadonly<{
+    defaultValue: string;
+    maxLength?: number;
+    applyOnAboutToSave?: (value: string) => string;
+    isAllowedToSave?: (value: string) => boolean;
+    onSave?: (value: string) => void;
+  }> {}
 
 export const EditableLabel = React.forwardRef<
-  HTMLDivElement & { readonly enterEditMode: () => void },
+  HTMLDivElement & DeepReadonly<{ enterEditMode: () => void }>,
   Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> & Props
 >(({ className, defaultValue, maxLength, applyOnAboutToSave, isAllowedToSave, onSave, ...props }, ref) => {
   React.useImperativeHandle(

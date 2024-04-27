@@ -1,12 +1,12 @@
 import * as React from "react";
 
+import type { DeepReadonly } from "ts-essentials";
+
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { cn } from "@/utils";
 
-interface Props {
-  readonly options: readonly string[];
-}
+interface Props extends DeepReadonly<{ options: string[] }> {}
 
 export const InputWithOptions = React.forwardRef<
   React.ElementRef<typeof Input>,
