@@ -12,7 +12,7 @@ export type DeepestReadonly<T> = DeepReadonly<
     : {
         [K in keyof T]: T[K] extends (...args: infer _) => void
           ? ModifyReturnType<T[K], DeepestReadonly<ReturnType<T[K]>>>
-          : T[K];
+          : DeepestReadonly<T[K]>;
       }
 >;
 
