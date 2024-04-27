@@ -5,6 +5,10 @@ export type Prettify<T> = {
   [K in keyof T]: T[K];
 } & {};
 
+export type DeepReadonly<T> = {
+  readonly [P in keyof T]: DeepReadonly<T[P]>;
+};
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
