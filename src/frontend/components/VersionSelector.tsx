@@ -1,42 +1,31 @@
-import * as React from "react";
-
 import { UpdateIcon } from "@radix-ui/react-icons";
+import * as React from "react";
+import type { DeepReadonly } from "ts-essentials";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { type Version, versionTypes } from "@/core-types";
 
-const versionTypes = ["release", "beta", "preview"] as const;
-
-interface Props {
-  readonly versions: Versions;
-  readonly onRefreshRequest: () => void;
-  readonly defaultDisplayName?: string;
-  readonly onDisplayNameChange?: (displayName: string) => void;
-}
-
-interface Versions {
-  readonly release: readonly Version[];
-  readonly beta: readonly Version[];
-  readonly preview: readonly Version[];
-}
-
-interface Version {
-  readonly displayName: string;
-  readonly availableArchitectures: readonly string[];
-}
+interface Props
+  extends DeepReadonly<{
+    versionsByType: { [K in (typeof versionTypes)[number]]: Version[] };
+    onRefreshRequest: () => void;
+    defaultDisplayName?: string;
+    onDisplayNameChange?: (displayName: string) => void;
+  }> {}
 
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
   React.ComponentPropsWithoutRef<typeof Tabs> & Props
->(({ defaultValue, versions, onRefreshRequest, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
+>(({ defaultValue, versionsByType, onRefreshRequest, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
   return (
     <Tabs
       ref={ref}
       defaultValue={
         versionTypes.find((versionType) =>
-          versions[versionType].find((version) => version.displayName === defaultDisplayName),
+          versionsByType[versionType].find((version) => version.displayName === defaultDisplayName),
         ) ?? versionTypes[0]
       }
       {...props}
@@ -51,7 +40,7 @@ export const VersionSelector = React.forwardRef<
           forceMount={true}
         >
           <InnerVersionSelector
-            versions={versions[versionType]}
+            versions={versionsByType[versionType]}
             defaultDisplayName={defaultDisplayName}
             onDisplayNameChange={onDisplayNameChange}
           />
@@ -64,7 +53,7 @@ export const VersionSelector = React.forwardRef<
 function TopBar({
   variant = "cl",
   onRefreshRequest,
-}: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Pick<Props, "onRefreshRequest">) {
+}: DeepReadonly<{ variant?: "lr" | "rl" | "cr" | "cl" }> & Pick<Props, "onRefreshRequest">) {
   const versionTypeSelector = (
     <TabsList className="grid grid-cols-3">
       {versionTypes.map((versionType) => (
@@ -135,11 +124,11 @@ function InnerVersionSelector({
   versions,
   defaultDisplayName,
   onDisplayNameChange,
-}: {
-  readonly versions: readonly Version[];
-  readonly defaultDisplayName?: string;
-  readonly onDisplayNameChange?: (displayName: string) => void;
-}) {
+}: DeepReadonly<{
+  versions: Version[];
+  defaultDisplayName?: string;
+  onDisplayNameChange?: (displayName: string) => void;
+}>) {
   const [currentDisplayName, setCurrentDisplayName] = React.useState(
     versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
   );
