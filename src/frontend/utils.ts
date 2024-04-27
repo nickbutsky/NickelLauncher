@@ -13,7 +13,7 @@ export type DeepestReadonly<T> = DeepReadonly<{
 }>;
 
 // biome-ignore lint/style/useNamingConvention: False positive
-export type ModifyReturnType<T, RT> = T extends (...a: infer A) => void ? (...a: A) => RT : never;
+export type ModifyReturnType<T extends (...args: Parameters<T>) => void, RT> = (...args: Parameters<T>) => RT;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
