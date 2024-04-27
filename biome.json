@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
     "ignore": [
       "node_modules/",
@@ -15,10 +15,14 @@
   "linter": {
     "rules": {
       "all": true,
-      "nursery": {
-        "all": true,
+      "style": {
         "noNamespaceImport": "off",
-        "noUndeclaredDependencies": "off"
+        "useNamingConvention": {
+          "level": "warn",
+          "options": {
+            "strictCase": false
+          }
+        }
       }
     }
   }

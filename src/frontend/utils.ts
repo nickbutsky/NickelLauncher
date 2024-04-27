@@ -1,13 +1,19 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { DeepReadonly } from "ts-essentials";
 
 export type Prettify<T> = {
   [K in keyof T]: T[K];
 } & {};
 
-export type DeepReadonly<T> = {
-  readonly [P in keyof T]: DeepReadonly<T[P]>;
-};
+export type DeepestReadonly<T> = DeepReadonly<{
+  [K in keyof T]: T[K] extends (...a: infer _) => void
+    ? ModifyReturnType<T[K], DeepestReadonly<ReturnType<T[K]>>>
+    : T[K];
+}>;
+
+// biome-ignore lint/style/useNamingConvention: False positive
+export type ModifyReturnType<T, RT> = T extends (...a: infer A) => void ? (...a: A) => RT : never;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
