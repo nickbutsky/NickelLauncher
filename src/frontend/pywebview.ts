@@ -15,5 +15,5 @@ interface API {
       dirname: string;
       version: { displayName: string; availableArchitectures: string[] };
     }[];
-  };
+  }[];
 }
