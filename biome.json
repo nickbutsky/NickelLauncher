@@ -15,6 +15,9 @@
   "linter": {
     "rules": {
       "all": true,
+      "correctness": {
+        "noUndeclaredVariables": "off"
+      },
       "style": {
         "noNamespaceImport": "off",
         "useNamingConvention": {
