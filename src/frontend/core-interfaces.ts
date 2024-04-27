@@ -5,6 +5,7 @@ export interface Instance
     name: string;
     dirname: string;
     version: Version;
+    architectureChoice: string;
   }> {}
 
 export interface Version extends DeepestReadonly<{ displayName: string; availableArchitectures: string[] }> {}
