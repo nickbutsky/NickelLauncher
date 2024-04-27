@@ -1,5 +1,4 @@
 import * as React from "react";
-// biome-ignore lint/style/useNamingConvention: ReactDOM is a community accepted name
 import * as ReactDOM from "react-dom/client";
 
 import { App } from "@/App.tsx";
