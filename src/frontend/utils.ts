@@ -15,18 +15,20 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function useAPI(apiFunction: (typeof pywebview.api)[keyof typeof pywebview.api]) {
-  const [data, setData] = React.useState<Awaited<ReturnType<typeof apiFunction>>>();
+export function useAPI<F extends (typeof pywebview.api)[keyof typeof pywebview.api]>(apiFunction: F) {
+  type APIAwaitedReturnType = Awaited<ReturnType<F>>;
+
+  const [data, setData] = React.useState<APIAwaitedReturnType>();
   const [ready, setReady] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
-      setData(await apiFunction());
+      setData((await apiFunction()) as APIAwaitedReturnType); // Typescript can't infer this on its own
       setReady(true);
     })();
   }, [apiFunction]);
 
-  return [data, ready];
+  return [data, ready] as [Exclude<typeof data, undefined>, true] | [typeof data, false];
 }
 
 export async function waitUntilTrue(
