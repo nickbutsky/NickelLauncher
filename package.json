@@ -4,7 +4,8 @@
   "version": "0.3.1",
   "type": "module",
   "scripts": {
-    "dev": "tsc && vite build && py src/main.py"
+    "dev": "vite build && py src/main.py",
+    "build": "tsc && vite build && py src/main.py"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
