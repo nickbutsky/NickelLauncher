@@ -17,12 +17,12 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import type { Instance } from "@/core-types";
-import { type DeepestReadonly, cn, waitUntilTrue } from "@/utils";
+import type { Instance, VersionsByType } from "@/core-types";
+import { cn, waitUntilTrue } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
-  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepestReadonly<{ initialState: Instance }>
+  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ initialState: Instance }>
 >(({ className, variant, initialState, ...props }, ref) => {
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci">("cg");
 
@@ -117,13 +117,19 @@ function ChangeGroupDialogContent() {
 function ChangeVersionDialogContent({
   currentVersionDisplayName,
 }: DeepReadonly<{ currentVersionDisplayName: string }>) {
+  const [versionsByType, setVersionsByType] = React.useState<VersionsByType>({ release: [], beta: [], preview: [] });
+
+  React.useEffect(() => {
+    (async () => setVersionsByType(await pywebview.api.getVersionsByType()))();
+  }, []);
+
   return (
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Change version</DialogTitle>
       </DialogHeader>
       <VersionSelector
-        versionsByType={pywebview.api.get_versions_by_type()}
+        versionsByType={versionsByType}
         onRefreshRequest={() => undefined}
         defaultDisplayName={currentVersionDisplayName}
       />

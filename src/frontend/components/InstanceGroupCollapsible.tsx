@@ -1,6 +1,6 @@
-import * as React from "react";
-
 import { CaretDownIcon } from "@radix-ui/react-icons";
+import * as React from "react";
+import type { DeepReadonly } from "ts-essentials";
 
 import { EditableLabel } from "@/components/EditableLabel";
 import { InstanceButton } from "@/components/InstanceButton";
@@ -14,11 +14,11 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import type { InstanceGroup } from "@/core-types";
-import { type DeepestReadonly, waitUntilTrue } from "@/utils";
+import { waitUntilTrue } from "@/utils";
 
 export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
-  React.ComponentPropsWithoutRef<typeof Collapsible> & DeepestReadonly<{ initialState: InstanceGroup }>
+  React.ComponentPropsWithoutRef<typeof Collapsible> & DeepReadonly<{ initialState: InstanceGroup }>
 >(({ defaultOpen, initialState, ...props }, ref) => {
   const editableLabelRef = React.useRef<React.ElementRef<typeof EditableLabel>>(null);
   const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);

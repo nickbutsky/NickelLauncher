@@ -1,7 +1,7 @@
-import * as testData from "@/test-data";
-
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as React from "react";
 import { useForm } from "react-hook-form";
+import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
 
 import { InputWithOptions } from "@/components/InputWithOptions";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import type { InstanceGroup, VersionsByType } from "@/core-types";
 
 const formSchema = z.object({
   instanceName: z.string().trim().min(1, "Instance name must be at least 1 character long."),
@@ -18,13 +19,26 @@ const formSchema = z.object({
 });
 
 export function InstanceCreationDialogContent() {
+  const [versionsByType, setVersionByType] = React.useState<VersionsByType>({ release: [], beta: [], preview: [] });
+  const [instanceGroups, setInstanceGroups] = React.useState<DeepReadonly<InstanceGroup[]>>([]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     reValidateMode: "onSubmit",
-    defaultValues: {
-      instanceName: "",
-      groupName: "",
-      versionDisplayName: testData.versions.release[14]?.displayName,
+    defaultValues: async () => {
+      return {
+        instanceName: "",
+        groupName: await (async () => {
+          const instanceGroups = await pywebview.api.getInstanceGroups();
+          setInstanceGroups(instanceGroups);
+          return "";
+        })(),
+        versionDisplayName: await (async () => {
+          const versionsByType = await pywebview.api.getVersionsByType();
+          setVersionByType(versionsByType);
+          return versionsByType.release[14]?.displayName ?? "";
+        })(),
+      };
     },
   });
 
@@ -60,7 +74,7 @@ export function InstanceCreationDialogContent() {
                 <FormControl>
                   <InputWithOptions
                     maxLength={50}
-                    options={testData.instanceGroups.map((instanceGroup) => instanceGroup.name)}
+                    options={instanceGroups.map((instanceGroup) => instanceGroup.name)}
                     {...field}
                   />
                 </FormControl>
@@ -74,7 +88,7 @@ export function InstanceCreationDialogContent() {
               <FormItem>
                 <FormControl>
                   <VersionSelector
-                    versionsByType={testData.versions}
+                    versionsByType={versionsByType}
                     onRefreshRequest={() => undefined}
                     defaultDisplayName={field.value}
                     onDisplayNameChange={field.onChange}
