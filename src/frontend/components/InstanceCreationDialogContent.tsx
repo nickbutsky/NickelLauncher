@@ -15,11 +15,13 @@ import type { InstanceGroup, VersionsByType } from "@/core-types";
 export function InstanceCreationDialogContent() {
   const [instanceGroups, setInstanceGroups] = React.useState<DeepReadonly<InstanceGroup[]>>([]);
   const [versionsByType, setVersionsByType] = React.useState<VersionsByType>({ release: [], beta: [], preview: [] });
+  const [ready, setReady] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
       setInstanceGroups(await pywebview.api.getInstanceGroups());
       setVersionsByType(await pywebview.api.getVersionsByType());
+      setReady(true);
     })();
   }, []);
 
@@ -28,7 +30,7 @@ export function InstanceCreationDialogContent() {
       <DialogHeader>
         <DialogTitle>Create new instance</DialogTitle>
       </DialogHeader>
-      <InstanceCreationForm instanceGroups={instanceGroups} versionsByType={versionsByType} />
+      {ready ? <InstanceCreationForm instanceGroups={instanceGroups} versionsByType={versionsByType} /> : <></>}
     </DialogContent>
   );
 }
@@ -79,12 +81,17 @@ function InstanceCreationForm({
             <FormItem>
               <FormLabel>Group name</FormLabel>
               <FormControl>
-                {/* <Input maxLength={50} {...field} /> */}
-                <InputWithOptions
-                  maxLength={50}
-                  options={instanceGroups.map((instanceGroup) => instanceGroup.name)}
-                  {...field}
-                />
+                {instanceGroups.length ? (
+                  <InputWithOptions
+                    maxLength={50}
+                    options={instanceGroups
+                      .map((instanceGroup) => instanceGroup.name)
+                      .filter((instanceGroup) => instanceGroup !== "")}
+                    {...field}
+                  />
+                ) : (
+                  <Input maxLength={50} {...field} />
+                )}
               </FormControl>
             </FormItem>
           )}
