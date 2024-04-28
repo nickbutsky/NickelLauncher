@@ -19,26 +19,23 @@ const formSchema = z.object({
 });
 
 export function InstanceCreationDialogContent() {
-  const [versionsByType, setVersionByType] = React.useState<VersionsByType>({ release: [], beta: [], preview: [] });
+  const [versionsByType, setVersionsByType] = React.useState<VersionsByType>({ release: [], beta: [], preview: [] });
   const [instanceGroups, setInstanceGroups] = React.useState<DeepReadonly<InstanceGroup[]>>([]);
+
+  React.useEffect(() => {
+    (async () => {
+      setVersionsByType(await pywebview.api.getVersionsByType());
+      setInstanceGroups(await pywebview.api.getInstanceGroups());
+    })();
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     reValidateMode: "onSubmit",
-    defaultValues: async () => {
-      return {
-        instanceName: "",
-        groupName: await (async () => {
-          const instanceGroups = await pywebview.api.getInstanceGroups();
-          setInstanceGroups(instanceGroups);
-          return "";
-        })(),
-        versionDisplayName: await (async () => {
-          const versionsByType = await pywebview.api.getVersionsByType();
-          setVersionByType(versionsByType);
-          return versionsByType.release[14]?.displayName ?? "";
-        })(),
-      };
+    defaultValues: {
+      instanceName: "",
+      groupName: "",
+      versionDisplayName: versionsByType.release[14]?.displayName ?? "",
     },
   });
 
