@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import * as React from "react";
 import { twMerge } from "tailwind-merge";
 
 export type Prettify<T> = {
@@ -12,6 +13,20 @@ export type ModifyReturnType<T extends (...args: Parameters<T>) => void, RT> = T
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function useAPI(apiFunction: (typeof pywebview.api)[keyof typeof pywebview.api]) {
+  const [data, setData] = React.useState<Awaited<ReturnType<typeof apiFunction>>>();
+  const [ready, setReady] = React.useState(false);
+
+  React.useEffect(() => {
+    (async () => {
+      setData(await apiFunction());
+      setReady(true);
+    })();
+  }, [apiFunction]);
+
+  return [data, ready];
 }
 
 export async function waitUntilTrue(
