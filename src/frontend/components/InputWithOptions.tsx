@@ -18,7 +18,7 @@ export const InputWithOptions = React.forwardRef<
 
   const inputRef = React.useRef<React.ElementRef<typeof Input>>(null);
 
-  return (
+  return options.length ? (
     <div className="flex">
       <Input
         className={cn("rounded-r-none focus:z-10", className)}
@@ -57,5 +57,15 @@ export const InputWithOptions = React.forwardRef<
         </SelectContent>
       </Select>
     </div>
+  ) : (
+    <Input
+      className={className}
+      ref={inputRef}
+      onChange={(event) => {
+        setValue(event.currentTarget.value);
+        onChange?.(event);
+      }}
+      {...props}
+    />
   );
 });
