@@ -81,12 +81,10 @@ function InstanceCreationForm({
             <FormItem>
               <FormLabel>Group name</FormLabel>
               <FormControl>
-                {instanceGroups.length ? (
+                {instanceGroups.filter((instanceGroup) => instanceGroup.name !== "").length ? (
                   <InputWithOptions
                     maxLength={50}
-                    options={instanceGroups
-                      .map((instanceGroup) => instanceGroup.name)
-                      .filter((instanceGroup) => instanceGroup !== "")}
+                    options={instanceGroups.map((instanceGroup) => instanceGroup.name).filter((name) => name !== "")}
                     {...field}
                   />
                 ) : (
