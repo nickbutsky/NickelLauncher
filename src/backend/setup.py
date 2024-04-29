@@ -38,7 +38,3 @@ def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
         level=logging.DEBUG,
         handlers=[handler],
     )
-
-
-if __name__ == "__main__":
-    main()
