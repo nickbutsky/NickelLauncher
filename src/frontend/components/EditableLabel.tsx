@@ -38,7 +38,7 @@ export const EditableLabel = React.forwardRef<
     if (labelRef.current) {
       setHeight(labelRef.current.clientHeight);
     }
-  }, []);
+  });
 
   React.useEffect(() => {
     if (editMode) {
