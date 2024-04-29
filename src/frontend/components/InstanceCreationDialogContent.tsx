@@ -46,7 +46,7 @@ function InstanceCreationForm({
     defaultValues: {
       instanceName: "",
       groupName: "",
-      versionDisplayName: versionsByType.release[14]?.displayName ?? "",
+      versionDisplayName: versionsByType.release[0]?.displayName ?? "",
     },
   });
 
