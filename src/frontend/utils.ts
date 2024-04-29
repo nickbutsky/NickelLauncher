@@ -28,7 +28,7 @@ export function useAPI<F extends (typeof pywebview.api)[keyof typeof pywebview.a
     })();
   }, [apiFunction]);
 
-  return [data, ready] as [APIAwaitedReturnType, true] | [typeof data, false];
+  return [data, ready] as [APIAwaitedReturnType, true] | [undefined, false];
 }
 
 export async function waitUntilTrue(
