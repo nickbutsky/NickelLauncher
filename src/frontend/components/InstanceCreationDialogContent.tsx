@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
@@ -11,26 +10,22 @@ import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/compon
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import type { InstanceGroup, VersionsByType } from "@/core-types";
+import { useAPI } from "@/utils";
 
 export function InstanceCreationDialogContent() {
-  const [instanceGroups, setInstanceGroups] = React.useState<DeepReadonly<InstanceGroup[]>>([]);
-  const [versionsByType, setVersionsByType] = React.useState<VersionsByType>({ release: [], beta: [], preview: [] });
-  const [ready, setReady] = React.useState(false);
-
-  React.useEffect(() => {
-    (async () => {
-      setInstanceGroups(await pywebview.api.getInstanceGroups());
-      setVersionsByType(await pywebview.api.getVersionsByType());
-      setReady(true);
-    })();
-  }, []);
+  const [instanceGroups, instanceGroupsReady] = useAPI(pywebview.api.getInstanceGroups);
+  const [versionsByType, versionsByTypeReady] = useAPI(pywebview.api.getVersionsByType);
 
   return (
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Create new instance</DialogTitle>
       </DialogHeader>
-      {ready ? <InstanceCreationForm instanceGroups={instanceGroups} versionsByType={versionsByType} /> : <></>}
+      {instanceGroupsReady && versionsByTypeReady ? (
+        <InstanceCreationForm instanceGroups={instanceGroups} versionsByType={versionsByType} />
+      ) : (
+        <></>
+      )}
     </DialogContent>
   );
 }
