@@ -18,6 +18,11 @@
       "correctness": {
         "noUndeclaredVariables": "off"
       },
+      "nursery": {
+        "all": true,
+        "noReactSpecificProps": "off",
+        "noUndeclaredDependencies": "off"
+      },
       "style": {
         "noNamespaceImport": "off",
         "useNamingConvention": {
