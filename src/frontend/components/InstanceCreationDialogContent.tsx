@@ -92,6 +92,7 @@ function InstanceCreationForm({
             <FormItem>
               <FormControl>
                 <VersionSelector
+                  className="h-72"
                   versionsByType={versionsByType}
                   onRefreshRequest={() => undefined}
                   defaultDisplayName={field.value}
