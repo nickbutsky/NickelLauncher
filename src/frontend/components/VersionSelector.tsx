@@ -20,19 +20,22 @@ interface Props
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
   React.ComponentPropsWithoutRef<typeof Tabs> & Props
->(({ defaultValue, versionsByType, onRefreshRequest, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
-  return (
-    <Tabs
-      ref={ref}
-      defaultValue={
-        versionTypes.find((versionType) =>
-          versionsByType[versionType].find((version) => version.displayName === defaultDisplayName),
-        ) ?? versionTypes[0]
-      }
-      asChild={true}
-      {...props}
-    >
-      <div className="flex flex-col">
+>(
+  (
+    { className, defaultValue, versionsByType, onRefreshRequest, defaultDisplayName, onDisplayNameChange, ...props },
+    ref,
+  ) => {
+    return (
+      <Tabs
+        className={cn("flex flex-col", className)}
+        ref={ref}
+        defaultValue={
+          versionTypes.find((versionType) =>
+            versionsByType[versionType].find((version) => version.displayName === defaultDisplayName),
+          ) ?? versionTypes[0]
+        }
+        {...props}
+      >
         <TopBar onRefreshRequest={onRefreshRequest} />
         {versionTypes.map((versionType) => (
           <TabsContent
@@ -50,10 +53,10 @@ export const VersionSelector = React.forwardRef<
             />
           </TabsContent>
         ))}
-      </div>
-    </Tabs>
-  );
-});
+      </Tabs>
+    );
+  },
+);
 
 function TopBar({
   variant = "cl",
