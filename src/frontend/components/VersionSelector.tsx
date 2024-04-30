@@ -39,6 +39,7 @@ export const VersionSelector = React.forwardRef<
           key={versionType}
           value={versionType}
           forceMount={true}
+          asChild={true}
         >
           <InnerVersionSelector
             versions={versionsByType[versionType]}
