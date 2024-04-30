@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { type Version, type VersionsByType, versionTypes } from "@/core-types";
+import { cn } from "@/utils";
 
 interface Props
   extends DeepReadonly<{
@@ -120,15 +121,15 @@ function TopBar({
   );
 }
 
-function InnerVersionSelector({
-  versions,
-  defaultDisplayName,
-  onDisplayNameChange,
-}: DeepReadonly<{
-  versions: Version[];
-  defaultDisplayName?: string;
-  onDisplayNameChange?: (displayName: string) => void;
-}>) {
+const InnerVersionSelector = React.forwardRef<
+  React.ElementRef<typeof ScrollArea>,
+  React.ComponentPropsWithoutRef<typeof ScrollArea> &
+    DeepReadonly<{
+      versions: Version[];
+      defaultDisplayName?: string;
+      onDisplayNameChange?: (displayName: string) => void;
+    }>
+>(({ className, type, versions, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
   const [currentDisplayName, setCurrentDisplayName] = React.useState(
     versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
   );
@@ -140,7 +141,7 @@ function InnerVersionSelector({
   }, []);
 
   return (
-    <ScrollArea className="h-[300px] pr-3" type="always">
+    <ScrollArea className={cn("h-[300px] pr-3", className)} ref={ref} type="always" {...props}>
       <ToggleGroup
         className="flex-col gap-0"
         type="single"
@@ -167,4 +168,4 @@ function InnerVersionSelector({
       </ToggleGroup>
     </ScrollArea>
   );
-}
+});
