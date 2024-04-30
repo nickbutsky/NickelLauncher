@@ -101,12 +101,21 @@ export const InstanceButton = React.forwardRef<
 });
 
 function ChangeGroupDialogContent() {
+  const [instanceGroups, ready] = useAPI(pywebview.api.getInstanceGroups);
+
   return (
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Change group</DialogTitle>
       </DialogHeader>
-      <InputWithOptions placeholder="Group name" options={[]} />
+      {ready ? (
+        <InputWithOptions
+          placeholder="Group name"
+          options={instanceGroups.map((instanceGroup) => instanceGroup.name).filter((name) => name !== "")}
+        />
+      ) : (
+        <></>
+      )}
       <DialogFooter>
         <Button type="submit">Change</Button>
       </DialogFooter>
