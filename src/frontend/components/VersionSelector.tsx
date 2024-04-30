@@ -31,23 +31,25 @@ export const VersionSelector = React.forwardRef<
       }
       {...props}
     >
-      <TopBar onRefreshRequest={onRefreshRequest} />
-      {versionTypes.map((versionType) => (
-        <TabsContent
-          className="data-[state=inactive]:hidden"
-          tabIndex={-1}
-          key={versionType}
-          value={versionType}
-          forceMount={true}
-          asChild={true}
-        >
-          <InnerVersionSelector
-            versions={versionsByType[versionType]}
-            defaultDisplayName={defaultDisplayName}
-            onDisplayNameChange={onDisplayNameChange}
-          />
-        </TabsContent>
-      ))}
+      <div className="flex h-full flex-col">
+        <TopBar onRefreshRequest={onRefreshRequest} />
+        {versionTypes.map((versionType) => (
+          <TabsContent
+            className="flex-1 data-[state=inactive]:hidden"
+            tabIndex={-1}
+            key={versionType}
+            value={versionType}
+            forceMount={true}
+            asChild={true}
+          >
+            <InnerVersionSelector
+              versions={versionsByType[versionType]}
+              defaultDisplayName={defaultDisplayName}
+              onDisplayNameChange={onDisplayNameChange}
+            />
+          </TabsContent>
+        ))}
+      </div>
     </Tabs>
   );
 });
@@ -142,7 +144,7 @@ const InnerVersionSelector = React.forwardRef<
   }, []);
 
   return (
-    <ScrollArea className={cn("h-[300px] pr-3", className)} ref={ref} type="always" {...props}>
+    <ScrollArea className={cn("pr-3", className)} ref={ref} type="always" {...props}>
       <ToggleGroup
         className="flex-col gap-0"
         type="single"
