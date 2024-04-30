@@ -126,6 +126,7 @@ function ChangeVersionDialogContent({
       </DialogHeader>
       {ready ? (
         <VersionSelector
+          className="h-72"
           versionsByType={versionsByType}
           onRefreshRequest={() => undefined}
           defaultDisplayName={currentVersionDisplayName}
