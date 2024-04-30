@@ -29,9 +29,10 @@ export const VersionSelector = React.forwardRef<
           versionsByType[versionType].find((version) => version.displayName === defaultDisplayName),
         ) ?? versionTypes[0]
       }
+      asChild={true}
       {...props}
     >
-      <div className="flex h-full flex-col">
+      <div className="flex flex-col">
         <TopBar onRefreshRequest={onRefreshRequest} />
         {versionTypes.map((versionType) => (
           <TabsContent
