@@ -148,7 +148,7 @@ const InnerVersionSelector = React.forwardRef<
   }, []);
 
   return (
-    <ScrollArea className={cn("pr-3", className)} ref={ref} type="always" {...props}>
+    <ScrollArea className={cn("rounded-md border pr-3", className)} ref={ref} type="always" {...props}>
       <ToggleGroup
         className="flex-col gap-0"
         type="single"
