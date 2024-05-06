@@ -21,10 +21,8 @@ export function InstanceCreationDialogContent() {
       <DialogHeader>
         <DialogTitle>Create new instance</DialogTitle>
       </DialogHeader>
-      {instanceGroupsReady && versionsByTypeReady ? (
+      {instanceGroupsReady && versionsByTypeReady && (
         <InstanceCreationForm instanceGroups={instanceGroups} versionsByType={versionsByType} />
-      ) : (
-        <></>
       )}
     </DialogContent>
   );

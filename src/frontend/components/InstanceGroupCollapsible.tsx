@@ -20,7 +20,8 @@ export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
   React.ComponentPropsWithoutRef<typeof Collapsible> & DeepReadonly<{ initialState: InstanceGroup }>
 >(({ defaultOpen, initialState, ...props }, ref) => {
-  const editableLabelRef = React.useRef<React.ElementRef<typeof EditableLabel>>(null);
+  const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
+
   const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
 
   return (
@@ -31,11 +32,11 @@ export const InstanceGroupCollapsible = React.forwardRef<
             <CaretDownIcon />
           </Button>
         </CollapsibleTrigger>
-        {initialState.name ? (
+        {initialState.name && (
           <ContextMenu>
             <ContextMenuTrigger asChild={true}>
               <EditableLabel
-                ref={editableLabelRef}
+                editModeTrigger={editableLabelTrigger}
                 defaultValue={initialState.name}
                 maxLength={50}
                 applyOnAboutToSave={(value) => value.trim()}
@@ -47,7 +48,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
                 ref={renameContextMenuItemRef}
                 onSelect={() =>
                   waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
-                    editableLabelRef.current?.enterEditMode(),
+                    setEditableLabelTrigger(!editableLabelTrigger),
                   )
                 }
               >
@@ -56,8 +57,6 @@ export const InstanceGroupCollapsible = React.forwardRef<
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
-        ) : (
-          <div>{initialState.name}</div>
         )}
       </div>
       <CollapsibleContent className="my-1 flex flex-wrap gap-3 data-[state=closed]:hidden" forceMount={true}>

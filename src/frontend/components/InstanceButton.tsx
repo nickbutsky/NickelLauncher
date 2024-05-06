@@ -25,8 +25,8 @@ export const InstanceButton = React.forwardRef<
   Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ initialState: Instance }>
 >(({ className, variant, initialState, ...props }, ref) => {
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci">("cg");
+  const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
 
-  const editableLabelRef = React.useRef<React.ElementRef<typeof EditableLabel>>(null);
   const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
 
   return (
@@ -42,7 +42,7 @@ export const InstanceButton = React.forwardRef<
             <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
             <div className="grid grid-rows-2 text-left">
               <EditableLabel
-                ref={editableLabelRef}
+                editModeTrigger={editableLabelTrigger}
                 defaultValue={initialState.name}
                 maxLength={20}
                 applyOnAboutToSave={(value) => value.trim()}
@@ -67,7 +67,7 @@ export const InstanceButton = React.forwardRef<
             ref={renameContextMenuItemRef}
             onSelect={() =>
               waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
-                editableLabelRef.current?.enterEditMode(),
+                setEditableLabelTrigger(!editableLabelTrigger),
               )
             }
           >
@@ -108,13 +108,11 @@ function ChangeGroupDialogContent() {
       <DialogHeader>
         <DialogTitle>Change group</DialogTitle>
       </DialogHeader>
-      {ready ? (
+      {ready && (
         <InputWithOptions
           placeholder="Group name"
           options={instanceGroups.map((instanceGroup) => instanceGroup.name).filter((name) => name !== "")}
         />
-      ) : (
-        <></>
       )}
       <DialogFooter>
         <Button type="submit">Change</Button>
@@ -133,15 +131,13 @@ function ChangeVersionDialogContent({
       <DialogHeader>
         <DialogTitle>Change version</DialogTitle>
       </DialogHeader>
-      {ready ? (
+      {ready && (
         <VersionSelector
           className="h-72"
           versionsByType={versionsByType}
           onRefreshRequest={() => undefined}
           defaultDisplayName={currentVersionDisplayName}
         />
-      ) : (
-        <></>
       )}
       <DialogFooter>
         <Button type="submit">Change</Button>
