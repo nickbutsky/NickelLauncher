@@ -60,7 +60,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
           <div>{initialState.name}</div>
         )}
       </div>
-      <CollapsibleContent className="mt-1 flex flex-wrap gap-3 data-[state=closed]:hidden" forceMount={true}>
+      <CollapsibleContent className="my-1 flex flex-wrap gap-3 data-[state=closed]:hidden" forceMount={true}>
         {initialState.instances.map((instance) => (
           <InstanceButton key={instance.name} initialState={instance} />
         ))}
