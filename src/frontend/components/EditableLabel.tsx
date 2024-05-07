@@ -1,8 +1,8 @@
-import * as Portal from "@radix-ui/react-portal";
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
 import { cn, useIsFirstRender } from "@/utils";
+import { Popover, PopoverContent } from "@radix-ui/react-popover";
 
 interface Props
   extends DeepReadonly<{
@@ -57,47 +57,49 @@ export const EditableLabel = React.forwardRef<
           {editMode ? "" : value}
         </div>
         {editMode && (
-          <Portal.Root
-            className="absolute"
-            style={{
-              left: (labelRef.current?.getBoundingClientRect().left as number) - 4,
-              top: labelRef.current?.getBoundingClientRect().top,
-            }}
-            asChild={true}
-          >
-            <DynamicInput
+          <Popover open={true} modal={true}>
+            <PopoverContent
+              className="absolute"
               style={{
-                height: height,
-                font: window
-                  .getComputedStyle(labelRef.current as Exclude<typeof labelRef.current, null>)
-                  .getPropertyValue("font"),
+                left: (labelRef.current?.getBoundingClientRect().left as number) - 4,
+                top: labelRef.current?.getBoundingClientRect().top,
               }}
-              ref={inputRef}
-              defaultValue={value}
-              maxLength={maxLength}
-              onBlur={() => setEditMode(false)}
-              onContextMenu={(event) => event.stopPropagation()}
-              onKeyDown={(event) => {
-                if (event.key === "Escape") {
-                  return setEditMode(false);
-                }
-                if (!(event.key === "Enter")) {
-                  return;
-                }
-                const newValue =
-                  applyOnAboutToSave?.(event.currentTarget.value ?? "") ?? event.currentTarget.value ?? "";
-                if (isAllowedToSave && !isAllowedToSave(newValue)) {
-                  return;
-                }
-                if (newValue === value) {
-                  return setEditMode(false);
-                }
-                onSave?.(newValue);
-                setValue(newValue);
-                setEditMode(false);
-              }}
-            />
-          </Portal.Root>
+              asChild={true}
+            >
+              <DynamicInput
+                style={{
+                  height: height,
+                  font: window
+                    .getComputedStyle(labelRef.current as Exclude<typeof labelRef.current, null>)
+                    .getPropertyValue("font"),
+                }}
+                ref={inputRef}
+                defaultValue={value}
+                maxLength={maxLength}
+                onBlur={() => setEditMode(false)}
+                onContextMenu={(event) => event.stopPropagation()}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    return setEditMode(false);
+                  }
+                  if (!(event.key === "Enter")) {
+                    return;
+                  }
+                  const newValue =
+                    applyOnAboutToSave?.(event.currentTarget.value ?? "") ?? event.currentTarget.value ?? "";
+                  if (isAllowedToSave && !isAllowedToSave(newValue)) {
+                    return;
+                  }
+                  if (newValue === value) {
+                    return setEditMode(false);
+                  }
+                  onSave?.(newValue);
+                  setValue(newValue);
+                  setEditMode(false);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
         )}
       </>
     );
