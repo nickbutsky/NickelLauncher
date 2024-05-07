@@ -38,7 +38,9 @@ export const EditableLabel = React.forwardRef<
       if (editMode || firstRender) {
         return;
       }
-      saveHeight();
+      if (labelRef.current) {
+        setHeight(labelRef.current?.clientHeight);
+      }
       setEditMode(true);
     }, [editModeTrigger]);
 
@@ -48,12 +50,6 @@ export const EditableLabel = React.forwardRef<
         inputRef.current?.select();
       }
     }, [editMode]);
-
-    function saveHeight() {
-      if (labelRef.current) {
-        setHeight(labelRef.current.clientHeight);
-      }
-    }
 
     return (
       <>
