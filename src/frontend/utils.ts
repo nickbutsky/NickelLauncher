@@ -31,6 +31,16 @@ export function useAPI<F extends (typeof pywebview.api)[keyof typeof pywebview.a
   return [data, ready] as [UsedAPI, true] | [undefined, false];
 }
 
+export const useIsFirstRender = () => {
+  const isFirstRenderRef = React.useRef(true);
+
+  React.useEffect(() => {
+    isFirstRenderRef.current = false;
+  }, []);
+
+  return isFirstRenderRef.current;
+};
+
 export async function waitUntilTrue(
   conditionFunction: () => boolean,
   interval = 10,

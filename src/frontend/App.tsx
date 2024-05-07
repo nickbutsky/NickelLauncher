@@ -12,13 +12,10 @@ export function App() {
 
   return (
     <ThemeProvider defaultTheme="dark">
-      {ready ? (
+      {ready &&
         instanceGroups.map((instanceGroup) => (
           <InstanceGroupCollapsible key={instanceGroup.name} initialState={instanceGroup} />
-        ))
-      ) : (
-        <></>
-      )}
+        ))}
       <Dialog>
         <DialogTrigger>
           <Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">

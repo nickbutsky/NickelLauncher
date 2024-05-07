@@ -1,9 +1,8 @@
-import * as React from "react";
-
 import * as Portal from "@radix-ui/react-portal";
+import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
-import { cn } from "@/utils";
+import { cn, useIsFirstRender } from "@/utils";
 
 interface Props
   extends DeepReadonly<{
@@ -32,16 +31,15 @@ export const EditableLabel = React.forwardRef<
     const labelRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
 
-    React.useEffect(() => {
-      saveHeight();
-    }, []);
+    const firstRender = useIsFirstRender();
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
     React.useEffect(() => {
-      if (!editMode && height) {
-        saveHeight();
-        setEditMode(true);
+      if (editMode || firstRender) {
+        return;
       }
+      saveHeight();
+      setEditMode(true);
     }, [editModeTrigger]);
 
     React.useEffect(() => {
