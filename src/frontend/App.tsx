@@ -19,7 +19,7 @@ export function App() {
             <InstanceGroupCollapsible key={instanceGroup.name} initialState={instanceGroup} />
           ))}
         <Dialog>
-          <DialogTrigger>
+          <DialogTrigger asChild={true}>
             <Button className="fixed right-0 bottom-0 z-10 mr-1 mb-1 rounded-full" size="icon">
               <PlusIcon />
             </Button>
