@@ -2,10 +2,10 @@ import { PlusIcon } from "@radix-ui/react-icons";
 
 import { InstanceCreationDialogContent } from "@/components/InstanceCreationDialogContent";
 import { InstanceGroupCollapsible } from "@/components/InstanceGroupCollapsible";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Button } from "@/components/shadcn/button";
+import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
+import { ScrollArea } from "@/components/shadcn/scroll-area";
+import { ThemeProvider } from "@/components/shadcn/theme-provider";
 import { useAPI } from "@/utils";
 
 export function App() {

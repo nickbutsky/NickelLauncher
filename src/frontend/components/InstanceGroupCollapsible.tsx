@@ -2,17 +2,17 @@ import { CaretDownIcon } from "@radix-ui/react-icons";
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
-import { EditableLabel } from "@/components/EditableLabel";
 import { InstanceButton } from "@/components/InstanceButton";
-import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { EditableLabel } from "@/components/nickel/EditableLabel";
+import { Button } from "@/components/shadcn/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/shadcn/collapsible";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuShortcut,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu";
+} from "@/components/shadcn/context-menu";
 import type { InstanceGroup } from "@/core-types";
 import { waitUntilTrue } from "@/utils";
 

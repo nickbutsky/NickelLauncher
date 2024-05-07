@@ -2,8 +2,8 @@ import * as React from "react";
 
 import type { DeepReadonly } from "ts-essentials";
 
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Input } from "@/components/shadcn/input";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/shadcn/select";
 import { cn } from "@/utils";
 
 interface Props extends DeepReadonly<{ options: string[] }> {}

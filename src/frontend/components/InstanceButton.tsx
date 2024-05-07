@@ -2,10 +2,10 @@ import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
 import defaultLogo from "@/assets/default.png";
-import { EditableLabel } from "@/components/EditableLabel";
-import { InputWithOptions } from "@/components/InputWithOptions";
 import { VersionSelector } from "@/components/VersionSelector";
-import { Button } from "@/components/ui/button";
+import { EditableLabel } from "@/components/nickel/EditableLabel";
+import { InputWithOptions } from "@/components/nickel/InputWithOptions";
+import { Button } from "@/components/shadcn/button";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -15,8 +15,15 @@ import {
   ContextMenuSeparator,
   ContextMenuShortcut,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+} from "@/components/shadcn/context-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/shadcn/dialog";
 import type { Instance } from "@/core-types";
 import { cn, useAPI, waitUntilTrue } from "@/utils";
 
