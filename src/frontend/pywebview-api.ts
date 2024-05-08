@@ -14,4 +14,5 @@ interface API {
   getVersionsByType: () => Promise<DeepReadonly<VersionsByType>>;
   toggleGroupHidden: (name: string) => Promise<void>;
   renameInstance: (dirname: string, newName: string) => Promise<void>;
+  changeVersion: (dirname: string, versionDisplayName: string) => Promise<void>;
 }

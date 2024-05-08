@@ -1,5 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
+import { useForm } from "react-hook-form";
 import type { DeepReadonly } from "ts-essentials";
+import { z } from "zod";
 
 import defaultLogo from "@/assets/default.png";
 import { VersionSelector } from "@/components/VersionSelector";
@@ -24,7 +27,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/shadcn/dialog";
-import type { Instance } from "@/core-types";
+import { Form, FormControl, FormField, FormItem } from "@/components/shadcn/form";
+import type { Instance, VersionsByType } from "@/core-types";
 import { cn, useAPI, waitUntilTrue } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
@@ -99,7 +103,12 @@ export const InstanceButton = React.forwardRef<
         {
           {
             cg: <ChangeGroupDialogContent />,
-            cv: <ChangeVersionDialogContent currentVersionDisplayName={initialState.version.displayName} />,
+            cv: (
+              <ChangeVersionDialogContent
+                dirname={initialState.dirname}
+                currentVersionDisplayName={initialState.version.displayName}
+              />
+            ),
             ci: <CopyInstanceDialogContent />,
           }[dialogContentId]
         }
@@ -130,8 +139,9 @@ function ChangeGroupDialogContent() {
 }
 
 function ChangeVersionDialogContent({
+  dirname,
   currentVersionDisplayName,
-}: DeepReadonly<{ currentVersionDisplayName: string }>) {
+}: DeepReadonly<{ dirname: string; currentVersionDisplayName: string }>) {
   const [versionsByType, ready] = useAPI(pywebview.api.getVersionsByType);
 
   return (
@@ -140,17 +150,59 @@ function ChangeVersionDialogContent({
         <DialogTitle>Change version</DialogTitle>
       </DialogHeader>
       {ready && (
-        <VersionSelector
-          className="h-72"
+        <ChangeVersionForm
+          dirname={dirname}
+          currentVersionDisplayName={currentVersionDisplayName}
           versionsByType={versionsByType}
-          onRefreshRequest={() => undefined}
-          defaultDisplayName={currentVersionDisplayName}
         />
       )}
-      <DialogFooter>
-        <Button type="submit">Change</Button>
-      </DialogFooter>
     </DialogContent>
+  );
+}
+
+const changeVersionFormSchema = z.object({ versionDisplayName: z.string() });
+
+function ChangeVersionForm({
+  dirname,
+  currentVersionDisplayName,
+  versionsByType,
+}: DeepReadonly<{ dirname: string; currentVersionDisplayName: string; versionsByType: VersionsByType }>) {
+  const form = useForm<z.infer<typeof changeVersionFormSchema>>({
+    resolver: zodResolver(changeVersionFormSchema),
+    reValidateMode: "onSubmit",
+    defaultValues: {
+      versionDisplayName: currentVersionDisplayName,
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form
+        className="space-y-4"
+        onSubmit={form.handleSubmit((data) => pywebview.api.changeVersion(dirname, data.versionDisplayName))}
+      >
+        <FormField
+          control={form.control}
+          name="versionDisplayName"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <VersionSelector
+                  className="h-72"
+                  versionsByType={versionsByType}
+                  onRefreshRequest={() => undefined}
+                  defaultDisplayName={field.value}
+                  onDisplayNameChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <DialogFooter>
+          <Button type="submit">Change</Button>
+        </DialogFooter>
+      </form>
+    </Form>
   );
 }
 

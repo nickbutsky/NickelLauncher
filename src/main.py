@@ -63,14 +63,31 @@ class API:
         for group in instancemanager.get_instance_groups():
             try:
                 instance = next(iter(instance for instance in group.instances if instance.directory.name == dirname))
+            except StopIteration:  # noqa: PERF203
+                pass
+            else:
                 if instance.name == new_name:
                     return
                 instance.name = new_name
+                return
+
+    def changeVersion(self, dirname: str, version_display_name: str) -> None:  # noqa: N802
+        for group in instancemanager.get_instance_groups():
+            try:
+                instance = next(iter(instance for instance in group.instances if instance.directory.name == dirname))
             except StopIteration:  # noqa: PERF203
                 pass
-
-    def changeVersion(self, dirname: str, version_name: str) -> None:  # noqa: N802
-        pass
+            else:
+                if instance.version.name == version_display_name:
+                    return
+                instance.version = next(
+                    iter(
+                        version
+                        for version in versionretrieve.get_versions_locally()
+                        if version.name == version_display_name
+                    ),
+                )
+                return
 
     def changeArchitectureChoice(self, dirname: str, architecture_choice: Architecture) -> None:  # noqa: N802
         pass
