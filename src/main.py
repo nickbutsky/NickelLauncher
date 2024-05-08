@@ -22,6 +22,7 @@ class API:
         return [
             {
                 "name": group.name,
+                "hidden": group.hidden,
                 "instances": [
                     {
                         "name": instance.name,
