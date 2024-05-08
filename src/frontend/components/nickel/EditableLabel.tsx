@@ -20,7 +20,7 @@ export const EditableLabel = React.forwardRef<
     { className, editModeTrigger, defaultValue, maxLength, applyOnAboutToSave, isAllowedToSave, onSave, ...props },
     ref,
   ) => {
-    React.useImperativeHandle(ref, () => labelRef.current as HTMLDivElement);
+    React.useImperativeHandle(ref, () => labelRef.current as Exclude<typeof labelRef.current, null>);
 
     const [value, setValue] = React.useState(maxLength === undefined ? defaultValue : defaultValue.slice(0, maxLength));
     const [editMode, setEditMode] = React.useState(false);
