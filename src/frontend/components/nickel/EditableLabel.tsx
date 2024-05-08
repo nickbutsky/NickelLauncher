@@ -112,7 +112,7 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
   ({ className, onFocus, onChange, ...props }, ref) => {
     return (
       <input
-        className={cn("bg-inherit px-1", className)}
+        className={cn("bg-black px-1", className)}
         ref={ref}
         onFocus={(event) => {
           adjustInputWidth(event);
