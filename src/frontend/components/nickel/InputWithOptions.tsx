@@ -15,6 +15,7 @@ export const InputWithOptions = React.forwardRef<
   const [value, setValue] = React.useState("");
 
   const inputRef = React.useRef<React.ElementRef<typeof Input>>(null);
+  const selectTriggerRef = React.useRef<React.ElementRef<typeof SelectTrigger>>(null);
 
   return options.length ? (
     <div className="flex">
@@ -37,15 +38,21 @@ export const InputWithOptions = React.forwardRef<
           inputRef.current.dispatchEvent(new Event("input", { bubbles: true }));
         }}
         onOpenChange={(open) => {
+          function preventFocus() {
+            selectTriggerRef.current?.blur();
+          }
+
           if (!open) {
+            selectTriggerRef.current?.addEventListener("focus", preventFocus);
             setTimeout(() => {
               inputRef.current?.focus();
               inputRef.current?.select();
+              selectTriggerRef.current?.removeEventListener("focus", preventFocus);
             }, 0);
           }
         }}
       >
-        <SelectTrigger className="w-min rounded-l-none" />
+        <SelectTrigger className="w-min rounded-l-none" ref={selectTriggerRef} />
         <SelectContent>
           {options.map((option) => (
             <SelectItem key={option} value={option}>
