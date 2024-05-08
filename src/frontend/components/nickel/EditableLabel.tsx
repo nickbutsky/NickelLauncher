@@ -4,19 +4,17 @@ import type { DeepReadonly } from "ts-essentials";
 
 import { cn, useIsFirstRender } from "@/utils";
 
-interface Props
-  extends DeepReadonly<{
-    editModeTrigger: boolean;
-    defaultValue: string;
-    maxLength?: number;
-    applyOnAboutToSave?: (value: string) => string;
-    isAllowedToSave?: (value: string) => boolean;
-    onSave?: (value: string) => void;
-  }> {}
-
 export const EditableLabel = React.forwardRef<
   HTMLDivElement,
-  Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> & Props
+  Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> &
+    DeepReadonly<{
+      editModeTrigger: boolean;
+      defaultValue: string;
+      maxLength?: number;
+      applyOnAboutToSave?: (value: string) => string;
+      isAllowedToSave?: (value: string) => boolean;
+      onSave?: (value: string) => void;
+    }>
 >(
   (
     { className, editModeTrigger, defaultValue, maxLength, applyOnAboutToSave, isAllowedToSave, onSave, ...props },

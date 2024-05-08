@@ -6,11 +6,9 @@ import { Input } from "@/components/shadcn/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/shadcn/select";
 import { cn } from "@/utils";
 
-interface Props extends DeepReadonly<{ options: string[] }> {}
-
 export const InputWithOptions = React.forwardRef<
   React.ElementRef<typeof Input>,
-  React.ComponentPropsWithoutRef<typeof Input> & Props
+  React.ComponentPropsWithoutRef<typeof Input> & DeepReadonly<{ options: string[] }>
 >(({ className, onChange, options, ...props }, ref) => {
   React.useImperativeHandle(ref, () => inputRef.current as Exclude<typeof inputRef.current, null>, []);
 
