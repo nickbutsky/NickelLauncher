@@ -54,6 +54,7 @@ export const InstanceButton = React.forwardRef<
                 maxLength={20}
                 applyOnAboutToSave={(value) => value.trim()}
                 isAllowedToSave={(value) => value.length > 0}
+                onSave={(value) => pywebview.api.renameInstance(initialState.dirname, value)}
               />
               <div>{initialState.version.displayName}</div>
             </div>
