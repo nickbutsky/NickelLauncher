@@ -56,6 +56,9 @@ class API:
 
         # next(iter(group for group in instancemanager.get_instance_groups() if group.name == old_name)).name = new_name
 
+    def toggleGroupHidden(self, name: str) -> None:  # noqa: N802
+        next(iter(group for group in instancemanager.get_instance_groups() if group.name == name)).toggle_hidden()
+
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802
         for group in instancemanager.get_instance_groups():
             try:

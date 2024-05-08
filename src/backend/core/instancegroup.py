@@ -37,16 +37,15 @@ class InstanceGroup:
     def hidden(self) -> bool:
         return self._hidden
 
-    @hidden.setter
-    def hidden(self, hidden: bool) -> None:
-        if self.unnamed:
-            return
-        self._hidden = hidden
-        self._notify_subscribers()
-
     @property
     def instances(self) -> tuple[Instance, ...]:
         return tuple(self._instances)
+
+    def toggle_hidden(self) -> None:
+        if self.unnamed:
+            return
+        self._hidden = not self.hidden
+        self._notify_subscribers()
 
     def add_instances(self, position: int, instances: Sequence[Instance]) -> None:
         self._instances[position:position] = instances

@@ -19,13 +19,19 @@ import { waitUntilTrue } from "@/utils";
 export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
   React.ComponentPropsWithoutRef<typeof Collapsible> & DeepReadonly<{ initialState: InstanceGroup }>
->(({ defaultOpen, initialState, ...props }, ref) => {
+>(({ defaultOpen, onOpenChange, initialState, ...props }, ref) => {
+  const [name, _] = React.useState(initialState.name);
   const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
 
   const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
 
   return (
-    <Collapsible ref={ref} defaultOpen={!initialState.hidden} {...props}>
+    <Collapsible
+      ref={ref}
+      defaultOpen={!initialState.hidden}
+      onOpenChange={() => pywebview.api.toggleGroupHidden(name)}
+      {...props}
+    >
       <div className="flex items-center gap-2">
         <CollapsibleTrigger asChild={true}>
           <Button className="data-[state=closed]:-rotate-90" variant="ghost" size="icon">
