@@ -5,7 +5,6 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent / "backend"))
 
-import contextlib
 from typing import TYPE_CHECKING
 
 import webview  # pyright: ignore [reportMissingTypeStubs]
@@ -59,10 +58,13 @@ class API:
 
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802
         for group in instancemanager.get_instance_groups():
-            with contextlib.suppress(StopIteration):
-                next(
-                    iter(instance for instance in group.instances if instance.directory.name == dirname),
-                ).name = new_name
+            try:
+                instance = next(iter(instance for instance in group.instances if instance.directory.name == dirname))
+                if instance.name == new_name:
+                    return
+                instance.name = new_name
+            except StopIteration:  # noqa: PERF203
+                pass
 
     def changeVersion(self, dirname: str, version_name: str) -> None:  # noqa: N802
         pass
