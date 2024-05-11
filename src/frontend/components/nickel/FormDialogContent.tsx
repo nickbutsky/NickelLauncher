@@ -16,7 +16,7 @@ import { Form, FormField } from "@/components/shadcn/form";
 
 type Schema = ZodObject<Record<string, ZodType>>;
 
-type DialogFormFieldProps<T extends Schema = Schema> = {
+type DialogFormFieldProps<T extends Schema> = {
   name: Path<z.infer<T>>;
   render: ({ field }: { field: ControllerRenderProps<FieldValues, Path<z.infer<T>>> }) => React.ReactElement;
 };
@@ -60,6 +60,6 @@ export function FormDialogContent<T extends Schema>({
   );
 }
 
-export function DialogFormField(props: DialogFormFieldProps) {
-  return <>{props}</>;
+export function DialogFormField<T extends Schema>(props: DialogFormFieldProps<T>) {
+  return undefined && props;
 }
