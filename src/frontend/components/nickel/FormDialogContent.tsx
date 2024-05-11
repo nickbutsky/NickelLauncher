@@ -4,6 +4,7 @@ import {
   type ControllerRenderProps,
   type DefaultValues,
   type FieldValues,
+  type Path,
   type SubmitHandler,
   useForm,
 } from "react-hook-form";
@@ -16,8 +17,8 @@ import { Form, FormField } from "@/components/shadcn/form";
 type Schema = ZodObject<Record<string, ZodType>>;
 
 type DialogFormFieldProps<T extends Schema = Schema> = {
-  name: keyof z.infer<T>;
-  render: ({ field }: { field: ControllerRenderProps<FieldValues, keyof z.infer<T>> }) => React.ReactNode;
+  name: Path<z.infer<T>>;
+  render: ({ field }: { field: ControllerRenderProps<FieldValues, Path<z.infer<T>>> }) => React.ReactElement;
 };
 
 export function FormDialogContent<T extends Schema>({
@@ -60,5 +61,5 @@ export function FormDialogContent<T extends Schema>({
 }
 
 export function DialogFormField(props: DialogFormFieldProps) {
-  return <></>;
+  return <>{props}</>;
 }
