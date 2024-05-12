@@ -120,20 +120,31 @@ function ChangeGroupDialogContent() {
   const [instanceGroups, ready] = useAPI(pywebview.api.getInstanceGroups);
 
   return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Change group</DialogTitle>
-      </DialogHeader>
-      {ready && (
-        <InputWithOptions
-          placeholder="Group name"
-          options={instanceGroups.map((instanceGroup) => instanceGroup.name).filter((name) => name !== "")}
+    ready && (
+      <FormDialogContent
+        title="Change group"
+        submitText="Change"
+        schema={z.object({ groupName: z.string() })}
+        defaultValues={{ groupName: "" }}
+        onSubmit={(data) => console.log(JSON.stringify(data, undefined, 2))}
+      >
+        <DialogFormField
+          name="groupName"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <InputWithOptions
+                  placeholder="Group name"
+                  maxLength={50}
+                  options={instanceGroups.map((instanceGroup) => instanceGroup.name).filter((name) => name !== "")}
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
         />
-      )}
-      <DialogFooter>
-        <Button type="submit">Change</Button>
-      </DialogFooter>
-    </DialogContent>
+      </FormDialogContent>
+    )
   );
 }
 
