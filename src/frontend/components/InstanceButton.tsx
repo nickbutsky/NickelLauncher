@@ -1,12 +1,11 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
-import { useForm } from "react-hook-form";
 import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
 
 import defaultLogo from "@/assets/default.png";
 import { VersionSelector } from "@/components/VersionSelector";
 import { EditableLabel } from "@/components/nickel/EditableLabel";
+import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDialogContent";
 import { InputWithOptions } from "@/components/nickel/InputWithOptions";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -27,8 +26,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/shadcn/dialog";
-import { Form, FormControl, FormField, FormItem } from "@/components/shadcn/form";
-import type { Instance, VersionsByType } from "@/core-types";
+import { FormControl, FormItem } from "@/components/shadcn/form";
+import type { Instance } from "@/core-types";
 import { cn, useAPI, waitUntilTrue } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
@@ -145,44 +144,17 @@ function ChangeVersionDialogContent({
   const [versionsByType, ready] = useAPI(pywebview.api.getVersionsByType);
 
   return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Change version</DialogTitle>
-      </DialogHeader>
-      {ready && (
-        <ChangeVersionForm
-          dirname={dirname}
-          currentVersionDisplayName={currentVersionDisplayName}
-          versionsByType={versionsByType}
-        />
-      )}
-    </DialogContent>
-  );
-}
-
-const changeVersionFormSchema = z.object({ versionDisplayName: z.string() });
-
-function ChangeVersionForm({
-  dirname,
-  currentVersionDisplayName,
-  versionsByType,
-}: DeepReadonly<{ dirname: string; currentVersionDisplayName: string; versionsByType: VersionsByType }>) {
-  const form = useForm<z.infer<typeof changeVersionFormSchema>>({
-    resolver: zodResolver(changeVersionFormSchema),
-    reValidateMode: "onSubmit",
-    defaultValues: {
-      versionDisplayName: currentVersionDisplayName,
-    },
-  });
-
-  return (
-    <Form {...form}>
-      <form
-        className="space-y-4"
-        onSubmit={form.handleSubmit((data) => pywebview.api.changeVersion(dirname, data.versionDisplayName))}
+    ready && (
+      <FormDialogContent
+        title="Change Version"
+        submitText="Change"
+        schema={z.object({ versionDisplayName: z.string() })}
+        defaultValues={{
+          versionDisplayName: currentVersionDisplayName,
+        }}
+        onSubmit={(data) => pywebview.api.changeVersion(dirname, data.versionDisplayName)}
       >
-        <FormField
-          control={form.control}
+        <DialogFormField
           name="versionDisplayName"
           render={({ field }) => (
             <FormItem>
@@ -198,11 +170,8 @@ function ChangeVersionForm({
             </FormItem>
           )}
         />
-        <DialogFooter>
-          <Button type="submit">Change</Button>
-        </DialogFooter>
-      </form>
-    </Form>
+      </FormDialogContent>
+    )
   );
 }
 
