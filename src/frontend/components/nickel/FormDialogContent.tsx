@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
 import {
-  type ControllerRenderProps,
+  type ControllerProps,
   type DefaultValues,
+  type FieldPath,
   type FieldValues,
   type Path,
   type SubmitHandler,
@@ -14,14 +15,7 @@ import { Button } from "@/components/shadcn/button";
 import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
 import { Form, FormField } from "@/components/shadcn/form";
 
-type Schema = ZodObject<Record<string, ZodType>>;
-
-type DialogFormFieldProps<T extends Schema> = {
-  name: Path<z.infer<T>>;
-  render: ({ field }: { field: ControllerRenderProps<FieldValues, Path<z.infer<T>>> }) => React.ReactElement;
-};
-
-export function FormDialogContent<T extends Schema>({
+export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>({
   ref,
   children,
   title,
@@ -32,7 +26,9 @@ export function FormDialogContent<T extends Schema>({
   ...props
 }: Omit<React.ComponentProps<typeof DialogContent>, "children" | "onSubmit"> &
   Readonly<{
-    children: React.ReactElement<DialogFormFieldProps<T>> | React.ReactElement<DialogFormFieldProps<T>>[];
+    children:
+      | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>
+      | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
     title: string;
     submitText: string;
     schema: T;
@@ -60,6 +56,9 @@ export function FormDialogContent<T extends Schema>({
   );
 }
 
-export function DialogFormField<T extends Schema>(props: DialogFormFieldProps<T>) {
+export function DialogFormField<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({ ...props }: Omit<ControllerProps<TFieldValues, TName>, "control">) {
   return undefined && props;
 }
