@@ -1,15 +1,10 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
 
 import { VersionSelector } from "@/components/VersionSelector";
+import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDialogContent";
 import { InputWithOptions } from "@/components/nickel/InputWithOptions";
-import { Button } from "@/components/shadcn/button";
-import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/shadcn/form";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input";
-import type { InstanceGroup, VersionsByType } from "@/core-types";
 import { useAPI } from "@/utils";
 
 export function InstanceCreationDialogContent() {
@@ -17,45 +12,24 @@ export function InstanceCreationDialogContent() {
   const [versionsByType, versionsByTypeReady] = useAPI(pywebview.api.getVersionsByType);
 
   return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Create new instance</DialogTitle>
-      </DialogHeader>
-      {instanceGroupsReady && versionsByTypeReady && (
-        <InstanceCreationForm instanceGroups={instanceGroups} versionsByType={versionsByType} />
-      )}
-    </DialogContent>
-  );
-}
-
-const formSchema = z.object({
-  instanceName: z.string().trim().min(1, "Instance name must be at least 1 character long."),
-  groupName: z.string().trim(),
-  versionDisplayName: z.string(),
-});
-
-function InstanceCreationForm({
-  instanceGroups,
-  versionsByType,
-}: DeepReadonly<{ instanceGroups: InstanceGroup[]; versionsByType: VersionsByType }>) {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    reValidateMode: "onSubmit",
-    defaultValues: {
-      instanceName: "",
-      groupName: "",
-      versionDisplayName: versionsByType.release[0]?.displayName ?? "",
-    },
-  });
-
-  return (
-    <Form {...form}>
-      <form
-        className="space-y-4"
-        onSubmit={form.handleSubmit((data) => console.log(JSON.stringify(data, undefined, 2)))}
+    instanceGroupsReady &&
+    versionsByTypeReady && (
+      <FormDialogContent
+        title="Create new instance"
+        submitText="Create"
+        schema={z.object({
+          instanceName: z.string().trim().min(1, "Instance name must be at least 1 character long."),
+          groupName: z.string().trim(),
+          versionDisplayName: z.string(),
+        })}
+        defaultValues={{
+          instanceName: "",
+          groupName: "",
+          versionDisplayName: versionsByType.release[0]?.displayName ?? "",
+        }}
+        onSubmit={(data) => console.log(JSON.stringify(data, undefined, 2))}
       >
-        <FormField
-          control={form.control}
+        <DialogFormField
           name="instanceName"
           render={({ field }) => (
             <FormItem>
@@ -67,8 +41,7 @@ function InstanceCreationForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
+        <DialogFormField
           name="groupName"
           render={({ field }) => (
             <FormItem>
@@ -83,8 +56,7 @@ function InstanceCreationForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
+        <DialogFormField
           name="versionDisplayName"
           render={({ field }) => (
             <FormItem>
@@ -100,10 +72,7 @@ function InstanceCreationForm({
             </FormItem>
           )}
         />
-        <DialogFooter>
-          <Button type="submit">Create</Button>
-        </DialogFooter>
-      </form>
-    </Form>
+      </FormDialogContent>
+    )
   );
 }
