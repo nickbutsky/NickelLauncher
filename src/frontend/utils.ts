@@ -15,20 +15,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function useAPI<F extends (typeof pywebview.api)[keyof typeof pywebview.api]>(apiFunction: F) {
-  type UsedAPI = Awaited<ReturnType<F>>;
-
-  const [data, setData] = React.useState<UsedAPI>();
-  const [ready, setReady] = React.useState(false);
+export function useReliablePromise<T>(promise: Promise<T>) {
+  const [result, setResult] = React.useState<Awaited<T>>();
+  const [fullfilled, setFullfilled] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
-      setData((await apiFunction()) as UsedAPI); // Typescript can't infer this on its own
-      setReady(true);
+      setResult(await promise);
+      setFullfilled(true);
     })();
-  }, [apiFunction]);
+  }, [promise]);
 
-  return [data, ready] as [UsedAPI, true] | [undefined, false];
+  return [result, fullfilled] as [Awaited<T>, true] | [undefined, false];
 }
 
 export const useIsFirstRender = () => {

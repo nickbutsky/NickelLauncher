@@ -6,10 +6,10 @@ import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { ThemeProvider } from "@/components/shadcn/theme-provider";
-import { useAPI } from "@/utils";
+import { useReliablePromise } from "@/utils";
 
 export function App() {
-  const [instanceGroups, ready] = useAPI(pywebview.api.getInstanceGroups);
+  const [instanceGroups, ready] = useReliablePromise(pywebview.api.getInstanceGroups());
 
   return (
     <ThemeProvider defaultTheme="dark">
