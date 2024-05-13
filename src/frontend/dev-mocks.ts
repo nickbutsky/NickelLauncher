@@ -5,9 +5,9 @@ import type { Instance, InstanceGroup, VersionsByType } from "@/core-types";
 const mockApi: typeof pywebview.api = {
   getInstanceGroups: () => Promise.resolve(instanceGroups),
   getVersionsByType: () => Promise.resolve(versionsByType),
-  toggleGroupHidden: Promise.resolve,
-  renameInstance: Promise.resolve,
-  changeVersion: Promise.resolve,
+  toggleGroupHidden: () => Promise.resolve(),
+  renameInstance: () => Promise.resolve(),
+  changeVersion: () => Promise.resolve(),
 };
 
 if (import.meta.env.DEV) {
