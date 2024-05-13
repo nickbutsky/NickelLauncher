@@ -13,7 +13,7 @@ import type { DeepReadonly } from "ts-essentials";
 import type { ZodObject, ZodType, z } from "zod";
 
 import { Button } from "@/components/shadcn/button";
-import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
+import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
 import { Form, FormField } from "@/components/shadcn/form";
 
 export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>({
@@ -40,18 +40,27 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   }>) {
   const form = useForm({ resolver: zodResolver(schema), reValidateMode: "onSubmit", defaultValues });
 
+  const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
+
   return (
     <DialogContent ref={ref} {...props}>
       <DialogHeader>
         <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
       <Form {...form}>
-        <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          className="space-y-4"
+          onSubmit={form.handleSubmit((data) => {
+            onSubmit(data);
+            hiddenCloseButtonRef.current?.click();
+          })}
+        >
           {React.Children.map(children, (child) => (
             <FormField control={form.control} name={child.props.name} render={child.props.render} />
           ))}
           <DialogFooter>
             <Button type="submit">{submitText}</Button>
+            <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
           </DialogFooter>
         </form>
       </Form>
