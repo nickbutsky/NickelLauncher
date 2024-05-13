@@ -9,6 +9,7 @@ import {
   type SubmitHandler,
   useForm,
 } from "react-hook-form";
+import type { DeepReadonly } from "ts-essentials";
 import type { ZodObject, ZodType, z } from "zod";
 
 import { Button } from "@/components/shadcn/button";
@@ -25,15 +26,17 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   onSubmit,
   ...props
 }: Omit<React.ComponentProps<typeof DialogContent>, "children" | "onSubmit"> &
+  DeepReadonly<{
+    title: string;
+    submitText: string;
+    schema: T;
+    onSubmit: SubmitHandler<z.infer<T>>;
+  }> &
   Readonly<{
     children:
       | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>
       | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
-    title: string;
-    submitText: string;
-    schema: T;
     defaultValues: DefaultValues<z.infer<T>>;
-    onSubmit: SubmitHandler<z.infer<T>>;
   }>) {
   const form = useForm({ resolver: zodResolver(schema), reValidateMode: "onSubmit", defaultValues });
 
