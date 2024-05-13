@@ -20,7 +20,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
   React.ComponentPropsWithoutRef<typeof Collapsible> & DeepReadonly<{ initialState: InstanceGroup }>
 >(({ defaultOpen, onOpenChange, initialState, ...props }, ref) => {
-  const [name, _] = React.useState(initialState.name);
+  const [name, setName] = React.useState(initialState.name);
   const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
 
   const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
@@ -47,6 +47,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
                 maxLength={50}
                 applyOnAboutToSave={(value) => value.trim()}
                 isAllowedToSave={(value) => value.length > 0}
+                onSave={(value) => setName(value)}
               />
             </ContextMenuTrigger>
             <ContextMenuContent>
