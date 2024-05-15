@@ -5,11 +5,11 @@ import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDial
 import { InputWithOptions } from "@/components/nickel/InputWithOptions";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input";
-import { useReliablePromise } from "@/utils";
+import { useReliableAsyncFunction } from "@/utils";
 
 export function InstanceCreationDialogContent() {
-  const [instanceGroups, instanceGroupsReady] = useReliablePromise(pywebview.api.getInstanceGroups());
-  const [versionsByType, versionsByTypeReady] = useReliablePromise(pywebview.api.getVersionsByType());
+  const [instanceGroups, instanceGroupsReady] = useReliableAsyncFunction(pywebview.api.getInstanceGroups);
+  const [versionsByType, versionsByTypeReady] = useReliableAsyncFunction(pywebview.api.getVersionsByType);
 
   return (
     instanceGroupsReady &&

@@ -28,7 +28,7 @@ import {
 } from "@/components/shadcn/dialog";
 import { FormControl, FormItem } from "@/components/shadcn/form";
 import type { Instance } from "@/core-types";
-import { cn, useReliablePromise, waitUntilTrue } from "@/utils";
+import { cn, useReliableAsyncFunction, waitUntilTrue } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
@@ -117,7 +117,7 @@ export const InstanceButton = React.forwardRef<
 });
 
 function ChangeGroupDialogContent() {
-  const [instanceGroups, ready] = useReliablePromise(pywebview.api.getInstanceGroups());
+  const [instanceGroups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups);
 
   return (
     ready && (
@@ -152,7 +152,7 @@ function ChangeVersionDialogContent({
   dirname,
   currentVersionDisplayName,
 }: DeepReadonly<{ dirname: string; currentVersionDisplayName: string }>) {
-  const [versionsByType, ready] = useReliablePromise(pywebview.api.getVersionsByType());
+  const [versionsByType, ready] = useReliableAsyncFunction(pywebview.api.getVersionsByType);
 
   return (
     ready && (
