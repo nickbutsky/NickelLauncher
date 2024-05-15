@@ -8,11 +8,11 @@ import { cn } from "@/utils";
 
 export const InputWithOptions = React.forwardRef<
   React.ElementRef<typeof Input>,
-  React.ComponentPropsWithoutRef<typeof Input> & DeepReadonly<{ options: string[] }>
->(({ className, onChange, options, ...props }, ref) => {
+  Omit<React.ComponentPropsWithoutRef<typeof Input>, "value"> & DeepReadonly<{ options: string[]; value?: string }>
+>(({ className, onChange, options, value, ...props }, ref) => {
   React.useImperativeHandle(ref, () => inputRef.current as Exclude<typeof inputRef.current, null>, []);
 
-  const [value, setValue] = React.useState("");
+  const [currentValue, setCurrentValue] = React.useState(value);
 
   const inputRef = React.useRef<React.ElementRef<typeof Input>>(null);
   const selectTriggerRef = React.useRef<React.ElementRef<typeof SelectTrigger>>(null);
@@ -22,14 +22,15 @@ export const InputWithOptions = React.forwardRef<
       <Input
         className={cn("rounded-r-none focus:z-10", className)}
         ref={inputRef}
+        defaultValue={value}
         onChange={(event) => {
-          setValue(event.currentTarget.value);
+          setCurrentValue(event.currentTarget.value);
           onChange?.(event);
         }}
         {...props}
       />
       <Select
-        value={value}
+        value={currentValue}
         onValueChange={(value) => {
           if (!(value && inputRef.current)) {
             return;
@@ -67,7 +68,7 @@ export const InputWithOptions = React.forwardRef<
       className={className}
       ref={inputRef}
       onChange={(event) => {
-        setValue(event.currentTarget.value);
+        setCurrentValue(event.currentTarget.value);
         onChange?.(event);
       }}
       {...props}
