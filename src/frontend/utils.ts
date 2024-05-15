@@ -16,7 +16,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function useReliableAsyncFunction<T>(asyncFunction: () => Promise<T>) {
-  const [result, setResult] = React.useState<Awaited<T>>();
+  const [result, setResult] = React.useState<T>();
   const [returned, setReturned] = React.useState(false);
 
   React.useEffect(() => {
@@ -26,7 +26,7 @@ export function useReliableAsyncFunction<T>(asyncFunction: () => Promise<T>) {
     })();
   }, [asyncFunction]);
 
-  return [result, returned] as [Awaited<T>, true] | [undefined, false];
+  return [result, returned] as [T, true] | [undefined, false];
 }
 
 export const useIsFirstRender = () => {
