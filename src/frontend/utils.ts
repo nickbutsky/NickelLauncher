@@ -15,18 +15,21 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function useReliableAsyncFunction<T>(asyncFunction: () => Promise<T>) {
+export function useReliableAsyncFunction<T, F extends (...args: never[]) => Promise<T>>(
+  asyncFunction: F,
+  parameters: Parameters<F>,
+) {
   const [result, setResult] = React.useState<T>();
   const [returned, setReturned] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
-      setResult(await asyncFunction());
+      setResult(await asyncFunction(...parameters));
       setReturned(true);
     })();
-  }, [asyncFunction]);
+  }, [asyncFunction, parameters]);
 
-  return [result, returned] as [T, true] | [undefined, false];
+  return [result, returned] as [Awaited<ReturnType<F>>, true] | [undefined, false];
 }
 
 export const useIsFirstRender = () => {

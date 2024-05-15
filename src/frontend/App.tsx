@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/components/shadcn/theme-provider";
 import { useReliableAsyncFunction } from "@/utils";
 
 export function App() {
-  const [instanceGroups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups);
+  const [instanceGroups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
 
   return (
     <ThemeProvider defaultTheme="dark">

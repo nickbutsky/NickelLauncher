@@ -8,8 +8,8 @@ import { Input } from "@/components/shadcn/input";
 import { useReliableAsyncFunction } from "@/utils";
 
 export function InstanceCreationDialogContent() {
-  const [instanceGroups, instanceGroupsReady] = useReliableAsyncFunction(pywebview.api.getInstanceGroups);
-  const [versionsByType, versionsByTypeReady] = useReliableAsyncFunction(pywebview.api.getVersionsByType);
+  const [instanceGroups, instanceGroupsReady] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
+  const [versionsByType, versionsByTypeReady] = useReliableAsyncFunction(pywebview.api.getVersionsByType, []);
 
   return (
     instanceGroupsReady &&

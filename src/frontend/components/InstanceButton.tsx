@@ -117,7 +117,7 @@ export const InstanceButton = React.forwardRef<
 });
 
 function ChangeGroupDialogContent() {
-  const [instanceGroups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups);
+  const [instanceGroups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
 
   return (
     ready && (
@@ -152,7 +152,7 @@ function ChangeVersionDialogContent({
   dirname,
   currentVersionDisplayName,
 }: DeepReadonly<{ dirname: string; currentVersionDisplayName: string }>) {
-  const [versionsByType, ready] = useReliableAsyncFunction(pywebview.api.getVersionsByType);
+  const [versionsByType, ready] = useReliableAsyncFunction(pywebview.api.getVersionsByType, []);
 
   return (
     ready && (
