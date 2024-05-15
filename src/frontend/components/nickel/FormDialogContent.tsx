@@ -19,6 +19,7 @@ import { Form, FormField } from "@/components/shadcn/form";
 export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>({
   ref,
   children,
+  onCloseAutoFocus,
   title,
   submitText,
   schema,
@@ -43,7 +44,14 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
 
   return (
-    <DialogContent ref={ref} {...props}>
+    <DialogContent
+      ref={ref}
+      onCloseAutoFocus={(event) => {
+        form.reset();
+        onCloseAutoFocus?.(event);
+      }}
+      {...props}
+    >
       <DialogHeader>
         <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
