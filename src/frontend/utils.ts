@@ -22,12 +22,13 @@ export function useReliableAsyncFunction<T, F extends (...args: never[]) => Prom
   const [result, setResult] = React.useState<T>();
   const [returned, setReturned] = React.useState(false);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     (async () => {
       setResult(await asyncFunction(...parameters));
       setReturned(true);
     })();
-  }, [asyncFunction, parameters]);
+  }, [asyncFunction, JSON.stringify(parameters)]);
 
   return [result, returned] as [Awaited<ReturnType<F>>, true] | [undefined, false];
 }
