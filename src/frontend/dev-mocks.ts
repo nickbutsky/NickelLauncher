@@ -1,6 +1,6 @@
 import type { DeepReadonly, MarkWritable } from "ts-essentials";
 
-import type { Instance, InstanceGroup, VersionsByType } from "@/core-types";
+import type { InstanceGroup, VersionsByType } from "@/core-types";
 
 const mockApi: typeof pywebview.api = {
   getInstanceGroups: () => Promise.resolve(instanceGroups),
