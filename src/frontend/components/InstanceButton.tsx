@@ -34,7 +34,7 @@ export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
   Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ initialState: Instance }>
 >(({ className, variant, initialState, ...props }, ref) => {
-  const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci">("cg");
+  const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci">("ci");
   const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
 
   const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
