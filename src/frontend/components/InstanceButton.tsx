@@ -101,7 +101,7 @@ export const InstanceButton = React.forwardRef<
         </ContextMenuContent>
         {
           {
-            cg: <ChangeGroupDialogContent />,
+            cg: <ChangeGroupDialogContent dirname={initialState.dirname} />,
             cv: (
               <ChangeVersionDialogContent
                 dirname={initialState.dirname}
@@ -116,7 +116,7 @@ export const InstanceButton = React.forwardRef<
   );
 });
 
-function ChangeGroupDialogContent() {
+function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
   const [instanceGroups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
 
   return (
@@ -125,7 +125,12 @@ function ChangeGroupDialogContent() {
         title="Change group"
         submitText="Change"
         schema={z.object({ groupName: z.string() })}
-        defaultValues={{ groupName: "" }}
+        defaultValues={{
+          groupName:
+            instanceGroups.find((instanceGroup) =>
+              instanceGroup.instances.find((instance) => instance.dirname === dirname),
+            )?.name ?? "",
+        }}
         onSubmit={(data) => console.log(JSON.stringify(data, undefined, 2))}
       >
         <DialogFormField
