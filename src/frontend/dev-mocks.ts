@@ -367,41 +367,113 @@ const versionsByType = {
   ],
 } as const satisfies VersionsByType;
 
-const instances: DeepReadonly<Instance[]> = [
-  {
-    name: "main",
-    dirname: "main",
-    version: versionsByType.release[41],
-    architectureChoice: "x86",
-  },
-  {
-    name: "latest release",
-    dirname: "latest_release",
-    version: versionsByType.release[0],
-    architectureChoice: "x64",
-  },
-  {
-    name: "latest preview",
-    dirname: "latest_preview",
-    version: versionsByType.preview[0],
-    architectureChoice: "x64",
-  },
-  {
-    name: "client testing",
-    dirname: "client_testing",
-    version: versionsByType.release[41],
-    architectureChoice: "x86",
-  },
-  {
-    name: "pack testing",
-    dirname: "pack_testing",
-    version: versionsByType.preview[41],
-    architectureChoice: "x86",
-  },
-];
-
 const instanceGroups: DeepReadonly<InstanceGroup[]> = [
-  { name: "", hidden: false, instances: instances },
-  { name: "sorted", hidden: true, instances: [...instances].sort() },
-  { name: "reversed", hidden: false, instances: [...instances].reverse() },
+  {
+    name: "",
+    hidden: false,
+    instances: [
+      {
+        name: "main",
+        dirname: "main",
+        version: versionsByType.release[41],
+        architectureChoice: "x86",
+      },
+      {
+        name: "latest release",
+        dirname: "latest_release",
+        version: versionsByType.release[0],
+        architectureChoice: "x64",
+      },
+      {
+        name: "latest preview",
+        dirname: "latest_preview",
+        version: versionsByType.preview[0],
+        architectureChoice: "x64",
+      },
+      {
+        name: "client testing",
+        dirname: "client_testing",
+        version: versionsByType.release[41],
+        architectureChoice: "x86",
+      },
+      {
+        name: "pack testing",
+        dirname: "pack_testing",
+        version: versionsByType.preview[41],
+        architectureChoice: "x86",
+      },
+    ],
+  },
+  {
+    name: "sorted",
+    hidden: true,
+    instances: [
+      {
+        name: "Application1",
+        dirname: "App1Dir",
+        version: versionsByType.preview[34],
+        architectureChoice: "x64",
+      },
+      {
+        name: "Application2",
+        dirname: "App2Dir",
+        version: versionsByType.release[1],
+        architectureChoice: "x86",
+      },
+      {
+        name: "Application3",
+        dirname: "App3Dir",
+        version: versionsByType.beta[78],
+        architectureChoice: "x64",
+      },
+      {
+        name: "Application4",
+        dirname: "App4Dir",
+        version: versionsByType.preview[1],
+        architectureChoice: "x86",
+      },
+      {
+        name: "Application5",
+        dirname: "App5Dir",
+        version: versionsByType.release[32],
+        architectureChoice: "x64",
+      },
+    ],
+  },
+  {
+    name: "reversed",
+    hidden: false,
+    instances: [
+      {
+        name: "Application6",
+        dirname: "App6Dir",
+        version: versionsByType.preview[12],
+        architectureChoice: "x86",
+      },
+      {
+        name: "Application7",
+        dirname: "App7Dir",
+        version: versionsByType.release[4],
+        architectureChoice: "x64",
+      },
+      {
+        name: "Application8",
+        dirname: "App8Dir",
+        version: versionsByType.preview[5],
+        architectureChoice: "x86",
+      },
+      {
+        name: "Application9",
+        dirname: "App9Dir",
+        version: versionsByType.beta[2],
+        architectureChoice: "x64",
+      },
+      {
+        name: "Application10",
+        dirname: "App10Dir",
+        version: versionsByType.preview[4],
+        architectureChoice: "x86",
+      },
+    ],
+  },
 ];
