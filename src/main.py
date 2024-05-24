@@ -54,22 +54,22 @@ class API:
     def renameGroup(self, old_name: str, new_name: str) -> None:  # noqa: N802
         ...
         # if old_name == "":
-        #     return
+        #     return  # noqa: ERA001
 
-        # next(group for group in instancemanager.get_instance_groups() if group.name == old_name).name = new_name
+        # next(group for group in instancemanager.get_instance_groups() if group.name == old_name).name = new_name  # noqa: ERA001, E501
 
     def toggleGroupHidden(self, name: str) -> None:  # noqa: N802
         next(group for group in instancemanager.get_instance_groups() if group.name == name).toggle_hidden()
 
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
-        if not instance or instance.name == new_name:
+        if instance.name == new_name:
             return
         instance.name = new_name
 
     def changeVersion(self, dirname: str, version_display_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
-        if not instance or instance.version.name == version_display_name:
+        if instance.version.name == version_display_name:
             return
         instance.version = next(
             version for version in versionretrieve.get_versions_locally() if version.name == version_display_name
@@ -77,12 +77,13 @@ class API:
 
     def changeArchitectureChoice(self, dirname: str, architecture_choice: Architecture) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
-        if not instance:
+        if instance.architecture_choice == architecture_choice:
             return
         instance.architecture_choice = architecture_choice
 
     def changeGroup(self, dirname: str, group_name: str) -> None:  # noqa: N802
-        pass
+        instance = self._get_instance(dirname)
+        instancemanager.change_instance_group(instance, group_name)
 
     def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802
         pass
@@ -90,7 +91,7 @@ class API:
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         pass
 
-    def _get_instance(self, dirname: str) -> Instance | None:
+    def _get_instance(self, dirname: str) -> Instance:
         return next(
             instance
             for instance in chain.from_iterable(group.instances for group in instancemanager.get_instance_groups())

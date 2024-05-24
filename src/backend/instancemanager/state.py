@@ -55,6 +55,11 @@ class State:
         self._save()
 
     def delete_instance_group(self, instance_group: InstanceGroup) -> None:
+        if not instance_group.instances:
+            self._instance_groups.remove(instance_group)
+            self._save()
+            return
+
         if instance_group.unnamed:
             return
         self._instance_groups.remove(instance_group)

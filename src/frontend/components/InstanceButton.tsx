@@ -2,6 +2,7 @@ import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
 
+import { AppContext } from "@/App";
 import defaultLogo from "@/assets/default.png";
 import { VersionSelector } from "@/components/VersionSelector";
 import { EditableLabel } from "@/components/nickel/EditableLabel";
@@ -127,6 +128,8 @@ export const InstanceButton = React.forwardRef<
 function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
   const [instanceGroups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
 
+  const appContext = React.useContext(AppContext);
+
   return (
     ready && (
       <FormDialogContent
@@ -139,7 +142,8 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
               instanceGroup.instances.find((instance) => instance.dirname === dirname),
             )?.name ?? "",
         }}
-        onSubmit={(data) => console.log(JSON.stringify(data, undefined, 2))}
+        onSubmit={(data) => pywebview.api.changeGroup(dirname, data.groupName).then(() => appContext.resetMainArea())}
+        closeThenSubmit={true}
       >
         <DialogFormField
           name="groupName"

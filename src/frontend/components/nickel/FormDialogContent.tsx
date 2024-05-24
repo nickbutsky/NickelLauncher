@@ -25,6 +25,7 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   schema,
   defaultValues,
   onSubmit,
+  closeThenSubmit,
   ...props
 }: Omit<React.ComponentProps<typeof DialogContent>, "children" | "onSubmit"> &
   DeepReadonly<{
@@ -32,6 +33,7 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
     submitText: string;
     schema: T;
     onSubmit: SubmitHandler<z.infer<T>>;
+    closeThenSubmit?: boolean;
   }> &
   Readonly<{
     children:
@@ -39,13 +41,19 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
       | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
     defaultValues: DefaultValues<z.infer<T>>;
   }>) {
+  React.useImperativeHandle(
+    ref as Exclude<typeof ref, string>,
+    () => dialogContentRef.current as Exclude<typeof dialogContentRef.current, null>,
+  );
+
   const form = useForm({ resolver: zodResolver(schema), reValidateMode: "onSubmit", defaultValues });
 
+  const dialogContentRef = React.useRef<React.ElementRef<typeof DialogContent>>(null);
   const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
 
   return (
     <DialogContent
-      ref={ref}
+      ref={dialogContentRef}
       onCloseAutoFocus={(event) => {
         form.reset();
         onCloseAutoFocus?.(event);
@@ -59,8 +67,13 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
         <form
           className="space-y-4"
           onSubmit={form.handleSubmit((data) => {
-            onSubmit(data);
-            hiddenCloseButtonRef.current?.click();
+            if (closeThenSubmit) {
+              hiddenCloseButtonRef.current?.click();
+              dialogContentRef.current?.addEventListener("animationend", () => onSubmit(data));
+            } else {
+              onSubmit(data);
+              hiddenCloseButtonRef.current?.click();
+            }
           })}
         >
           {React.Children.map(children, (child) => (
