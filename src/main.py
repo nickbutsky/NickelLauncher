@@ -5,6 +5,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent / "backend"))
 
+from itertools import chain
 from typing import TYPE_CHECKING
 
 import webview  # pyright: ignore [reportMissingTypeStubs]
@@ -41,54 +42,38 @@ class API:
         ]
 
     def getVersionsByType(self) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
-        def get_version_representations(version_type: VersionType) -> list[dict[str, str | list[str]]]:
-            return [
+        return {
+            version_type: [
                 {"displayName": version.name, "availableArchitectures": list(version.available_architectures)}
                 for version in versionretrieve.get_versions_locally()
                 if version.type == version_type
             ]
-
-        return {version_type: get_version_representations(version_type) for version_type in VersionType}
+            for version_type in VersionType
+        }
 
     def renameGroup(self, old_name: str, new_name: str) -> None:  # noqa: N802
         ...
         # if old_name == "":
         #     return
 
-        # next(iter(group for group in instancemanager.get_instance_groups() if group.name == old_name)).name = new_name
+        # next(group for group in instancemanager.get_instance_groups() if group.name == old_name).name = new_name
 
     def toggleGroupHidden(self, name: str) -> None:  # noqa: N802
-        next(iter(group for group in instancemanager.get_instance_groups() if group.name == name)).toggle_hidden()
+        next(group for group in instancemanager.get_instance_groups() if group.name == name).toggle_hidden()
 
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802
-        for group in instancemanager.get_instance_groups():
-            try:
-                instance = next(iter(instance for instance in group.instances if instance.directory.name == dirname))
-            except StopIteration:  # noqa: PERF203
-                pass
-            else:
-                if instance.name == new_name:
-                    return
-                instance.name = new_name
-                return
+        instance = self._get_instance(dirname)
+        if not instance or instance.name == new_name:
+            return
+        instance.name = new_name
 
     def changeVersion(self, dirname: str, version_display_name: str) -> None:  # noqa: N802
-        for group in instancemanager.get_instance_groups():
-            try:
-                instance = next(iter(instance for instance in group.instances if instance.directory.name == dirname))
-            except StopIteration:  # noqa: PERF203
-                pass
-            else:
-                if instance.version.name == version_display_name:
-                    return
-                instance.version = next(
-                    iter(
-                        version
-                        for version in versionretrieve.get_versions_locally()
-                        if version.name == version_display_name
-                    ),
-                )
-                return
+        instance = self._get_instance(dirname)
+        if not instance or instance.version.name == version_display_name:
+            return
+        instance.version = next(
+            version for version in versionretrieve.get_versions_locally() if version.name == version_display_name
+        )
 
     def changeArchitectureChoice(self, dirname: str, architecture_choice: Architecture) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
@@ -106,12 +91,11 @@ class API:
         pass
 
     def _get_instance(self, dirname: str) -> Instance | None:
-        for group in instancemanager.get_instance_groups():
-            try:
-                return next(iter(instance for instance in group.instances if instance.directory.name == dirname))
-            except StopIteration:  # noqa: PERF203
-                pass
-        return None
+        return next(
+            instance
+            for instance in chain.from_iterable(group.instances for group in instancemanager.get_instance_groups())
+            if instance.directory.name == dirname
+        )
 
 
 def main() -> None:

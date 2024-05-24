@@ -24,7 +24,7 @@ def create_instance(name: str, instance_group_name: str, version_name: str) -> N
     _instancecreate.create_instance(
         name,
         instance_group_name,
-        next(iter(v for v in versionretrieve.get_versions_locally() if v.name == version_name)),
+        next(v for v in versionretrieve.get_versions_locally() if v.name == version_name),
         _state,
     )
     # _watchdog.ignore_dir_created_event = False
@@ -37,8 +37,8 @@ def copy_instance(instance: Instance, copy_worlds: bool) -> None:
 
 
 def change_instance_group(instance: Instance, instance_group_name: str) -> None:
-    old_instance_group = next(iter(group for group in _state.instance_groups if instance in group.instances))
-    new_instance_group = next(iter(group for group in _state.instance_groups if group.name == instance_group_name))
+    old_instance_group = next(group for group in _state.instance_groups if instance in group.instances)
+    new_instance_group = next(group for group in _state.instance_groups if group.name == instance_group_name)
     if old_instance_group == new_instance_group:
         return
     old_instance_group.move_instances(len(new_instance_group.instances), new_instance_group, [instance])
