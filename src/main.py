@@ -14,6 +14,7 @@ from backend import instancemanager, versionretrieve
 from backend.core.version import VersionType
 
 if TYPE_CHECKING:
+    from backend.core.instance import Instance
     from backend.core.version import Architecture
 
 
@@ -90,7 +91,10 @@ class API:
                 return
 
     def changeArchitectureChoice(self, dirname: str, architecture_choice: Architecture) -> None:  # noqa: N802
-        pass
+        instance = self._get_instance(dirname)
+        if not instance:
+            return
+        instance.architecture_choice = architecture_choice
 
     def changeGroup(self, dirname: str, group_name: str) -> None:  # noqa: N802
         pass
@@ -100,6 +104,14 @@ class API:
 
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         pass
+
+    def _get_instance(self, dirname: str) -> Instance | None:
+        for group in instancemanager.get_instance_groups():
+            try:
+                return next(iter(instance for instance in group.instances if instance.directory.name == dirname))
+            except StopIteration:  # noqa: PERF203
+                pass
+        return None
 
 
 def main() -> None:

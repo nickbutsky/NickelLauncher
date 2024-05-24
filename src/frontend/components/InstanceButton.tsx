@@ -36,6 +36,7 @@ export const InstanceButton = React.forwardRef<
 >(({ className, variant, initialState, ...props }, ref) => {
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci">("ci");
   const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
+  const [architectureChoice, setArchitectureChoice] = React.useState(initialState.architectureChoice);
 
   const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
 
@@ -66,7 +67,14 @@ export const InstanceButton = React.forwardRef<
         <ContextMenuContent>
           <ContextMenuItem>Launch</ContextMenuItem>
           <ContextMenuSeparator />
-          <ContextMenuRadioGroup value={initialState.architectureChoice}>
+          <ContextMenuRadioGroup
+            value={architectureChoice}
+            onValueChange={(value) =>
+              pywebview.api
+                .changeArchitectureChoice(initialState.dirname, value)
+                .then(() => setArchitectureChoice(value))
+            }
+          >
             {initialState.version.availableArchitectures.map((architecture) => (
               <ContextMenuRadioItem key={architecture} value={architecture}>
                 {architecture}

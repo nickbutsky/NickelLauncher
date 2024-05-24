@@ -15,4 +15,5 @@ interface API {
   toggleGroupHidden: (name: string) => Promise<void>;
   renameInstance: (dirname: string, newName: string) => Promise<void>;
   changeVersion: (dirname: string, versionDisplayName: string) => Promise<void>;
+  changeArchitectureChoice: (dirname: string, architectureChoice: string) => Promise<void>;
 }

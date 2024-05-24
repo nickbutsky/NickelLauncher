@@ -8,6 +8,7 @@ const mockApi: typeof pywebview.api = {
   toggleGroupHidden: () => Promise.resolve(),
   renameInstance: () => Promise.resolve(),
   changeVersion: () => Promise.resolve(),
+  changeArchitectureChoice: () => Promise.resolve(),
 };
 
 if (import.meta.env.DEV) {
