@@ -9,6 +9,7 @@ const mockApi: typeof pywebview.api = {
   renameInstance: () => Promise.resolve(),
   changeVersion: () => Promise.resolve(),
   changeArchitectureChoice: () => Promise.resolve(),
+  changeGroup: () => Promise.resolve(),
 };
 
 if (import.meta.env.DEV) {
