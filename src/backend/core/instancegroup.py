@@ -57,8 +57,9 @@ class InstanceGroup:
         instance_group._instances[position:position] = instances  # noqa: SLF001
         self._notify_subscribers()
 
-    def remove_instance(self, instance: Instance) -> None:
-        self._instances.remove(instance)
+    def remove_instances(self, instances: Sequence[Instance]) -> None:
+        for instance in instances:
+            self._instances.remove(instance)
         self._notify_subscribers()
 
     def to_dict(self) -> dict[str, object]:
