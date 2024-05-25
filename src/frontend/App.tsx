@@ -19,15 +19,15 @@ export function App() {
     <ThemeProvider defaultTheme="dark">
       <AppContext.Provider value={{ resetMainArea: () => setMainAreaKey(crypto.randomUUID()) }}>
         <MainArea key={mainAreaKey} />
+        <Dialog>
+          <DialogTrigger asChild={true}>
+            <Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">
+              <PlusIcon />
+            </Button>
+          </DialogTrigger>
+          <InstanceCreationDialogContent />
+        </Dialog>
       </AppContext.Provider>
-      <Dialog>
-        <DialogTrigger asChild={true}>
-          <Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">
-            <PlusIcon />
-          </Button>
-        </DialogTrigger>
-        <InstanceCreationDialogContent />
-      </Dialog>
     </ThemeProvider>
   );
 }

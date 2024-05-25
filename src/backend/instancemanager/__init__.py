@@ -13,6 +13,7 @@ from . import stateload as _stateload
 
 if TYPE_CHECKING:
     from core.instance import Instance
+    from core.version import Version
 
 
 def get_instance_groups() -> tuple[InstanceGroup, ...]:
@@ -23,14 +24,9 @@ def delete_instance_group(instance_group: InstanceGroup) -> None:
     _state.delete_instance_group(instance_group)
 
 
-def create_instance(name: str, instance_group_name: str, version_name: str) -> None:
+def create_instance(name: str, instance_group_name: str, version: Version) -> None:
     # _watchdog.ignore_dir_created_event = True
-    _instancecreate.create_instance(
-        name,
-        instance_group_name,
-        next(v for v in versionretrieve.get_versions_locally() if v.name == version_name),
-        _state,
-    )
+    _instancecreate.create_instance(name, instance_group_name, version, _state)
     # _watchdog.ignore_dir_created_event = False
 
 

@@ -21,16 +21,19 @@ export function useReliableAsyncFunction<T, F extends (...args: never[]) => Prom
 ) {
   const [result, setResult] = React.useState<T>();
   const [returned, setReturned] = React.useState(false);
+  const [reuseTrigger, setReuseTrigger] = React.useState(false);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
     (async () => {
       setResult(await asyncFunction(...parameters));
       setReturned(true);
     })();
-  }, [asyncFunction, JSON.stringify(parameters)]);
+  }, [asyncFunction, JSON.stringify(parameters), reuseTrigger]);
 
-  return [result, returned] as [Awaited<ReturnType<F>>, true] | [undefined, false];
+  return [result, returned, () => setReuseTrigger(!reuseTrigger)] as
+    | [Awaited<ReturnType<F>>, true, () => void]
+    | [undefined, false, () => void];
 }
 
 export const useIsFirstRender = () => {

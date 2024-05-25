@@ -106,6 +106,13 @@ class API:
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         pass
 
+    def createInstance(self, name: str, group_name: str, version_display_name: str) -> None:  # noqa: N802
+        instancemanager.create_instance(
+            name,
+            group_name,
+            next(version for version in versionretrieve.get_versions_locally() if version.name == version_display_name),
+        )
+
     def _get_instance_group(self, name: str) -> InstanceGroup:
         return next(group for group in instancemanager.get_instance_groups() if group.name == name)
 

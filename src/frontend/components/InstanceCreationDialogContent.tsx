@@ -1,5 +1,7 @@
+import * as React from "react";
 import { z } from "zod";
 
+import { AppContext } from "@/App";
 import { VersionSelector } from "@/components/VersionSelector";
 import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDialogContent";
 import { InputWithOptions } from "@/components/nickel/InputWithOptions";
@@ -8,8 +10,13 @@ import { Input } from "@/components/shadcn/input";
 import { useReliableAsyncFunction } from "@/utils";
 
 export function InstanceCreationDialogContent() {
-  const [instanceGroups, instanceGroupsReady] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
+  const [instanceGroups, instanceGroupsReady, reuseGetInstanceGroups] = useReliableAsyncFunction(
+    pywebview.api.getInstanceGroups,
+    [],
+  );
   const [versionsByType, versionsByTypeReady] = useReliableAsyncFunction(pywebview.api.getVersionsByType, []);
+
+  const appContext = React.useContext(AppContext);
 
   return (
     instanceGroupsReady &&
@@ -27,7 +34,12 @@ export function InstanceCreationDialogContent() {
           groupName: "",
           versionDisplayName: versionsByType.release[0]?.displayName ?? "",
         }}
-        onSubmit={(data) => console.log(JSON.stringify(data, undefined, 2))}
+        onSubmit={(data) =>
+          pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then(() => {
+            appContext.resetMainArea();
+            reuseGetInstanceGroups();
+          })
+        }
       >
         <DialogFormField
           name="instanceName"
