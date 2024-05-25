@@ -62,12 +62,13 @@ class State:
 
         if instance_group.unnamed:
             return
+
         self._instance_groups.remove(instance_group)
+
         if not self.instance_groups[0].unnamed:
             unnamed_instance_group = InstanceGroup("", instance_group.instances)
             self._instance_groups.insert(0, unnamed_instance_group)
             unnamed_instance_group.subscribe_to_change(self._save)
-            self._save()
         else:
             unnamed_instance_group = self.instance_groups[0]
             instance_group.move_instances(
@@ -75,6 +76,7 @@ class State:
                 unnamed_instance_group,
                 instance_group.instances,
             )
+        self._save()
 
     def _save(self) -> None:
         with (self._directory / "groups.json").open("w") as f:
