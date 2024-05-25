@@ -120,7 +120,7 @@ def _load_instance_groups(
     for group_model in group_models:
         instances = [
             instance
-            for instance in [_load_instance(directory / dirname, versions) for dirname in group_model.instances]
+            for instance in (_load_instance(directory / dirname, versions) for dirname in group_model.instances)
             if instance is not None
         ]
         if not instances:
