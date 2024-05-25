@@ -12,6 +12,11 @@ if TYPE_CHECKING:
 
 
 class Instance:
+    """The representation of an isolated instance.
+
+    The unique identifier of an instance is its directory.
+    """
+
     def __init__(self, name: str, version: Version, architecture_choice: Architecture, directory: Path) -> None:
         self._name = name.strip()
         self._version = version
