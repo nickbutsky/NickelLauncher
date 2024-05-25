@@ -16,6 +16,7 @@ from backend.core.version import VersionType
 
 if TYPE_CHECKING:
     from backend.core.instance import Instance
+    from backend.core.instancegroup import InstanceGroup
     from backend.core.version import Architecture
 
 
@@ -52,14 +53,25 @@ class API:
         }
 
     def renameGroup(self, old_name: str, new_name: str) -> None:  # noqa: N802
-        ...
-        # if old_name == "":
-        #     return  # noqa: ERA001
+        if old_name == "":
+            return
 
-        # next(group for group in instancemanager.get_instance_groups() if group.name == old_name).name = new_name  # noqa: ERA001, E501
+        group = self._get_instance_group(old_name)
+
+        try:
+            group_with_new_name = self._get_instance_group(new_name)
+        except StopIteration:
+            group_with_new_name = None
+
+        if not group_with_new_name:
+            group.name = new_name
+            return
+
+        group.move_instances(len(group_with_new_name.instances), group_with_new_name, group.instances)
+        instancemanager.delete_instance_group(group)
 
     def toggleGroupHidden(self, name: str) -> None:  # noqa: N802
-        next(group for group in instancemanager.get_instance_groups() if group.name == name).toggle_hidden()
+        self._get_instance_group(name).toggle_hidden()
 
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
@@ -90,6 +102,9 @@ class API:
 
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         pass
+
+    def _get_instance_group(self, name: str) -> InstanceGroup:
+        return next(group for group in instancemanager.get_instance_groups() if group.name == name)
 
     def _get_instance(self, dirname: str) -> Instance:
         return next(

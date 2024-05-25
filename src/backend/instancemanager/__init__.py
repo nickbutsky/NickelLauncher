@@ -19,6 +19,10 @@ def get_instance_groups() -> tuple[InstanceGroup, ...]:
     return _state.instance_groups
 
 
+def delete_instance_group(instance_group: InstanceGroup) -> None:
+    _state.delete_instance_group(instance_group)
+
+
 def create_instance(name: str, instance_group_name: str, version_name: str) -> None:
     # _watchdog.ignore_dir_created_event = True
     _instancecreate.create_instance(

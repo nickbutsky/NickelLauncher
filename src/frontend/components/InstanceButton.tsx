@@ -142,7 +142,9 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
               instanceGroup.instances.find((instance) => instance.dirname === dirname),
             )?.name ?? "",
         }}
-        onSubmit={(data) => pywebview.api.changeGroup(dirname, data.groupName).then(() => appContext.resetMainArea())}
+        onSubmit={(data) =>
+          pywebview.api.changeGroup(dirname, data.groupName.trim()).then(() => appContext.resetMainArea())
+        }
         closeThenSubmit={true}
       >
         <DialogFormField
