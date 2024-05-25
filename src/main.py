@@ -101,7 +101,7 @@ class API:
         instancemanager.change_instance_group(instance, group_name)
 
     def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802
-        pass
+        instancemanager.copy_instance(self._get_instance(dirname), copy_worlds)
 
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         pass

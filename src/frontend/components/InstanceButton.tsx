@@ -21,6 +21,7 @@ import {
 } from "@/components/shadcn/context-menu";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -117,7 +118,7 @@ export const InstanceButton = React.forwardRef<
                 currentVersionDisplayName={initialState.version.displayName}
               />
             ),
-            ci: <CopyInstanceDialogContent />,
+            ci: <CopyInstanceDialogContent dirname={initialState.dirname} />,
           }[dialogContentId]
         }
       </ContextMenu>
@@ -205,15 +206,32 @@ function ChangeVersionDialogContent({
   );
 }
 
-function CopyInstanceDialogContent() {
+function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
+  const dialogContentRef = React.useRef<React.ElementRef<typeof DialogContent>>(null);
+
+  const appContext = React.useContext(AppContext);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
+  const copyInstance = React.useCallback(
+    (copyWorlds: boolean) =>
+      pywebview.api
+        .copyInstance(dirname, copyWorlds)
+        .then(() => dialogContentRef.current?.addEventListener("animationend", appContext.resetMainArea)),
+    [dirname],
+  );
+
   return (
-    <DialogContent>
+    <DialogContent ref={dialogContentRef}>
       <DialogHeader>
         <DialogTitle>Do you want to copy your worlds?</DialogTitle>
       </DialogHeader>
-      <DialogFooter className="gap-2">
-        <Button type="submit">Yes</Button>
-        <Button type="submit">No</Button>
+      <DialogFooter className="gap-y-1.5">
+        <DialogClose onClick={() => copyInstance(true)} asChild={true}>
+          <Button type="submit">Yes</Button>
+        </DialogClose>
+        <DialogClose onClick={() => copyInstance(false)} asChild={true}>
+          <Button type="submit">No</Button>
+        </DialogClose>
       </DialogFooter>
     </DialogContent>
   );

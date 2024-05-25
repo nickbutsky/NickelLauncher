@@ -12,6 +12,7 @@ const mockApi: typeof pywebview.api = {
   changeVersion: () => Promise.resolve(),
   changeArchitectureChoice: () => Promise.resolve(),
   changeGroup: () => Promise.resolve(),
+  copyInstance: () => Promise.resolve(),
 };
 
 if (import.meta.env.DEV) {

@@ -19,4 +19,5 @@ interface API {
   changeVersion: (dirname: string, versionDisplayName: string) => Promise<void>;
   changeArchitectureChoice: (dirname: string, architectureChoice: string) => Promise<void>;
   changeGroup: (dirname: string, groupName: string) => Promise<void>;
+  copyInstance: (dirname: string, copyWorlds: boolean) => Promise<void>;
 }
