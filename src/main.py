@@ -73,6 +73,9 @@ class API:
     def toggleGroupHidden(self, name: str) -> None:  # noqa: N802
         self._get_instance_group(name).toggle_hidden()
 
+    def deleteGroup(self, name: str) -> None:  # noqa: N802
+        instancemanager.delete_instance_group(self._get_instance_group(name))
+
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
         if instance.name == new_name:

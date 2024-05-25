@@ -7,6 +7,7 @@ const mockApi: typeof pywebview.api = {
   getVersionsByType: () => Promise.resolve(versionsByType),
   renameGroup: () => Promise.resolve(),
   toggleGroupHidden: () => Promise.resolve(),
+  deleteGroup: () => Promise.resolve(),
   renameInstance: () => Promise.resolve(),
   changeVersion: () => Promise.resolve(),
   changeArchitectureChoice: () => Promise.resolve(),
