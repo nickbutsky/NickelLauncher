@@ -67,8 +67,10 @@ class API:
             group.name = new_name
             return
 
-        group.move_instances(len(group_with_new_name.instances), group_with_new_name, group.instances)
+        instances = group.instances
+        group.remove_instances(instances)
         instancemanager.delete_instance_group(group)
+        group_with_new_name.add_instances(len(group_with_new_name.instances), instances)
 
     def toggleGroupHidden(self, name: str) -> None:  # noqa: N802
         self._get_instance_group(name).toggle_hidden()
