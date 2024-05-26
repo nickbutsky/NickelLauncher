@@ -27,18 +27,6 @@ def delete_instance_group(instance_group: InstanceGroup) -> None:
     _state.delete_instance_group(instance_group)
 
 
-def create_instance(name: str, instance_group_name: str, version: Version) -> None:
-    # _watchdog.ignore_dir_created_event = True
-    _instancecreate.create_instance(name, instance_group_name, version, _state)
-    # _watchdog.ignore_dir_created_event = False
-
-
-def copy_instance(instance: Instance, copy_worlds: bool) -> None:
-    # _watchdog.ignore_dir_created_event = True
-    _instancecreate.copy_instance(instance, copy_worlds, _state)
-    # _watchdog.ignore_dir_created_event = False
-
-
 def move_instances(position: int, instance_group_name: str, instances: Sequence[Instance]) -> None:
     removal_dict = {
         group.name: [instance for instance in group.instances if instance in instances]
@@ -59,6 +47,18 @@ def move_instances(position: int, instance_group_name: str, instances: Sequence[
     for group in get_instance_groups():
         if not group.instances:
             delete_instance_group(instance_group)
+
+
+def create_instance(name: str, instance_group_name: str, version: Version) -> None:
+    # _watchdog.ignore_dir_created_event = True
+    _instancecreate.create_instance(name, instance_group_name, version, _state)
+    # _watchdog.ignore_dir_created_event = False
+
+
+def copy_instance(instance: Instance, copy_worlds: bool) -> None:
+    # _watchdog.ignore_dir_created_event = True
+    _instancecreate.copy_instance(instance, copy_worlds, _state)
+    # _watchdog.ignore_dir_created_event = False
 
 
 _state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
