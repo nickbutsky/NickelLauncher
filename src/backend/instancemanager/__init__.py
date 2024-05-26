@@ -43,6 +43,8 @@ def move_instances(position: int, group_name: str, instances: Sequence[Instance]
         _state.add_instance_group(group)
 
     group.add_instances(position, tuple(chain.from_iterable(removal_dict.values())))
+    if group.hidden:
+        group.toggle_hidden()
 
     for group in get_instance_groups():
         if not group.instances:
