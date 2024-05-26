@@ -23,11 +23,11 @@ def get_instance_groups() -> tuple[InstanceGroup, ...]:
     return _state.instance_groups
 
 
-def delete_instance_group(instance_group: InstanceGroup) -> None:
-    _state.delete_instance_group(instance_group)
+def delete_instance_group(group: InstanceGroup) -> None:
+    _state.delete_instance_group(group)
 
 
-def move_instances(position: int, instance_group_name: str, instances: Sequence[Instance]) -> None:
+def move_instances(position: int, group_name: str, instances: Sequence[Instance]) -> None:
     removal_dict = {
         group.name: [instance for instance in group.instances if instance in instances]
         for group in get_instance_groups()
@@ -37,21 +37,21 @@ def move_instances(position: int, instance_group_name: str, instances: Sequence[
         group.remove_instances(removal_dict[group.name])
 
     try:
-        instance_group = next(group for group in get_instance_groups() if group.name == instance_group_name)
+        group = next(group for group in get_instance_groups() if group.name == group_name)
     except StopIteration:
-        instance_group = InstanceGroup(instance_group_name, [])
-        _state.add_instance_group(instance_group)
+        group = InstanceGroup(group_name, [])
+        _state.add_instance_group(group)
 
-    instance_group.add_instances(position, tuple(chain.from_iterable(removal_dict.values())))
+    group.add_instances(position, tuple(chain.from_iterable(removal_dict.values())))
 
     for group in get_instance_groups():
         if not group.instances:
             delete_instance_group(group)
 
 
-def create_instance(name: str, instance_group_name: str, version: Version) -> None:
+def create_instance(name: str, group_name: str, version: Version) -> None:
     # _watchdog.ignore_dir_created_event = True
-    _instancecreate.create_instance(name, instance_group_name, version, _state)
+    _instancecreate.create_instance(name, group_name, version, _state)
     # _watchdog.ignore_dir_created_event = False
 
 

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from .state import State
 
 
-def create_instance(name: str, instance_group_name: str, version: Version, state: State) -> None:
+def create_instance(name: str, group_name: str, version: Version, state: State) -> None:
     instance = Instance(
         name,
         version,
@@ -22,11 +22,11 @@ def create_instance(name: str, instance_group_name: str, version: Version, state
     )
     instance.populate_directory()
 
-    instance_group = next((group for group in state.instance_groups if group.name == instance_group_name), None)
-    if instance_group:
-        instance_group.add_instances(len(instance_group.instances), [instance])
+    group = next((group for group in state.instance_groups if group.name == group_name), None)
+    if group:
+        group.add_instances(len(group.instances), [instance])
     else:
-        state.add_instance_group(InstanceGroup(instance_group_name, [instance]))
+        state.add_instance_group(InstanceGroup(group_name, [instance]))
 
     state.last_instance = instance
 
@@ -47,6 +47,6 @@ def copy_instance(instance: Instance, copy_worlds: bool, state: State) -> None:
     )
     (copied_instance.directory / "com.mojang" / "minecraftWorlds").mkdir(exist_ok=True)
 
-    instance_group = next(group for group in state.instance_groups if instance in group.instances)
-    instance_group.add_instances(instance_group.instances.index(instance) + 1, [copied_instance])
+    group = next(group for group in state.instance_groups if instance in group.instances)
+    group.add_instances(group.instances.index(instance) + 1, [copied_instance])
     state.last_instance = copied_instance

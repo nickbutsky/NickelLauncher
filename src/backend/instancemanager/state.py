@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from core.instancegroup import InstanceGroup, InvalidUnnamedInstanceGroupMutationError
+from core.instancegroup import InstanceGroup, InvalidUnnamedInstanceGroupManipulationError
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -37,43 +37,43 @@ class State:
     def instance_groups(self) -> tuple[InstanceGroup, ...]:
         return tuple(self._instance_groups)
 
-    def add_instance_group(self, instance_group: InstanceGroup) -> None:
-        if instance_group.name in [group.name for group in self.instance_groups]:
+    def add_instance_group(self, group: InstanceGroup) -> None:
+        if group.name in [group.name for group in self.instance_groups]:
             raise InstanceGroupNameTakenError
-        if instance_group.unnamed:
-            self._instance_groups.insert(0, instance_group)
+        if group.unnamed:
+            self._instance_groups.insert(0, group)
         else:
-            self._instance_groups.append(instance_group)
-        instance_group.subscribe_to_change(self._save)
+            self._instance_groups.append(group)
+        group.subscribe_to_change(self._save)
         self._save()
 
-    def move_instance_group(self, position: int, instance_group: InstanceGroup) -> None:
-        if instance_group.unnamed:
-            return
-        self._instance_groups.remove(instance_group)
-        self._instance_groups.insert(position, instance_group)
+    def move_instance_group(self, position: int, group: InstanceGroup) -> None:
+        if group.unnamed:
+            raise InvalidUnnamedInstanceGroupManipulationError
+        self._instance_groups.remove(group)
+        self._instance_groups.insert(position, group)
         self._save()
 
-    def delete_instance_group(self, instance_group: InstanceGroup) -> None:
-        if not instance_group.instances:
-            self._instance_groups.remove(instance_group)
+    def delete_instance_group(self, group: InstanceGroup) -> None:
+        if not group.instances:
+            self._instance_groups.remove(group)
             self._save()
             return
 
-        if instance_group.unnamed:
-            raise InvalidUnnamedInstanceGroupMutationError
+        if group.unnamed:
+            raise InvalidUnnamedInstanceGroupManipulationError
 
-        self._instance_groups.remove(instance_group)
+        self._instance_groups.remove(group)
 
         if not self.instance_groups[0].unnamed:
-            unnamed_instance_group = InstanceGroup("", instance_group.instances)
-            self._instance_groups.insert(0, unnamed_instance_group)
-            unnamed_instance_group.subscribe_to_change(self._save)
+            unnamed_group = InstanceGroup("", group.instances)
+            self._instance_groups.insert(0, unnamed_group)
+            unnamed_group.subscribe_to_change(self._save)
         else:
-            unnamed_instance_group = self.instance_groups[0]
-            instances = instance_group.instances
-            instance_group.remove_instances(instances)
-            unnamed_instance_group.add_instances(len(unnamed_instance_group.instances), instances)
+            unnamed_group = self.instance_groups[0]
+            instances = group.instances
+            group.remove_instances(instances)
+            unnamed_group.add_instances(len(unnamed_group.instances), instances)
         self._save()
 
     def _save(self) -> None:

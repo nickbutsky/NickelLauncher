@@ -26,9 +26,9 @@ def load_state(directory: Path, versions: Iterable[Version]) -> State:
 
     groups_model.adapt_to_directory(directory)
 
-    instance_groups = _load_instance_groups(groups_model.groups, directory, versions)
-    last_instance = _get_last_instance(groups_model.last_instance, instance_groups)
-    return State(instance_groups, last_instance, directory)
+    groups = _load_instance_groups(groups_model.groups, directory, versions)
+    last_instance = _get_last_instance(groups_model.last_instance, groups)
+    return State(groups, last_instance, directory)
 
 
 class _GroupsModel(BaseModel):
