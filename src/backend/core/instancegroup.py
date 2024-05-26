@@ -29,7 +29,7 @@ class InstanceGroup:
     @name.setter
     def name(self, name: str) -> None:
         if self.unnamed:
-            return
+            raise InvalidUnnamedInstanceGroupMutationError
         self._name = name.strip()
         self._notify_subscribers()
 
@@ -69,3 +69,7 @@ class InstanceGroup:
     def _notify_subscribers(self) -> None:
         for subscriber in self._subscribers:
             subscriber()
+
+
+class InvalidUnnamedInstanceGroupMutationError(ValueError):
+    pass
