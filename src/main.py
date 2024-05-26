@@ -61,16 +61,9 @@ class API:
         try:
             group_with_new_name = self._get_instance_group(new_name)
         except StopIteration:
-            group_with_new_name = None
-
-        if not group_with_new_name:
             group.name = new_name
             return
-
-        instances = group.instances
-        group.remove_instances(instances)
-        instancemanager.delete_instance_group(group)
-        group_with_new_name.add_instances(len(group_with_new_name.instances), instances)
+        instancemanager.move_instances(len(group_with_new_name.instances), group_with_new_name.name, group.instances)
 
     def toggleGroupHidden(self, name: str) -> None:  # noqa: N802
         self._get_instance_group(name).toggle_hidden()
