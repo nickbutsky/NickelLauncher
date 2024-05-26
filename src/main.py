@@ -42,11 +42,13 @@ class API:
             for group in instancemanager.get_instance_groups()
         ]
 
-    def getVersionsByType(self) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
+    def getVersionsByType(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
         return {
             version_type: [
                 {"displayName": version.display_name, "availableArchitectures": list(version.available_architectures)}
-                for version in versionretrieve.get_versions_locally()
+                for version in (
+                    versionretrieve.get_versions_locally() if not remotely else versionretrieve.get_versions_remotely()
+                )
                 if version.type == version_type
             ]
             for version_type in VersionType

@@ -14,7 +14,10 @@ export function InstanceCreationDialogContent() {
     pywebview.api.getInstanceGroups,
     [],
   );
-  const [versionsByType, versionsByTypeReady] = useReliableAsyncFunction(pywebview.api.getVersionsByType, []);
+  const [versionsByType, versionsByTypeReady, reuseGetVersionsByType] = useReliableAsyncFunction(
+    pywebview.api.getVersionsByType,
+    [],
+  );
 
   const appContext = React.useContext(AppContext);
 
@@ -76,7 +79,7 @@ export function InstanceCreationDialogContent() {
                 <VersionSelector
                   className="h-72"
                   versionsByType={versionsByType}
-                  onRefreshRequest={() => undefined}
+                  onRefreshRequest={() => reuseGetVersionsByType([true])}
                   defaultDisplayName={field.value}
                   onDisplayNameChange={field.onChange}
                 />

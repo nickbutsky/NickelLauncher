@@ -172,7 +172,7 @@ function ChangeVersionDialogContent({
   dirname,
   currentVersionDisplayName,
 }: DeepReadonly<{ dirname: string; currentVersionDisplayName: string }>) {
-  const [versionsByType, ready] = useReliableAsyncFunction(pywebview.api.getVersionsByType, []);
+  const [versionsByType, ready, reuseGetVersionsByType] = useReliableAsyncFunction(pywebview.api.getVersionsByType, []);
 
   return (
     ready && (
@@ -193,7 +193,7 @@ function ChangeVersionDialogContent({
                 <VersionSelector
                   className="h-72"
                   versionsByType={versionsByType}
-                  onRefreshRequest={() => undefined}
+                  onRefreshRequest={() => reuseGetVersionsByType([true])}
                   defaultDisplayName={field.value}
                   onDisplayNameChange={field.onChange}
                 />

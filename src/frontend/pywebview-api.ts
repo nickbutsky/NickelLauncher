@@ -11,7 +11,7 @@ declare global {
 // biome-ignore lint/style/useNamingConvention: False positive
 interface API {
   getInstanceGroups: () => Promise<DeepReadonly<InstanceGroup[]>>;
-  getVersionsByType: () => Promise<DeepReadonly<VersionsByType>>;
+  getVersionsByType: (remotely?: boolean) => Promise<DeepReadonly<VersionsByType>>;
   renameInstanceGroup: (oldName: string, newName: string) => Promise<void>;
   toggleInstanceGroupHidden: (name: string) => Promise<void>;
   deleteInstanceGroup: (name: string) => Promise<void>;
