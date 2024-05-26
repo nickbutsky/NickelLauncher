@@ -37,7 +37,7 @@ export function InstanceCreationDialogContent() {
           groupName: "",
           versionDisplayName: versionsByType.release[0]?.displayName ?? "",
         }}
-        onSubmit={(data) =>
+        onSubmitBeforeClose={(data) =>
           pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then(() => {
             appContext.resetMainArea();
             reuseGetInstanceGroups([]);

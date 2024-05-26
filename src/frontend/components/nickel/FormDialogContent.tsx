@@ -24,16 +24,16 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   submitText,
   schema,
   defaultValues,
-  onSubmit,
-  closeThenSubmit,
+  onSubmitBeforeClose,
+  onSubmitAfterClose,
   ...props
 }: Omit<React.ComponentProps<typeof DialogContent>, "children" | "onSubmit"> &
   DeepReadonly<{
     title: string;
     submitText: string;
     schema: T;
-    onSubmit: SubmitHandler<z.infer<T>>;
-    closeThenSubmit?: boolean;
+    onSubmitBeforeClose?: SubmitHandler<z.infer<T>>;
+    onSubmitAfterClose?: SubmitHandler<z.infer<T>>;
   }> &
   Readonly<{
     children:
@@ -66,14 +66,10 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
       <Form {...form}>
         <form
           className="space-y-4"
-          onSubmit={form.handleSubmit((data) => {
-            if (closeThenSubmit) {
-              hiddenCloseButtonRef.current?.click();
-              dialogContentRef.current?.addEventListener("animationend", () => onSubmit(data));
-            } else {
-              onSubmit(data);
-              hiddenCloseButtonRef.current?.click();
-            }
+          onSubmit={form.handleSubmit(async (data) => {
+            await onSubmitBeforeClose?.(data);
+            hiddenCloseButtonRef.current?.click();
+            dialogContentRef.current?.addEventListener("animationend", () => onSubmitAfterClose?.(data));
           })}
         >
           {React.Children.map(children, (child) => (

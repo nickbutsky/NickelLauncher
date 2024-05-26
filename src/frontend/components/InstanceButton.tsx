@@ -141,12 +141,10 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
           groupName:
             groups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
         }}
-        onSubmit={(data) =>
-          pywebview.api
-            .moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
-            .then(() => appContext.resetMainArea())
+        onSubmitBeforeClose={async (data) =>
+          await pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
         }
-        closeThenSubmit={true}
+        onSubmitAfterClose={() => appContext.resetMainArea()}
       >
         <DialogFormField
           name="groupName"
@@ -183,7 +181,7 @@ function ChangeVersionDialogContent({
         defaultValues={{
           versionDisplayName: currentVersionDisplayName,
         }}
-        onSubmit={(data) => pywebview.api.changeVersion(dirname, data.versionDisplayName)}
+        onSubmitBeforeClose={(data) => pywebview.api.changeVersion(dirname, data.versionDisplayName)}
       >
         <DialogFormField
           name="versionDisplayName"
