@@ -8,10 +8,10 @@ const mockApi: typeof pywebview.api = {
   renameInstanceGroup: () => Promise.resolve(),
   toggleInstanceGroupHidden: () => Promise.resolve(),
   deleteInstanceGroup: () => Promise.resolve(),
+  moveInstances: () => Promise.resolve(),
   renameInstance: () => Promise.resolve(),
   changeVersion: () => Promise.resolve(),
   changeArchitectureChoice: () => Promise.resolve(),
-  changeGroup: () => Promise.resolve(),
   copyInstance: () => Promise.resolve(),
   createInstance: () => Promise.resolve(),
 };

@@ -71,6 +71,9 @@ class API:
     def deleteInstanceGroup(self, name: str) -> None:  # noqa: N802
         instancemanager.delete_instance_group(self._get_instance_group(name))
 
+    def moveInstances(self, position: int, group_name: str, dirnames: list[str]) -> None:  # noqa: N802
+        instancemanager.move_instances(position, group_name, [self._get_instance(dirname) for dirname in dirnames])
+
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
         if instance.name == new_name:
@@ -90,10 +93,6 @@ class API:
         if instance.architecture_choice == architecture_choice:
             return
         instance.architecture_choice = architecture_choice
-
-    def changeGroup(self, dirname: str, group_name: str) -> None:  # noqa: N802
-        instance = self._get_instance(dirname)
-        instancemanager.move_instances(sys.maxsize, group_name, [instance])
 
     def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802
         instancemanager.copy_instance(self._get_instance(dirname), copy_worlds)

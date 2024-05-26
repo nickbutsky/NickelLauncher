@@ -15,10 +15,10 @@ interface API {
   renameInstanceGroup: (oldName: string, newName: string) => Promise<void>;
   toggleInstanceGroupHidden: (name: string) => Promise<void>;
   deleteInstanceGroup: (name: string) => Promise<void>;
+  moveInstances: (position: number, groupName: string, dirnames: DeepReadonly<string[]>) => Promise<void>;
   renameInstance: (dirname: string, newName: string) => Promise<void>;
   changeVersion: (dirname: string, versionDisplayName: string) => Promise<void>;
   changeArchitectureChoice: (dirname: string, architectureChoice: string) => Promise<void>;
-  changeGroup: (dirname: string, groupName: string) => Promise<void>;
   copyInstance: (dirname: string, copyWorlds: boolean) => Promise<void>;
   createInstance: (name: string, groupName: string, versionDisplayName: string) => Promise<void>;
 }
