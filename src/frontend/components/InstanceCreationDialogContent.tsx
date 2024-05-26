@@ -61,7 +61,7 @@ export function InstanceCreationDialogContent() {
               <FormControl>
                 <InputWithOptions
                   maxLength={50}
-                  options={instanceGroups.map((instanceGroup) => instanceGroup.name).filter((name) => name !== "")}
+                  options={instanceGroups.map((group) => group.name).filter((name) => name !== "")}
                   {...field}
                 />
               </FormControl>

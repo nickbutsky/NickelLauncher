@@ -127,7 +127,7 @@ export const InstanceButton = React.forwardRef<
 });
 
 function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
-  const [instanceGroups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
+  const [groups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
 
   const appContext = React.useContext(AppContext);
 
@@ -139,9 +139,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
         schema={z.object({ groupName: z.string() })}
         defaultValues={{
           groupName:
-            instanceGroups.find((instanceGroup) =>
-              instanceGroup.instances.find((instance) => instance.dirname === dirname),
-            )?.name ?? "",
+            groups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
         }}
         onSubmit={(data) =>
           pywebview.api.changeGroup(dirname, data.groupName.trim()).then(() => appContext.resetMainArea())
@@ -156,7 +154,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
                 <InputWithOptions
                   placeholder="Group name"
                   maxLength={50}
-                  options={instanceGroups.map((instanceGroup) => instanceGroup.name).filter((name) => name !== "")}
+                  options={groups.map((group) => group.name).filter((name) => name !== "")}
                   {...field}
                 />
               </FormControl>
