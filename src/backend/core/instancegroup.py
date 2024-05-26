@@ -56,7 +56,7 @@ class InstanceGroup:
             self._instances.remove(instance)
         self._notify_subscribers()
 
-    def to_dict(self) -> dict[str, object]:
+    def to_dict(self) -> dict[str, str | bool | list[str]]:
         return {
             "name": self.name,
             "hidden": self.hidden,
