@@ -37,7 +37,7 @@ def move_instances(position: int, instance_group_name: str, instances: Sequence[
         group.remove_instances(removal_dict[group.name])
 
     try:
-        instance_group = next(group for group in _state.instance_groups if group.name == instance_group_name)
+        instance_group = next(group for group in get_instance_groups() if group.name == instance_group_name)
     except StopIteration:
         instance_group = InstanceGroup(instance_group_name, [])
         _state.add_instance_group(instance_group)
