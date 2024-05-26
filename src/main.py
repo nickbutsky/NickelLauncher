@@ -98,7 +98,7 @@ class API:
 
     def changeGroup(self, dirname: str, group_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
-        instancemanager.change_instance_group(instance, group_name)
+        instancemanager.move_instances(sys.maxsize, group_name, [instance])
 
     def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802
         instancemanager.copy_instance(self._get_instance(dirname), copy_worlds)

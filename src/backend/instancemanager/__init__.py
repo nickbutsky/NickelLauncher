@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import chain
 from typing import TYPE_CHECKING
 
 import versionretrieve
@@ -12,6 +13,8 @@ from . import stateload as _stateload
 # from .watchdogthread import WatchdogThread
 
 if TYPE_CHECKING:
+    from typing import Sequence
+
     from core.instance import Instance
     from core.version import Version
 
@@ -36,19 +39,26 @@ def copy_instance(instance: Instance, copy_worlds: bool) -> None:
     # _watchdog.ignore_dir_created_event = False
 
 
-def change_instance_group(instance: Instance, instance_group_name: str) -> None:
-    old_instance_group = next(group for group in _state.instance_groups if instance in group.instances)
+def move_instances(position: int, instance_group_name: str, instances: Sequence[Instance]) -> None:
+    removal_dict = {
+        group.name: [instance for instance in group.instances if instance in instances]
+        for group in get_instance_groups()
+    }
+
+    for group in get_instance_groups():
+        group.remove_instances(removal_dict[group.name])
+
     try:
-        new_instance_group = next(group for group in _state.instance_groups if group.name == instance_group_name)
+        instance_group = next(group for group in _state.instance_groups if group.name == instance_group_name)
     except StopIteration:
-        new_instance_group = InstanceGroup(instance_group_name, [])
-        _state.add_instance_group(new_instance_group)
-    else:
-        if old_instance_group == new_instance_group:
-            return
-    old_instance_group.move_instances(len(new_instance_group.instances), new_instance_group, [instance])
-    if not old_instance_group.instances:
-        _state.delete_instance_group(old_instance_group)
+        instance_group = InstanceGroup(instance_group_name, [])
+        _state.add_instance_group(instance_group)
+
+    instance_group.add_instances(position, tuple(chain.from_iterable(removal_dict.values())))
+
+    for group in get_instance_groups():
+        if not group.instances:
+            delete_instance_group(instance_group)
 
 
 _state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
