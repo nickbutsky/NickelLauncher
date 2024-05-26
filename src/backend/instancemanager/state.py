@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from core.instancegroup import InstanceGroup
+from core.instancegroup import InstanceGroup, InvalidUnnamedInstanceGroupMutationError
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -61,7 +61,7 @@ class State:
             return
 
         if instance_group.unnamed:
-            return
+            raise InvalidUnnamedInstanceGroupMutationError
 
         self._instance_groups.remove(instance_group)
 
