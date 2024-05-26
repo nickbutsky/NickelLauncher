@@ -33,6 +33,18 @@ class Version:
     packages: Mapping[Architecture, Path]
 
     @property
+    def display_name(self) -> str:
+        if self.type != VersionType.RELEASE:
+            return self.name
+
+        major_version, minor_version, patch, *_ = self.name.split(".")
+        return (
+            f"{major_version}.{minor_version}.{patch[:-2] or '0'}"
+            if major_version != "0"
+            else f"{major_version}.{minor_version[:2]}.{minor_version[2:].lstrip('0') or '0'}"
+        )
+
+    @property
     def available_architectures(self) -> OrderedSet[Architecture]:
         return OrderedSet(self.guids.keys())
 

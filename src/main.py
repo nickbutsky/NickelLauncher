@@ -31,7 +31,7 @@ class API:
                         "name": instance.name,
                         "dirname": instance.directory.name,
                         "version": {
-                            "displayName": instance.version.name,
+                            "displayName": instance.version.display_name,
                             "availableArchitectures": list(instance.version.available_architectures),
                         },
                         "architectureChoice": instance.architecture_choice,
@@ -45,7 +45,7 @@ class API:
     def getVersionsByType(self) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
         return {
             version_type: [
-                {"displayName": version.name, "availableArchitectures": list(version.available_architectures)}
+                {"displayName": version.display_name, "availableArchitectures": list(version.available_architectures)}
                 for version in versionretrieve.get_versions_locally()
                 if version.type == version_type
             ]
@@ -63,7 +63,7 @@ class API:
         except StopIteration:
             group.name = new_name
             return
-        instancemanager.move_instances(len(group_with_new_name.instances), group_with_new_name.name, group.instances)
+        instancemanager.move_instances(len(group_with_new_name.instances), new_name, group.instances)
 
     def toggleInstanceGroupHidden(self, name: str) -> None:  # noqa: N802
         self._get_instance_group(name).toggle_hidden()
@@ -82,10 +82,12 @@ class API:
 
     def changeVersion(self, dirname: str, version_display_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
-        if instance.version.name == version_display_name:
+        if instance.version.display_name == version_display_name:
             return
         instance.version = next(
-            version for version in versionretrieve.get_versions_locally() if version.name == version_display_name
+            version
+            for version in versionretrieve.get_versions_locally()
+            if version.display_name == version_display_name
         )
 
     def changeArchitectureChoice(self, dirname: str, architecture_choice: Architecture) -> None:  # noqa: N802
@@ -104,7 +106,11 @@ class API:
         instancemanager.create_instance(
             name,
             group_name,
-            next(version for version in versionretrieve.get_versions_locally() if version.name == version_display_name),
+            next(
+                version
+                for version in versionretrieve.get_versions_locally()
+                if version.display_name == version_display_name
+            ),
         )
 
     def _get_instance_group(self, name: str) -> InstanceGroup:
