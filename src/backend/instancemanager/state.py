@@ -71,11 +71,9 @@ class State:
             unnamed_instance_group.subscribe_to_change(self._save)
         else:
             unnamed_instance_group = self.instance_groups[0]
-            instance_group.move_instances(
-                len(unnamed_instance_group.instances),
-                unnamed_instance_group,
-                instance_group.instances,
-            )
+            instances = instance_group.instances
+            instance_group.remove_instances(instances)
+            unnamed_instance_group.add_instances(len(unnamed_instance_group.instances), instances)
         self._save()
 
     def _save(self) -> None:
