@@ -46,7 +46,7 @@ def move_instances(position: int, instance_group_name: str, instances: Sequence[
 
     for group in get_instance_groups():
         if not group.instances:
-            delete_instance_group(instance_group)
+            delete_instance_group(group)
 
 
 def create_instance(name: str, instance_group_name: str, version: Version) -> None:
