@@ -52,7 +52,7 @@ class API:
             for version_type in VersionType
         }
 
-    def renameGroup(self, old_name: str, new_name: str) -> None:  # noqa: N802
+    def renameInstanceGroup(self, old_name: str, new_name: str) -> None:  # noqa: N802
         if old_name == "":
             return
 
@@ -65,10 +65,10 @@ class API:
             return
         instancemanager.move_instances(len(group_with_new_name.instances), group_with_new_name.name, group.instances)
 
-    def toggleGroupHidden(self, name: str) -> None:  # noqa: N802
+    def toggleInstanceGroupHidden(self, name: str) -> None:  # noqa: N802
         self._get_instance_group(name).toggle_hidden()
 
-    def deleteGroup(self, name: str) -> None:  # noqa: N802
+    def deleteInstanceGroup(self, name: str) -> None:  # noqa: N802
         instancemanager.delete_instance_group(self._get_instance_group(name))
 
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802

@@ -32,7 +32,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
     <Collapsible
       ref={ref}
       defaultOpen={!initialState.hidden}
-      onOpenChange={() => pywebview.api.toggleGroupHidden(name)}
+      onOpenChange={() => pywebview.api.toggleInstanceGroupHidden(name)}
       {...props}
     >
       <div className="flex items-center gap-2">
@@ -55,7 +55,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
                     .getInstanceGroups()
                     .then((groups) =>
                       pywebview.api
-                        .renameGroup(name, value)
+                        .renameInstanceGroup(name, value)
                         .then(() =>
                           groups.find((group) => group.name === value) ? appContext.resetMainArea() : setName(value),
                         ),
@@ -75,7 +75,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
                 Rename
                 <ContextMenuShortcut>F2</ContextMenuShortcut>
               </ContextMenuItem>
-              <ContextMenuItem onSelect={() => pywebview.api.deleteGroup(name).then(appContext.resetMainArea)}>
+              <ContextMenuItem onSelect={() => pywebview.api.deleteInstanceGroup(name).then(appContext.resetMainArea)}>
                 Delete
               </ContextMenuItem>
             </ContextMenuContent>

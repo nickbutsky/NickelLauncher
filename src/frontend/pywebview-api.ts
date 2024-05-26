@@ -12,9 +12,9 @@ declare global {
 interface API {
   getInstanceGroups: () => Promise<DeepReadonly<InstanceGroup[]>>;
   getVersionsByType: () => Promise<DeepReadonly<VersionsByType>>;
-  renameGroup: (oldName: string, newName: string) => Promise<void>;
-  toggleGroupHidden: (name: string) => Promise<void>;
-  deleteGroup: (name: string) => Promise<void>;
+  renameInstanceGroup: (oldName: string, newName: string) => Promise<void>;
+  toggleInstanceGroupHidden: (name: string) => Promise<void>;
+  deleteInstanceGroup: (name: string) => Promise<void>;
   renameInstance: (dirname: string, newName: string) => Promise<void>;
   changeVersion: (dirname: string, versionDisplayName: string) => Promise<void>;
   changeArchitectureChoice: (dirname: string, architectureChoice: string) => Promise<void>;
