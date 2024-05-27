@@ -12,7 +12,7 @@ import { cn } from "@/utils";
 interface Props
   extends DeepReadonly<{
     versionsByType: VersionsByType;
-    onRefreshRequest: () => void;
+    onRefreshRequest: () => Promise<void>;
     defaultDisplayName?: string;
     onDisplayNameChange?: (displayName: string) => void;
   }> {}
@@ -62,6 +62,8 @@ function TopBar({
   variant = "cl",
   onRefreshRequest,
 }: DeepReadonly<{ variant?: "lr" | "rl" | "cr" | "cl" }> & Pick<Props, "onRefreshRequest">) {
+  const [refreshing, setRefreshing] = React.useState(false);
+
   const versionTypeSelector = (
     <TabsList className="grid grid-cols-3">
       {versionTypes.map((versionType) => (
@@ -78,9 +80,13 @@ function TopBar({
       type="button"
       size="icon"
       variant="secondary"
-      onClick={() => onRefreshRequest()}
+      onClick={async () => {
+        setRefreshing(true);
+        await onRefreshRequest();
+        setRefreshing(false);
+      }}
     >
-      <UpdateIcon />
+      <UpdateIcon className={cn(refreshing && "animate-spin")} />
     </Button>
   );
 
