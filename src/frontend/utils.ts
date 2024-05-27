@@ -12,13 +12,14 @@ export function useReliableAsyncFunction<T, F extends (...args: never[]) => Prom
 ) {
   const [result, setResult] = React.useState<T>();
   const [returned, setReturned] = React.useState(false);
-  const [params, setParams] = React.useState(parameters);
   const [reuseTrigger, setReuseTrigger] = React.useState(false);
+
+  const params = React.useRef(parameters);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
     (async () => {
-      setResult(await asyncFunction(...params));
+      setResult(await asyncFunction(...params.current));
       setReturned(true);
     })();
   }, [reuseTrigger]);
@@ -27,7 +28,7 @@ export function useReliableAsyncFunction<T, F extends (...args: never[]) => Prom
     result,
     returned,
     (parameters) => {
-      setParams(parameters);
+      params.current = parameters;
       setReuseTrigger(!reuseTrigger);
     },
   ] as
