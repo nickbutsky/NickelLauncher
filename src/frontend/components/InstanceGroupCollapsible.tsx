@@ -15,7 +15,6 @@ import {
   ContextMenuTrigger,
 } from "@/components/shadcn/context-menu";
 import type { InstanceGroup } from "@/core-types";
-import { waitUntilTrue } from "@/utils";
 
 export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
@@ -24,7 +23,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
   const [name, setName] = React.useState(initialState.name);
   const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
 
-  const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
+  const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 
   const appContext = React.useContext(AppContext);
 
@@ -63,11 +62,10 @@ export const InstanceGroupCollapsible = React.forwardRef<
                 }
               />
             </ContextMenuTrigger>
-            <ContextMenuContent>
+            <ContextMenuContent ref={contextMenuContentRef}>
               <ContextMenuItem
-                ref={renameContextMenuItemRef}
                 onSelect={() =>
-                  waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
+                  contextMenuContentRef.current?.addEventListener("animationend", () =>
                     setEditableLabelTrigger(!editableLabelTrigger),
                   )
                 }
