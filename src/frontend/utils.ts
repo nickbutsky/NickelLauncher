@@ -53,22 +53,3 @@ export const useIsFirstRender = () => {
 
   return isFirstRenderRef.current;
 };
-
-export async function waitUntilTrue(
-  conditionFunction: () => boolean,
-  interval = 10,
-  timeout = 10000,
-  throwOnTimeout = false,
-) {
-  let timePassed = 0;
-  return new Promise<void>(function poll(resolve, reject) {
-    if (timePassed >= timeout) {
-      return throwOnTimeout ? reject() : resolve();
-    }
-    if (conditionFunction()) {
-      return resolve();
-    }
-    timePassed += interval;
-    setTimeout(() => poll(resolve, reject), interval);
-  });
-}
