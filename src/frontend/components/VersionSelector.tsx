@@ -80,6 +80,7 @@ function TopBar({
       type="button"
       size="icon"
       variant="secondary"
+      disabled={refreshing}
       onClick={async () => {
         setRefreshing(true);
         await onRefreshRequest();
