@@ -30,7 +30,7 @@ import {
 } from "@/components/shadcn/dialog";
 import { FormControl, FormItem } from "@/components/shadcn/form";
 import type { Instance } from "@/core-types";
-import { cn, useReliableAsyncFunction, waitUntilTrue } from "@/utils";
+import { cn, useReliableAsyncFunction } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
@@ -40,7 +40,7 @@ export const InstanceButton = React.forwardRef<
   const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
   const [architectureChoice, setArchitectureChoice] = React.useState(initialState.architectureChoice);
 
-  const renameContextMenuItemRef = React.useRef<React.ElementRef<typeof ContextMenuItem>>(null);
+  const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 
   return (
     <Dialog>
@@ -66,7 +66,7 @@ export const InstanceButton = React.forwardRef<
             </div>
           </Button>
         </ContextMenuTrigger>
-        <ContextMenuContent>
+        <ContextMenuContent ref={contextMenuContentRef}>
           <ContextMenuItem>Launch</ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuRadioGroup
@@ -85,10 +85,9 @@ export const InstanceButton = React.forwardRef<
           </ContextMenuRadioGroup>
           <ContextMenuSeparator />
           <ContextMenuItem
-            ref={renameContextMenuItemRef}
             onSelect={() =>
-              waitUntilTrue(() => !renameContextMenuItemRef.current).then(() =>
-                setEditableLabelTrigger(!editableLabelTrigger),
+              contextMenuContentRef.current?.addEventListener("animationend", () =>
+                setTimeout(() => setEditableLabelTrigger(!editableLabelTrigger)),
               )
             }
           >
