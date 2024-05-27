@@ -28,13 +28,13 @@ def delete_instance_group(group: InstanceGroup) -> None:
 
 
 def move_instances(position: int, group_name: str, instances: Sequence[Instance]) -> None:
-    removal_dict = {
-        group.name: [instance for instance in group.instances if instance in instances]
-        for group in get_instance_groups()
-    }
+    removal_list = [
+        [instance for instance in group.instances if instance in instances] for group in get_instance_groups()
+    ]
 
-    for group in get_instance_groups():
-        group.remove_instances(removal_dict[group.name])
+    for i, group in enumerate(get_instance_groups()):
+        if removal_list[i]:
+            group.remove_instances(removal_list[i])
 
     try:
         group = next(group for group in get_instance_groups() if group.name == group_name)
@@ -42,7 +42,7 @@ def move_instances(position: int, group_name: str, instances: Sequence[Instance]
         group = InstanceGroup(group_name, [])
         _state.add_instance_group(group)
 
-    group.add_instances(position, tuple(chain.from_iterable(removal_dict.values())))
+    group.add_instances(position, tuple(chain.from_iterable(removal_list)))
     if group.hidden:
         group.toggle_hidden()
 
