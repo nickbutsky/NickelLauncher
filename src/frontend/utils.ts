@@ -11,29 +11,25 @@ export function useReliableAsyncFunction<T, F extends (...args: never[]) => Prom
   parameters: Parameters<F>,
 ) {
   const [result, setResult] = React.useState<T>();
-  const [returned, setReturned] = React.useState(false);
-  const [reuseTrigger, setReuseTrigger] = React.useState(false);
-
-  const params = React.useRef(parameters);
+  const [firstUseReturned, setFirstUseReturned] = React.useState(false);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
     (async () => {
-      setResult(await asyncFunction(...params.current));
-      setReturned(true);
+      setResult(await asyncFunction(...parameters));
+      setFirstUseReturned(true);
     })();
-  }, [reuseTrigger]);
+  }, []);
 
   return [
     result,
-    returned,
-    (parameters) => {
-      params.current = parameters;
-      setReuseTrigger(!reuseTrigger);
+    firstUseReturned,
+    async (parameters) => {
+      setResult(await asyncFunction(...parameters));
     },
   ] as
-    | [Awaited<ReturnType<F>>, true, (parameters: Parameters<F>) => void]
-    | [undefined, false, (parameters: Parameters<F>) => void];
+    | [Awaited<ReturnType<F>>, true, (parameters: Parameters<F>) => Promise<void>]
+    | [undefined, false, (parameters: Parameters<F>) => Promise<void>];
 }
 
 export const useIsFirstRender = () => {

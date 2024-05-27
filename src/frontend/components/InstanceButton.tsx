@@ -199,7 +199,7 @@ function ChangeVersionDialogContent({
                 <VersionSelector
                   className="h-72"
                   versionsByType={versionsByType}
-                  onRefreshRequest={() => reuseGetVersionsByType([true])}
+                  onRefreshRequest={async () => await reuseGetVersionsByType([true])}
                   defaultDisplayName={field.value}
                   onDisplayNameChange={field.onChange}
                 />
