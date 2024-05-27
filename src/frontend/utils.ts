@@ -37,11 +37,11 @@ export function useReliableAsyncFunction<T, F extends (...args: never[]) => Prom
 }
 
 export const useIsFirstRender = () => {
-  const isFirstRender = React.useRef(true);
+  const firstRender = React.useRef(true);
 
   React.useEffect(() => {
-    isFirstRender.current = false;
+    firstRender.current = false;
   }, []);
 
-  return isFirstRender.current;
+  return firstRender.current;
 };
