@@ -39,6 +39,7 @@ export const InstanceButton = React.forwardRef<
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci">("ci");
   const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
   const [architectureChoice, setArchitectureChoice] = React.useState(initialState.architectureChoice);
+  const [versionDisplayName, setVersionDisplayName] = React.useState(initialState.version.displayName);
 
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 
@@ -62,7 +63,7 @@ export const InstanceButton = React.forwardRef<
                 isAllowedToSave={(value) => value.length > 0}
                 onSave={(value) => pywebview.api.renameInstance(initialState.dirname, value)}
               />
-              <div>{initialState.version.displayName}</div>
+              <div>{versionDisplayName}</div>
             </div>
           </Button>
         </ContextMenuTrigger>
@@ -115,6 +116,7 @@ export const InstanceButton = React.forwardRef<
               <ChangeVersionDialogContent
                 dirname={initialState.dirname}
                 currentVersionDisplayName={initialState.version.displayName}
+                onSubmit={setVersionDisplayName}
               />
             ),
             ci: <CopyInstanceDialogContent dirname={initialState.dirname} />,
@@ -168,7 +170,12 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
 function ChangeVersionDialogContent({
   dirname,
   currentVersionDisplayName,
-}: DeepReadonly<{ dirname: string; currentVersionDisplayName: string }>) {
+  onSubmit,
+}: DeepReadonly<{
+  dirname: string;
+  currentVersionDisplayName: string;
+  onSubmit: (versionDisplayName: string) => void;
+}>) {
   const [versionsByType, ready, reuseGetVersionsByType] = useReliableAsyncFunction(pywebview.api.getVersionsByType, []);
 
   return (
@@ -180,7 +187,9 @@ function ChangeVersionDialogContent({
         defaultValues={{
           versionDisplayName: currentVersionDisplayName,
         }}
-        onSubmitBeforeClose={(data) => pywebview.api.changeVersion(dirname, data.versionDisplayName)}
+        onSubmitBeforeClose={(data) =>
+          pywebview.api.changeVersion(dirname, data.versionDisplayName).then(() => onSubmit(data.versionDisplayName))
+        }
       >
         <DialogFormField
           name="versionDisplayName"
