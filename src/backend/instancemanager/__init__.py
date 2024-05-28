@@ -65,7 +65,13 @@ def initialise_watchdog(on_sudden_change: Callable[[], object]) -> None:
     global _watchdog  # noqa: PLW0603
     if isinstance(_watchdog, _Watchdog):
         raise WatchdogAlreadyInitialisedError
-    _watchdog = _Watchdog(ROOT / "instances", on_sudden_change)
+
+    def callback() -> None:
+        global _state  # noqa: PLW0603
+        _state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
+        on_sudden_change()
+
+    _watchdog = _Watchdog(ROOT / "instances", callback)
     _watchdog.run()
 
 
