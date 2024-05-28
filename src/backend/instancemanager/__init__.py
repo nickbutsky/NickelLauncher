@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 from itertools import chain
 from typing import TYPE_CHECKING
 
@@ -9,11 +10,10 @@ from env import ROOT
 
 from . import instancecreate as _instancecreate
 from . import stateload as _stateload
-
-# from .watchdogthread import WatchdogThread
+from .watchdog import Watchdog as _Watchdog
 
 if TYPE_CHECKING:
-    from typing import Sequence
+    from typing import Callable, Generator, Sequence
 
     from core.instance import Instance
     from core.version import Version
@@ -52,18 +52,33 @@ def move_instances(position: int, group_name: str, instances: Sequence[Instance]
 
 
 def create_instance(name: str, group_name: str, version: Version) -> None:
-    # _watchdog.ignore_dir_created_event = True
-    _instancecreate.create_instance(name, group_name, version, _state)
-    # _watchdog.ignore_dir_created_event = False
+    with _watchdog.disable_dir_created_event_tracking():
+        _instancecreate.create_instance(name, group_name, version, _state)
 
 
 def copy_instance(instance: Instance, copy_worlds: bool) -> None:
-    # _watchdog.ignore_dir_created_event = True
-    _instancecreate.copy_instance(instance, copy_worlds, _state)
-    # _watchdog.ignore_dir_created_event = False
+    with _watchdog.disable_dir_created_event_tracking():
+        _instancecreate.copy_instance(instance, copy_worlds, _state)
+
+
+def initialise_watchdog(on_sudden_change: Callable[[], object]) -> None:
+    global _watchdog  # noqa: PLW0603
+    if isinstance(_watchdog, _Watchdog):
+        raise WatchdogAlreadyInitialisedError
+    _watchdog = _Watchdog(ROOT / "instances", on_sudden_change)
+    _watchdog.run()
+
+
+class WatchdogAlreadyInitialisedError(ValueError):
+    pass
+
+
+class _WatchdogDummy:
+    @staticmethod
+    @contextlib.contextmanager
+    def disable_dir_created_event_tracking() -> Generator[None, None, None]:
+        yield
 
 
 _state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
-# _watchdog = WatchdogThread(ROOT / "instances")
-
-# _watchdog.start()
+_watchdog = _WatchdogDummy()
