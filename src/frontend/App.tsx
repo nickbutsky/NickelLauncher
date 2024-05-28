@@ -1,6 +1,6 @@
 import { PlusIcon } from "@radix-ui/react-icons";
 import * as React from "react";
-import type { DeepReadonly, MarkWritable } from "ts-essentials";
+import type { MarkWritable } from "ts-essentials";
 
 import { InstanceCreationDialogContent } from "@/components/InstanceCreationDialogContent";
 import { MainArea } from "@/components/MainArea";
@@ -8,15 +8,7 @@ import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
 import { ThemeProvider } from "@/components/shadcn/theme-provider";
 
-export const AppContext = React.createContext<typeof webview>({
-  resetMainArea: () => undefined,
-});
-
-declare global {
-  interface Window extends DeepReadonly<{ webview: typeof webview }> {}
-
-  const webview: DeepReadonly<{ resetMainArea: () => void }>;
-}
+export const AppContext = React.createContext<typeof webview>({ resetMainArea: () => undefined });
 
 export function App() {
   const [mainAreaKey, setMainAreaKey] = React.useState(crypto.randomUUID());
