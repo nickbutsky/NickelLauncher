@@ -4,20 +4,26 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
+from typing import TYPE_CHECKING
 
+import instancemanager
 from env import ROOT
 
+if TYPE_CHECKING:
+    from typing import Callable
 
-def setup() -> None:
+
+def run(on_sudden_change: Callable[[], object]) -> None:
     _create_dirs()
     _setup_rotating_logger(ROOT / "logs", "nl")
+    instancemanager.initialise_watchdog(on_sudden_change)
 
 
 def _create_dirs() -> None:
-    (ROOT / "versions").mkdir(parents=True)
-    (ROOT / "instances").mkdir(parents=True)
-    (ROOT / "temp").mkdir(parents=True)
-    (ROOT / "logs").mkdir(parents=True)
+    (ROOT / "versions").mkdir(parents=True, exist_ok=True)
+    (ROOT / "instances").mkdir(parents=True, exist_ok=True)
+    (ROOT / "temp").mkdir(parents=True, exist_ok=True)
+    (ROOT / "logs").mkdir(parents=True, exist_ok=True)
 
 
 def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
