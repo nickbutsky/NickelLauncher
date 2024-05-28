@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol
 
 import instancemanager
 import versionretrieve
@@ -117,3 +117,7 @@ class API:
             for instance in chain.from_iterable(group.instances for group in instancemanager.get_instance_groups())
             if instance.directory.name == dirname
         )
+
+
+class FrontendAPI(Protocol):
+    def reset_main_area(self) -> None: ...

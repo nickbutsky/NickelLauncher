@@ -5,11 +5,21 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent / "backend"))
 
+from dataclasses import dataclass
+
 import webview  # pyright: ignore [reportMissingTypeStubs]
 from tendo.singleton import SingleInstance
 
 from backend import setup
-from backend.api import API
+from backend.bridge import API
+
+
+@dataclass(frozen=True, slots=True)
+class FrontendAPI:
+    window: webview.Window
+
+    def reset_main_area(self) -> None:
+        self.window.evaluate_js("webview.resetMainArea()")
 
 
 def main() -> None:
@@ -17,7 +27,7 @@ def main() -> None:
 
     window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=API())
 
-    setup.run(lambda: window.evaluate_js("webview.resetMainArea()"))
+    setup.run(FrontendAPI(window))
 
     webview.start(debug="__compiled__" not in globals())
 

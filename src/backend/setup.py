@@ -10,13 +10,13 @@ import instancemanager
 from env import ROOT
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from bridge import FrontendAPI
 
 
-def run(on_sudden_change: Callable[[], object]) -> None:
+def run(frontend_api: FrontendAPI) -> None:
     _create_dirs()
     _setup_rotating_logger(ROOT / "logs", "nl")
-    instancemanager.initialise_watchdog(on_sudden_change)
+    instancemanager.initialise_watchdog(frontend_api.reset_main_area)
 
 
 def _create_dirs() -> None:
