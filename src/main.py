@@ -129,7 +129,8 @@ class API:
 def main() -> None:
     me = SingleInstance()  # noqa: F841  # pyright: ignore [reportUnusedVariable]
 
-    webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=API())
+    window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=API())
+    instancemanager.initialise_watchdog(lambda: window.evaluate_js("webview.resetMainArea()"))
     webview.start(debug="__compiled__" not in globals())
 
 
