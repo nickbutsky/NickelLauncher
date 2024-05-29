@@ -10,9 +10,9 @@ import versionretrieve
 from core.version import VersionType
 
 if TYPE_CHECKING:
-    from backend.core.instance import Instance
-    from backend.core.instancegroup import InstanceGroup
-    from backend.core.version import Architecture
+    from core.instance import Instance
+    from core.instancegroup import InstanceGroup
+    from core.version import Architecture
 
 
 class API:
