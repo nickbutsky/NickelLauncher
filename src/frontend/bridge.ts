@@ -22,18 +22,20 @@ declare global {
     };
   }>;
 
-  // This is only used to call functions from the Python side.
-  const webview: API;
+  // This is only used to call functions from the Python side. These methods are swappable.
+  const webview: {
+    reloadMainArea: () => void;
+    propelLaunchReport: (
+      report: DeepReadonly<{
+        type: 0 | 1;
+        details: { processed: number; totalsize: number; unit: string };
+        text: string;
+      }> | null,
+    ) => void;
+  };
 }
 
-// biome-ignore lint/style/useNamingConvention: False positive
-export interface API {
-  reloadMainArea: () => void;
-  propelLaunchReport: (
-    report: DeepReadonly<{
-      type: 0 | 1;
-      details: { processed: number; totalsize: number; unit: string };
-      text: string;
-    }> | null,
-  ) => void;
-}
+(window as unknown as { webview: typeof webview }).webview = {
+  reloadMainArea: () => undefined,
+  propelLaunchReport: () => undefined,
+};
