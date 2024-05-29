@@ -5,13 +5,17 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent / "backend"))
 
+import json
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import webview  # pyright: ignore [reportMissingTypeStubs]
 from tendo.singleton import SingleInstance
 
-from backend import setup
-from backend.bridge import API
+from backend import bridge, setup
+
+if TYPE_CHECKING:
+    from backend.report import Report
 
 
 @dataclass(frozen=True, slots=True)
@@ -21,13 +25,18 @@ class FrontendAPI:
     def reload_main_area(self) -> None:
         self.window.evaluate_js("webview.reloadMainArea()")
 
+    def propel_launch_report(self, report: Report) -> None:
+        self.window.evaluate_js(f"webview.propelLaunchReport({json.dumps(report.to_dict())})")
+
 
 def main() -> None:
     me = SingleInstance()  # noqa: F841  # pyright: ignore [reportUnusedVariable]
 
-    window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=API())
+    window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=bridge.API())
 
-    setup.run(FrontendAPI(window))
+    frontend_api = FrontendAPI(window)
+    bridge.set_frontend_api(frontend_api)
+    setup.run(frontend_api)
 
     webview.start(debug="__compiled__" not in globals())
 
