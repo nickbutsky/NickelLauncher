@@ -11,9 +11,9 @@ import { ThemeProvider } from "@/components/shadcn/theme-provider";
 export const AppContext = React.createContext<typeof webview>({ resetMainArea: () => undefined });
 
 export function App() {
-  const [mainAreaKey, setMainAreaKey] = React.useState(crypto.randomUUID());
+  const [mainAreaReloadTrigger, setMainAreaReloadTrigger] = React.useState(false);
 
-  const appContext = { resetMainArea: () => setMainAreaKey(crypto.randomUUID()) };
+  const appContext = { resetMainArea: () => setMainAreaReloadTrigger(!mainAreaReloadTrigger) };
 
   if (!import.meta.env.DEV) {
     (window as MarkWritable<typeof window, "webview">).webview = appContext;
@@ -22,7 +22,7 @@ export function App() {
   return (
     <ThemeProvider defaultTheme="dark">
       <AppContext.Provider value={appContext}>
-        <MainArea key={mainAreaKey} />
+        <MainArea reloadTrigger={mainAreaReloadTrigger} />
         <Dialog>
           <DialogTrigger asChild={true}>
             <Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">

@@ -1,9 +1,21 @@
+import * as React from "react";
+import type { DeepReadonly } from "ts-essentials";
+
 import { InstanceGroupCollapsible } from "@/components/InstanceGroupCollapsible";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
-import { useReliableAsyncFunction } from "@/utils";
+import { useIsFirstRender, useReliableAsyncFunction } from "@/utils";
 
-export function MainArea() {
-  const [groups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
+export function MainArea({ reloadTrigger }: DeepReadonly<{ reloadTrigger: boolean }>) {
+  const [groups, ready, reuseGetInstanceGroups] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
+
+  const firstRender = useIsFirstRender();
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
+  React.useEffect(() => {
+    if (!firstRender) {
+      reuseGetInstanceGroups([]);
+    }
+  }, [reloadTrigger]);
 
   return (
     <ScrollArea className="h-screen" type="always">
