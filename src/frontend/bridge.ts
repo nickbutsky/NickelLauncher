@@ -21,5 +21,5 @@ declare global {
     };
   }>;
 
-  const webview: DeepReadonly<{ resetMainArea: () => void }>;
+  const webview: DeepReadonly<{ reloadMainArea: () => void }>;
 }

@@ -18,8 +18,8 @@ from backend.bridge import API
 class FrontendAPI:
     window: webview.Window
 
-    def reset_main_area(self) -> None:
-        self.window.evaluate_js("webview.resetMainArea()")
+    def reload_main_area(self) -> None:
+        self.window.evaluate_js("webview.reloadMainArea()")
 
 
 def main() -> None:

@@ -39,7 +39,7 @@ export function InstanceCreationDialogContent() {
         }}
         onSubmitBeforeClose={(data) =>
           pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then(() => {
-            appContext.resetMainArea();
+            appContext.reloadMainArea();
             reuseGetInstanceGroups([]);
           })
         }

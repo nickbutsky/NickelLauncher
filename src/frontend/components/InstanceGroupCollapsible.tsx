@@ -56,7 +56,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
                       pywebview.api
                         .renameInstanceGroup(name, value)
                         .then(() =>
-                          groups.find((group) => group.name === value) ? appContext.resetMainArea() : setName(value),
+                          groups.find((group) => group.name === value) ? appContext.reloadMainArea() : setName(value),
                         ),
                     )
                 }
@@ -73,7 +73,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
                 Rename
                 <ContextMenuShortcut>F2</ContextMenuShortcut>
               </ContextMenuItem>
-              <ContextMenuItem onSelect={() => pywebview.api.deleteInstanceGroup(name).then(appContext.resetMainArea)}>
+              <ContextMenuItem onSelect={() => pywebview.api.deleteInstanceGroup(name).then(appContext.reloadMainArea)}>
                 Delete
               </ContextMenuItem>
             </ContextMenuContent>

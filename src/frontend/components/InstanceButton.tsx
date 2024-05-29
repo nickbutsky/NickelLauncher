@@ -145,7 +145,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
         onSubmitBeforeClose={async (data) =>
           await pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
         }
-        onSubmitAfterClose={() => appContext.resetMainArea()}
+        onSubmitAfterClose={() => appContext.reloadMainArea()}
       >
         <DialogFormField
           name="groupName"
@@ -222,7 +222,7 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
     (copyWorlds: boolean) =>
       pywebview.api
         .copyInstance(dirname, copyWorlds)
-        .then(() => dialogContentRef.current?.addEventListener("animationend", appContext.resetMainArea)),
+        .then(() => dialogContentRef.current?.addEventListener("animationend", appContext.reloadMainArea)),
     [dirname],
   );
 

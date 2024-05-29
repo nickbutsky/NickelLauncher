@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 def run(frontend_api: FrontendAPI) -> None:
     _create_dirs()
     _setup_rotating_logger(ROOT / "logs", "nl")
-    instancemanager.initialise_watchdog(frontend_api.reset_main_area)
+    instancemanager.initialise_watchdog(frontend_api.reload_main_area)
 
 
 def _create_dirs() -> None:

@@ -8,12 +8,12 @@ import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
 import { ThemeProvider } from "@/components/shadcn/theme-provider";
 
-export const AppContext = React.createContext<typeof webview>({ resetMainArea: () => undefined });
+export const AppContext = React.createContext<typeof webview>({ reloadMainArea: () => undefined });
 
 export function App() {
   const [mainAreaReloadTrigger, setMainAreaReloadTrigger] = React.useState(false);
 
-  const appContext = { resetMainArea: () => setMainAreaReloadTrigger(!mainAreaReloadTrigger) };
+  const appContext = { reloadMainArea: () => setMainAreaReloadTrigger(!mainAreaReloadTrigger) };
 
   if (!import.meta.env.DEV) {
     (window as MarkWritable<typeof window, "webview">).webview = appContext;
