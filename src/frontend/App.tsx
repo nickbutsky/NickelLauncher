@@ -16,7 +16,7 @@ export function App() {
 
   const appContext = { reloadMainArea: () => setMainAreaReloadTrigger(!mainAreaReloadTrigger) };
 
-  if (!import.meta.env.DEV) {
+  if (import.meta.env.PROD) {
     webview.reloadMainArea = appContext.reloadMainArea;
   }
 
