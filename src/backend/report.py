@@ -25,6 +25,6 @@ class Report:
 
 @dataclass(frozen=True, slots=True)
 class ProgressDetails:
-    already_processed: float
-    total_size: float
+    processed: float
+    totalSize: float  # noqa: N815
     unit: str
