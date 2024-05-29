@@ -32,7 +32,7 @@ def download_version(
 
     logging.debug('Downloading a package to "%s"...', version.packages[architecture])
     temp_file = ROOT / "temp" / str(uuid4())
-    request.download_file(link, temp_file)
+    request.download_file(link, temp_file, reporthook)
     temp_file.replace(version.packages[architecture])
 
 
