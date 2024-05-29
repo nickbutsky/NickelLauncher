@@ -26,5 +26,5 @@ class Report:
 @dataclass(frozen=True, slots=True)
 class ProgressDetails:
     processed: float
-    totalSize: float  # noqa: N815
+    totalsize: float
     unit: str
