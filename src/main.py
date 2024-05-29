@@ -12,7 +12,8 @@ from typing import TYPE_CHECKING
 import webview  # pyright: ignore [reportMissingTypeStubs]
 from tendo.singleton import SingleInstance
 
-from backend import bridge, setup
+import backend.bridge
+import backend.setup
 
 if TYPE_CHECKING:
     from backend.report import Report
@@ -32,11 +33,11 @@ class FrontendAPI:
 def main() -> None:
     me = SingleInstance()  # noqa: F841  # pyright: ignore [reportUnusedVariable]
 
-    window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=bridge.API())
+    window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=backend.bridge.API())
 
     frontend_api = FrontendAPI(window)
-    bridge.set_frontend_api(frontend_api)
-    setup.run(frontend_api)
+    backend.bridge.set_frontend_api(frontend_api)
+    backend.setup.run(frontend_api)
 
     webview.start(debug="__compiled__" not in globals())
 
