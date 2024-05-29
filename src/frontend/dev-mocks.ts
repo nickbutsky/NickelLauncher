@@ -3,24 +3,24 @@ import type { DeepReadonly } from "ts-essentials";
 import type { InstanceGroup, VersionsByType } from "@/core-types";
 
 if (import.meta.env.DEV) {
-  const mockApi: typeof pywebview.api = {
-    getInstanceGroups: () => Promise.resolve(instanceGroups),
-    getVersionsByType: () => Promise.resolve(versionsByType),
-    renameInstanceGroup: () => Promise.resolve(),
-    toggleInstanceGroupHidden: () => Promise.resolve(),
-    deleteInstanceGroup: () => Promise.resolve(),
-    moveInstances: () => Promise.resolve(),
-    renameInstance: () => Promise.resolve(),
-    changeVersion: () => Promise.resolve(),
-    changeArchitectureChoice: () => Promise.resolve(),
-    copyInstance: () => Promise.resolve(),
-    createInstance: () => Promise.resolve(),
-    openGameDirectory: () => Promise.resolve(),
-    openInstanceDirectory: () => Promise.resolve(),
-    launchInstance: () => Promise.resolve(),
+  (window as unknown as { pywebview: typeof pywebview }).pywebview = {
+    api: {
+      getInstanceGroups: () => Promise.resolve(instanceGroups),
+      getVersionsByType: () => Promise.resolve(versionsByType),
+      renameInstanceGroup: () => Promise.resolve(),
+      toggleInstanceGroupHidden: () => Promise.resolve(),
+      deleteInstanceGroup: () => Promise.resolve(),
+      moveInstances: () => Promise.resolve(),
+      renameInstance: () => Promise.resolve(),
+      changeVersion: () => Promise.resolve(),
+      changeArchitectureChoice: () => Promise.resolve(),
+      copyInstance: () => Promise.resolve(),
+      createInstance: () => Promise.resolve(),
+      openGameDirectory: () => Promise.resolve(),
+      openInstanceDirectory: () => Promise.resolve(),
+      launchInstance: () => Promise.resolve(),
+    },
   };
-
-  (window as unknown as { pywebview: typeof pywebview }).pywebview = { api: mockApi };
 
   const versionsByType = {
     release: [
