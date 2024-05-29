@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
 from itertools import chain
 from typing import TYPE_CHECKING, Protocol
 
@@ -17,10 +16,7 @@ if TYPE_CHECKING:
     from report import Report
 
 
-@dataclass(slots=True)
 class API:
-    frontend_api: FrontendAPI | None = None
-
     def getInstanceGroups(self) -> list[dict[str, object]]:  # noqa: N802
         return [
             {
@@ -121,7 +117,7 @@ class API:
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         game.launch(
             self._get_instance(dirname),
-            lambda report: self.frontend_api.propel_launch_report(report) if self.frontend_api else None,
+            lambda report: _frontend_api.propel_launch_report(report) if _frontend_api else None,
         )
 
     def _get_instance_group(self, name: str) -> InstanceGroup:
@@ -135,6 +131,14 @@ class API:
         )
 
 
+def set_frontend_api(frontend_api: FrontendAPI) -> None:
+    global _frontend_api  # noqa: PLW0603
+    _frontend_api = frontend_api
+
+
 class FrontendAPI(Protocol):
     def reload_main_area(self) -> None: ...
     def propel_launch_report(self, report: Report) -> None: ...
+
+
+_frontend_api: FrontendAPI | None = None
