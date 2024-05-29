@@ -3,7 +3,7 @@ from __future__ import annotations
 from itertools import chain
 from typing import TYPE_CHECKING, Protocol
 
-import gamelaunch
+import game
 import instancemanager
 import versionretrieve
 from core.version import VersionType
@@ -107,7 +107,7 @@ class API:
         )
 
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
-        gamelaunch.launch(self._get_instance(dirname), lambda r: print(r))
+        game.launch(self._get_instance(dirname), lambda r: print(r))
 
     def _get_instance_group(self, name: str) -> InstanceGroup:
         return next(group for group in instancemanager.get_instance_groups() if group.name == name)

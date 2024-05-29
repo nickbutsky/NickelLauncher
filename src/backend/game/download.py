@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from core.version import Architecture, Version
 
 
-def download(
+def download_version(
     version: Version,
     architecture: Architecture,
     reporthook: Callable[[Report], object] | None = None,

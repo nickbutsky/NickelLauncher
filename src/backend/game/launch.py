@@ -5,10 +5,11 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import gamedownload
 import packagemanager
 import shell
 from report import Report
+
+from .download import download_version
 
 if TYPE_CHECKING:
     from typing import Callable
@@ -26,7 +27,7 @@ def launch(instance: Instance, reporthook: Callable[[Report], object] | None = N
 
     if not instance.version.is_downloaded(instance.architecture_choice):
         logging.info("Downloading Minecraft %s...", instance.version.name)
-        gamedownload.download(instance.version, instance.architecture_choice, reporthook)
+        download_version(instance.version, instance.architecture_choice, reporthook)
 
     if not instance.version.is_installed(instance.architecture_choice):
         _install(instance.version, instance.architecture_choice, reporthook)
