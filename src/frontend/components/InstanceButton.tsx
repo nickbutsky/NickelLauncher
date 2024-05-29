@@ -102,8 +102,12 @@ export const InstanceButton = React.forwardRef<
             <ContextMenuItem onSelect={() => setDialogContentId("cv")}>Change Version</ContextMenuItem>
           </DialogTrigger>
           <ContextMenuSeparator />
-          <ContextMenuItem>Minecraft Folder</ContextMenuItem>
-          <ContextMenuItem>Instance Folder</ContextMenuItem>
+          <ContextMenuItem onSelect={() => pywebview.api.openGameDirectory(initialState.dirname)}>
+            Minecraft Folder
+          </ContextMenuItem>
+          <ContextMenuItem onSelect={() => pywebview.api.openInstanceDirectory(initialState.dirname)}>
+            Instance Folder
+          </ContextMenuItem>
           <ContextMenuSeparator />
           <DialogTrigger asChild={true}>
             <ContextMenuItem onSelect={() => setDialogContentId("ci")}>Copy Instance</ContextMenuItem>

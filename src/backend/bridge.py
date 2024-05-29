@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from itertools import chain
 from typing import TYPE_CHECKING, Protocol
 
@@ -105,6 +106,12 @@ class API:
                 if version.display_name == version_display_name
             ),
         )
+
+    def openGameDirectory(self, dirname: str) -> None:  # noqa: N802
+        os.startfile(self._get_instance(dirname).directory / "com.mojang")  # noqa: S606
+
+    def openInstanceDirectory(self, dirname: str) -> None:  # noqa: N802
+        os.startfile(self._get_instance(dirname).directory)  # noqa: S606
 
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         game.launch(self._get_instance(dirname), lambda r: print(r))

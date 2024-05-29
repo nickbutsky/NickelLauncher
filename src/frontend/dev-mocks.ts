@@ -14,6 +14,9 @@ const mockApi: typeof pywebview.api = {
   changeArchitectureChoice: () => Promise.resolve(),
   copyInstance: () => Promise.resolve(),
   createInstance: () => Promise.resolve(),
+  openGameDirectory: () => Promise.resolve(),
+  openInstanceDirectory: () => Promise.resolve(),
+  launchInstance: () => Promise.resolve(),
 };
 
 if (import.meta.env.DEV) {
