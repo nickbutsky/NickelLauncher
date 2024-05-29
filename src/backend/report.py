@@ -22,9 +22,15 @@ class Report:
     def text(self) -> str:
         return self._text if self.type == self.ERROR else self._text + "..."
 
+    def to_dict(self) -> dict[str, object]:
+        return {"type": self.type, "details": self.details.to_dict() if self.details else None, "text": self.text}
+
 
 @dataclass(frozen=True, slots=True)
 class ProgressDetails:
     processed: float
     totalsize: float
     unit: str
+
+    def to_dict(self) -> dict[str, object]:
+        return {"processed": self.processed, "totalsize": self.totalsize, "unit": self.unit}
