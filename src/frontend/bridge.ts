@@ -16,6 +16,7 @@ declare global {
       changeArchitectureChoice: (dirname: string, architectureChoice: string) => Promise<void>;
       copyInstance: (dirname: string, copyWorlds: boolean) => Promise<void>;
       createInstance: (name: string, groupName: string, versionDisplayName: string) => Promise<void>;
+      launchInstance: (dirname: string) => Promise<void>;
     };
   }>;
 }

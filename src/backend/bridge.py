@@ -3,6 +3,7 @@ from __future__ import annotations
 from itertools import chain
 from typing import TYPE_CHECKING, Protocol
 
+import gamelaunch
 import instancemanager
 import versionretrieve
 from core.version import VersionType
@@ -94,9 +95,6 @@ class API:
     def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802
         instancemanager.copy_instance(self._get_instance(dirname), copy_worlds)
 
-    def launchInstance(self, dirname: str) -> None:  # noqa: N802
-        pass
-
     def createInstance(self, name: str, group_name: str, version_display_name: str) -> None:  # noqa: N802
         instancemanager.create_instance(
             name,
@@ -107,6 +105,9 @@ class API:
                 if version.display_name == version_display_name
             ),
         )
+
+    def launchInstance(self, dirname: str) -> None:  # noqa: N802
+        gamelaunch.launch(self._get_instance(dirname), lambda r: print(r))
 
     def _get_instance_group(self, name: str) -> InstanceGroup:
         return next(group for group in instancemanager.get_instance_groups() if group.name == name)

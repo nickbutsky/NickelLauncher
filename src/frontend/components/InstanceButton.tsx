@@ -68,7 +68,7 @@ export const InstanceButton = React.forwardRef<
           </Button>
         </ContextMenuTrigger>
         <ContextMenuContent ref={contextMenuContentRef}>
-          <ContextMenuItem>Launch</ContextMenuItem>
+          <ContextMenuItem onSelect={() => pywebview.api.launchInstance(initialState.dirname)}>Launch</ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuRadioGroup
             value={architectureChoice}
