@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from dataclasses import dataclass
 from itertools import chain
 from typing import TYPE_CHECKING, Protocol
 
@@ -13,9 +14,13 @@ if TYPE_CHECKING:
     from core.instance import Instance
     from core.instancegroup import InstanceGroup
     from core.version import Architecture
+    from report import Report
 
 
+@dataclass(slots=True)
 class API:
+    frontend_api: FrontendAPI | None = None
+
     def getInstanceGroups(self) -> list[dict[str, object]]:  # noqa: N802
         return [
             {
@@ -114,7 +119,10 @@ class API:
         os.startfile(self._get_instance(dirname).directory)  # noqa: S606
 
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
-        game.launch(self._get_instance(dirname), lambda r: print(r))
+        game.launch(
+            self._get_instance(dirname),
+            lambda report: self.frontend_api.propel_launch_report(report) if self.frontend_api else None,
+        )
 
     def _get_instance_group(self, name: str) -> InstanceGroup:
         return next(group for group in instancemanager.get_instance_groups() if group.name == name)
@@ -129,3 +137,4 @@ class API:
 
 class FrontendAPI(Protocol):
     def reload_main_area(self) -> None: ...
+    def propel_launch_report(self, report: Report) -> None: ...

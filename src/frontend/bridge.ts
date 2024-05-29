@@ -21,7 +21,19 @@ declare global {
       launchInstance: (dirname: string) => Promise<void>;
     };
   }>;
+
+  // This is only used to call functions from the Python side.
+  const webview: API;
 }
 
 // biome-ignore lint/style/useNamingConvention: False positive
-export interface API extends DeepReadonly<{ reloadMainArea: () => void }> {}
+export interface API {
+  reloadMainArea: () => void;
+  propelLaunchReport: (
+    report: DeepReadonly<{
+      type: 0 | 1;
+      details: { processed: number; totalsize: number; unit: string };
+      text: string;
+    }> | null,
+  ) => void;
+}
