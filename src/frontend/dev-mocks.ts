@@ -1,4 +1,4 @@
-import type { DeepReadonly, MarkWritable } from "ts-essentials";
+import type { DeepReadonly } from "ts-essentials";
 
 import type { InstanceGroup, VersionsByType } from "@/core-types";
 
@@ -17,7 +17,7 @@ const mockApi: typeof pywebview.api = {
 };
 
 if (import.meta.env.DEV) {
-  (window as MarkWritable<typeof window, "pywebview">).pywebview = { api: mockApi };
+  (window as unknown as { pywebview: typeof pywebview }).pywebview = { api: mockApi };
 }
 
 const versionsByType = {

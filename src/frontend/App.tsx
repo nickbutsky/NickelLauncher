@@ -1,14 +1,14 @@
 import { PlusIcon } from "@radix-ui/react-icons";
 import * as React from "react";
-import type { MarkWritable } from "ts-essentials";
 
+import type { API } from "@/bridge";
 import { InstanceCreationDialogContent } from "@/components/InstanceCreationDialogContent";
 import { MainArea } from "@/components/MainArea";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
 import { ThemeProvider } from "@/components/shadcn/theme-provider";
 
-export const AppContext = React.createContext<typeof webview>({ reloadMainArea: () => undefined });
+export const AppContext = React.createContext<API>({ reloadMainArea: () => undefined });
 
 export function App() {
   const [mainAreaReloadTrigger, setMainAreaReloadTrigger] = React.useState(false);
@@ -16,7 +16,7 @@ export function App() {
   const appContext = { reloadMainArea: () => setMainAreaReloadTrigger(!mainAreaReloadTrigger) };
 
   if (!import.meta.env.DEV) {
-    (window as MarkWritable<typeof window, "webview">).webview = appContext;
+    (window as unknown as { webview: API }).webview = appContext;
   }
 
   return (

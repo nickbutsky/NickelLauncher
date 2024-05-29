@@ -3,8 +3,6 @@ import type { DeepReadonly } from "ts-essentials";
 import type { InstanceGroup, VersionsByType } from "@/core-types";
 
 declare global {
-  interface Window extends DeepReadonly<{ pywebview: typeof pywebview; webview: typeof webview }> {}
-
   const pywebview: DeepReadonly<{
     api: {
       getInstanceGroups: () => Promise<DeepReadonly<InstanceGroup[]>>;
@@ -20,6 +18,7 @@ declare global {
       createInstance: (name: string, groupName: string, versionDisplayName: string) => Promise<void>;
     };
   }>;
-
-  const webview: DeepReadonly<{ reloadMainArea: () => void }>;
 }
+
+// biome-ignore lint/style/useNamingConvention: False positive
+export interface API extends DeepReadonly<{ reloadMainArea: () => void }> {}
