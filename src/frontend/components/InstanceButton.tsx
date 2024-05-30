@@ -34,7 +34,7 @@ import {
 import { FormControl, FormItem } from "@/components/shadcn/form";
 import { Progress } from "@/components/shadcn/progress";
 import type { Instance } from "@/core-types";
-import { cn, useReliableAsyncFunction } from "@/utils";
+import { cn } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
@@ -139,42 +139,39 @@ export const InstanceButton = React.forwardRef<
 });
 
 function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
-  const [groups, ready] = useReliableAsyncFunction(pywebview.api.getInstanceGroups, []);
-
   const appContext = React.useContext(AppContext);
 
   return (
-    ready && (
-      <FormDialogContent
-        title="Change group"
-        submitText="Change"
-        schema={z.object({ groupName: z.string() })}
-        defaultValues={{
-          groupName:
-            groups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
-        }}
-        onSubmitBeforeClose={async (data) =>
-          await pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
-        }
-        onSubmitAfterClose={() => appContext.reloadMainArea()}
-      >
-        <DialogFormField
-          name="groupName"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <InputWithOptions
-                  placeholder="Group name"
-                  maxLength={50}
-                  options={groups.map((group) => group.name).filter((name) => name !== "")}
-                  {...field}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </FormDialogContent>
-    )
+    <FormDialogContent
+      title="Change group"
+      submitText="Change"
+      schema={z.object({ groupName: z.string() })}
+      defaultValues={{
+        groupName:
+          appContext.instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))
+            ?.name ?? "",
+      }}
+      onSubmitBeforeClose={(data) =>
+        pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
+      }
+      onSubmitAfterClose={() => appContext.reloadMainArea()}
+    >
+      <DialogFormField
+        name="groupName"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <InputWithOptions
+                placeholder="Group name"
+                maxLength={50}
+                options={appContext.instanceGroups.map((group) => group.name).filter((name) => name !== "")}
+                {...field}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+    </FormDialogContent>
   );
 }
 
@@ -187,39 +184,37 @@ function ChangeVersionDialogContent({
   currentVersionDisplayName: string;
   onSubmit: (versionDisplayName: string) => void;
 }>) {
-  const [versionsByType, ready, reuseGetVersionsByType] = useReliableAsyncFunction(pywebview.api.getVersionsByType, []);
+  const appContext = React.useContext(AppContext);
 
   return (
-    ready && (
-      <FormDialogContent
-        title="Change Version"
-        submitText="Change"
-        schema={z.object({ versionDisplayName: z.string() })}
-        defaultValues={{
-          versionDisplayName: currentVersionDisplayName,
-        }}
-        onSubmitBeforeClose={(data) =>
-          pywebview.api.changeVersion(dirname, data.versionDisplayName).then(() => onSubmit(data.versionDisplayName))
-        }
-      >
-        <DialogFormField
-          name="versionDisplayName"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <VersionSelector
-                  className="h-72"
-                  versionsByType={versionsByType}
-                  onRefreshRequest={async () => await reuseGetVersionsByType([true])}
-                  defaultDisplayName={field.value}
-                  onDisplayNameChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </FormDialogContent>
-    )
+    <FormDialogContent
+      title="Change Version"
+      submitText="Change"
+      schema={z.object({ versionDisplayName: z.string() })}
+      defaultValues={{
+        versionDisplayName: currentVersionDisplayName,
+      }}
+      onSubmitBeforeClose={(data) =>
+        pywebview.api.changeVersion(dirname, data.versionDisplayName).then(() => onSubmit(data.versionDisplayName))
+      }
+    >
+      <DialogFormField
+        name="versionDisplayName"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <VersionSelector
+                className="h-72"
+                versionsByType={appContext.versionsByType}
+                onRefreshRequest={() => appContext.reloadVersionsByType(true)}
+                defaultDisplayName={field.value}
+                onDisplayNameChange={field.onChange}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+    </FormDialogContent>
   );
 }
 
@@ -257,15 +252,14 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
 function LaunchDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
   const [report, setReport] = React.useState<Parameters<typeof webview.propelLaunchReport>[0]>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
     if (import.meta.env.DEV) {
       return;
     }
     webview.propelLaunchReport = (report) => setReport(report);
-    pywebview.api.launchInstance(dirname).finally(() => {
-      webview.propelLaunchReport = () => undefined;
-    });
+    // pywebview.api.launchInstance(dirname).finally(() => {
+    //   webview.propelLaunchReport = () => undefined;
+    // });
   }, []);
 
   return (
