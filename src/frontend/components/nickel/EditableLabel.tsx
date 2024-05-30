@@ -30,7 +30,6 @@ export const EditableLabel = React.forwardRef<
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const firstRender = useIsFirstRender();
-
     // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
     React.useEffect(() => {
       if (editMode || firstRender) {
