@@ -28,7 +28,7 @@ declare global {
     propelLaunchReport: (
       report: DeepReadonly<{
         type: 0 | 1;
-        details: { processed: number; totalsize: number; unit: string };
+        details: { processed: number; totalsize: number; unit: string } | null;
         text: string;
       }> | null,
     ) => void;
