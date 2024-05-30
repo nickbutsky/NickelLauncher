@@ -1,3 +1,4 @@
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
@@ -25,10 +26,13 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
+  DialogPortal,
   DialogTitle,
   DialogTrigger,
 } from "@/components/shadcn/dialog";
 import { FormControl, FormItem } from "@/components/shadcn/form";
+import { Progress } from "@/components/shadcn/progress";
 import type { Instance } from "@/core-types";
 import { cn, useReliableAsyncFunction } from "@/utils";
 
@@ -36,7 +40,7 @@ export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
   Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ initialState: Instance }>
 >(({ className, variant, initialState, ...props }, ref) => {
-  const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci">("ci");
+  const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci" | "li">("ci");
   const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
   const [architectureChoice, setArchitectureChoice] = React.useState(initialState.architectureChoice);
   const [versionDisplayName, setVersionDisplayName] = React.useState(initialState.version.displayName);
@@ -68,7 +72,9 @@ export const InstanceButton = React.forwardRef<
           </Button>
         </ContextMenuTrigger>
         <ContextMenuContent ref={contextMenuContentRef}>
-          <ContextMenuItem onSelect={() => pywebview.api.launchInstance(initialState.dirname)}>Launch</ContextMenuItem>
+          <DialogTrigger onSelect={() => setDialogContentId("li")} asChild={true}>
+            <ContextMenuItem>Launch</ContextMenuItem>
+          </DialogTrigger>
           <ContextMenuSeparator />
           <ContextMenuRadioGroup
             value={architectureChoice}
@@ -95,11 +101,11 @@ export const InstanceButton = React.forwardRef<
             Rename
             <ContextMenuShortcut>F2</ContextMenuShortcut>
           </ContextMenuItem>
-          <DialogTrigger asChild={true}>
-            <ContextMenuItem onSelect={() => setDialogContentId("cg")}>Change Group</ContextMenuItem>
+          <DialogTrigger onSelect={() => setDialogContentId("cg")} asChild={true}>
+            <ContextMenuItem>Change Group</ContextMenuItem>
           </DialogTrigger>
-          <DialogTrigger asChild={true}>
-            <ContextMenuItem onSelect={() => setDialogContentId("cv")}>Change Version</ContextMenuItem>
+          <DialogTrigger onSelect={() => setDialogContentId("cv")} asChild={true}>
+            <ContextMenuItem>Change Version</ContextMenuItem>
           </DialogTrigger>
           <ContextMenuSeparator />
           <ContextMenuItem onSelect={() => pywebview.api.openGameDirectory(initialState.dirname)}>
@@ -109,8 +115,8 @@ export const InstanceButton = React.forwardRef<
             Instance Folder
           </ContextMenuItem>
           <ContextMenuSeparator />
-          <DialogTrigger asChild={true}>
-            <ContextMenuItem onSelect={() => setDialogContentId("ci")}>Copy Instance</ContextMenuItem>
+          <DialogTrigger onSelect={() => setDialogContentId("ci")} asChild={true}>
+            <ContextMenuItem>Copy Instance</ContextMenuItem>
           </DialogTrigger>
         </ContextMenuContent>
         {
@@ -124,6 +130,7 @@ export const InstanceButton = React.forwardRef<
               />
             ),
             ci: <CopyInstanceDialogContent dirname={initialState.dirname} />,
+            li: <LaunchDialogContent dirname={initialState.dirname} />,
           }[dialogContentId]
         }
       </ContextMenu>
@@ -244,5 +251,34 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
         </DialogClose>
       </DialogFooter>
     </DialogContent>
+  );
+}
+
+function LaunchDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
+  const [report, setReport] = React.useState<Parameters<typeof webview.propelLaunchReport>[0]>(null);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
+  React.useEffect(() => {
+    if (import.meta.env.DEV) {
+      return;
+    }
+    webview.propelLaunchReport = (report) => setReport(report);
+    pywebview.api.launchInstance(dirname).finally(() => {
+      webview.propelLaunchReport = () => undefined;
+    });
+  }, []);
+
+  return (
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogPrimitive.Content
+        className={cn(
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=open]:animate-in sm:rounded-lg",
+        )}
+      >
+        <Progress value={report?.details?.processed} max={report?.details?.totalsize} />
+        <DialogClose>Abort</DialogClose>
+      </DialogPrimitive.Content>
+    </DialogPortal>
   );
 }
