@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import typing
 from itertools import chain
 from typing import TYPE_CHECKING, Protocol
 
@@ -117,7 +118,7 @@ class API:
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         game.launch(
             self._get_instance(dirname),
-            lambda report: _frontend_api.propel_launch_report(report) if _frontend_api else None,
+            lambda report: get_frontend_api().propel_launch_report(report),
         )
 
     def _get_instance_group(self, name: str) -> InstanceGroup:
@@ -131,14 +132,31 @@ class API:
         )
 
 
-def set_frontend_api(frontend_api: FrontendAPI) -> None:
-    global _frontend_api  # noqa: PLW0603
-    _frontend_api = frontend_api
-
-
+@typing.runtime_checkable
 class FrontendAPI(Protocol):
     def reload_main_area(self) -> None: ...
     def propel_launch_report(self, report: Report) -> None: ...
+
+
+def get_frontend_api() -> FrontendAPI:
+    if not _frontend_api:
+        raise FrontendAPINotFoundError
+    return _frontend_api
+
+
+def set_frontend_api(frontend_api: FrontendAPI) -> None:
+    global _frontend_api  # noqa: PLW0603
+    if _frontend_api:
+        raise FrontendAPIAlreadySetError
+    _frontend_api = frontend_api
+
+
+class FrontendAPINotFoundError(ValueError):
+    pass
+
+
+class FrontendAPIAlreadySetError(ValueError):
+    pass
 
 
 _frontend_api: FrontendAPI | None = None

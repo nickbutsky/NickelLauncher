@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path(__file__).parent / "backend"))
-
 import json
+import sys
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import webview  # pyright: ignore [reportMissingTypeStubs]
 from tendo.singleton import SingleInstance
+
+sys.path.append(str(Path(__file__).parent / "backend"))
 
 import backend.bridge
 import backend.setup
@@ -34,11 +33,7 @@ def main() -> None:
     me = SingleInstance()  # noqa: F841  # pyright: ignore [reportUnusedVariable]
 
     window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=backend.bridge.API())
-
-    frontend_api = FrontendAPI(window)
-    backend.bridge.set_frontend_api(frontend_api)
-    backend.setup.run(frontend_api)
-
+    backend.setup.run(FrontendAPI(window))
     webview.start(debug="__compiled__" not in globals())
 
 
