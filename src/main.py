@@ -11,8 +11,7 @@ from tendo.singleton import SingleInstance
 
 sys.path.append(str(Path(__file__).parent / "backend"))
 
-import backend.bridge
-import backend.setup
+import backend.main
 
 if TYPE_CHECKING:
     from backend.report import Report
@@ -32,8 +31,8 @@ class FrontendAPI:
 def main() -> None:
     me = SingleInstance()  # noqa: F841  # pyright: ignore [reportUnusedVariable]
 
-    window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=backend.bridge.API())
-    backend.setup.run(FrontendAPI(window))
+    window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=backend.main.bridge.API())
+    backend.main.main(frontend_api=FrontendAPI(window))
     webview.start(debug="__compiled__" not in globals())
 
 
