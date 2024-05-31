@@ -32,12 +32,15 @@ export function useReliableAsyncFunction<T, F extends (...args: never[]) => Prom
     | [undefined, false, (parameters: Parameters<F>) => Promise<void>];
 }
 
-export const useIsFirstRender = () => {
+export function useIsFirstRender() {
   const firstRender = React.useRef(true);
-
   React.useEffect(() => {
     firstRender.current = false;
   }, []);
-
   return firstRender.current;
-};
+}
+
+export function useTrigger() {
+  const [trigger, setTrigger] = React.useState(false);
+  return [trigger, () => setTrigger(!trigger)] as [boolean, () => void];
+}

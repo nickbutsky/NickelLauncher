@@ -7,7 +7,7 @@ import { MainArea } from "@/components/MainArea";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
 import { ThemeProvider } from "@/components/shadcn/theme-provider";
-import { useReliableAsyncFunction } from "@/utils";
+import { useReliableAsyncFunction, useTrigger } from "@/utils";
 
 export const AppContext = React.createContext<
   Pick<typeof webview, "reloadMainArea"> &
@@ -26,7 +26,7 @@ export const AppContext = React.createContext<
 });
 
 export function App() {
-  const [mainAreaReloadTrigger, setMainAreaReloadTrigger] = React.useState(false);
+  const [mainAreaReloadTrigger, fireMainAreaReloadTrigger] = useTrigger();
 
   const [instanceGroups, groupsReady, reuseGetInstanceGroups] = useReliableAsyncFunction(
     pywebview.api.getInstanceGroups,
@@ -42,7 +42,7 @@ export function App() {
   }
 
   const appContext = {
-    reloadMainArea: () => setMainAreaReloadTrigger(!mainAreaReloadTrigger),
+    reloadMainArea: fireMainAreaReloadTrigger,
     instanceGroups,
     reloadInstanceGroups: () => reuseGetInstanceGroups([]),
     versionsByType,

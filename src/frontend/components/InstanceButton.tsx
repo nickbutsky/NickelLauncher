@@ -34,18 +34,19 @@ import {
 import { FormControl, FormItem } from "@/components/shadcn/form";
 import { Progress } from "@/components/shadcn/progress";
 import type { Instance } from "@/core-types";
-import { cn } from "@/utils";
+import { cn, useTrigger } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
   Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ initialState: Instance }>
 >(({ className, variant, initialState, ...props }, ref) => {
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci" | "li">("ci");
-  const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
   const [architectureChoice, setArchitectureChoice] = React.useState(initialState.architectureChoice);
   const [versionDisplayName, setVersionDisplayName] = React.useState(initialState.version.displayName);
 
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
+
+  const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
 
   return (
     <Dialog>
@@ -94,7 +95,7 @@ export const InstanceButton = React.forwardRef<
           <ContextMenuItem
             onSelect={() =>
               contextMenuContentRef.current?.addEventListener("animationend", () =>
-                setTimeout(() => setEditableLabelTrigger(!editableLabelTrigger)),
+                setTimeout(fireEditableLabelTrigger),
               )
             }
           >
@@ -252,6 +253,7 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
 function LaunchDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
   const [report, setReport] = React.useState<Parameters<typeof webview.propelLaunchReport>[0]>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
     if (import.meta.env.DEV) {
       return;

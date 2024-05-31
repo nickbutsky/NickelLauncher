@@ -15,17 +15,19 @@ import {
   ContextMenuTrigger,
 } from "@/components/shadcn/context-menu";
 import type { InstanceGroup } from "@/core-types";
+import { useTrigger } from "@/utils";
 
 export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
   React.ComponentPropsWithoutRef<typeof Collapsible> & DeepReadonly<{ initialState: InstanceGroup }>
 >(({ defaultOpen, onOpenChange, initialState, ...props }, ref) => {
   const [name, setName] = React.useState(initialState.name);
-  const [editableLabelTrigger, setEditableLabelTrigger] = React.useState(false);
 
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 
   const appContext = React.useContext(AppContext);
+
+  const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
 
   return (
     <Collapsible
@@ -65,9 +67,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
             <ContextMenuContent ref={contextMenuContentRef}>
               <ContextMenuItem
                 onSelect={() =>
-                  contextMenuContentRef.current?.addEventListener("animationend", () =>
-                    setEditableLabelTrigger(!editableLabelTrigger),
-                  )
+                  contextMenuContentRef.current?.addEventListener("animationend", fireEditableLabelTrigger)
                 }
               >
                 Rename
