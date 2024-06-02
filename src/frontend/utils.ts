@@ -11,11 +11,13 @@ export function useTrigger() {
   return [trigger, () => setTrigger(!trigger)] as const;
 }
 
-export function useTriggerEffect(effect: React.EffectCallback, trigger: boolean) {
+export function useTriggerEffect(effect: React.EffectCallback, trigger: boolean, allowFirstRender = false) {
   const firstRender = useIsFirstRender();
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
-    if (!firstRender) {
+    if (allowFirstRender) {
+      effect();
+    } else if (!firstRender) {
       effect();
     }
   }, [trigger]);
