@@ -44,3 +44,13 @@ export function useTrigger() {
   const [trigger, setTrigger] = React.useState(false);
   return [trigger, () => setTrigger(!trigger)] as const;
 }
+
+export function useTriggerEffect(effect: React.EffectCallback, trigger: boolean) {
+  const firstRender = useIsFirstRender();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
+  React.useEffect(() => {
+    if (!firstRender) {
+      effect();
+    }
+  }, [trigger]);
+}
