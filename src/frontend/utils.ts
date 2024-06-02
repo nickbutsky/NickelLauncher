@@ -6,6 +6,21 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function useTrigger() {
+  const [trigger, setTrigger] = React.useState(false);
+  return [trigger, () => setTrigger(!trigger)] as const;
+}
+
+export function useTriggerEffect(effect: React.EffectCallback, trigger: boolean) {
+  const firstRender = useIsFirstRender();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
+  React.useEffect(() => {
+    if (!firstRender) {
+      effect();
+    }
+  }, [trigger]);
+}
+
 export function useReliableAsyncFunction<T, F extends (...args: never[]) => Promise<T>>(
   asyncFunction: F,
   parameters: Parameters<F>,
@@ -38,19 +53,4 @@ export function useIsFirstRender() {
     firstRender.current = false;
   }, []);
   return firstRender.current;
-}
-
-export function useTrigger() {
-  const [trigger, setTrigger] = React.useState(false);
-  return [trigger, () => setTrigger(!trigger)] as const;
-}
-
-export function useTriggerEffect(effect: React.EffectCallback, trigger: boolean) {
-  const firstRender = useIsFirstRender();
-  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-  React.useEffect(() => {
-    if (!firstRender) {
-      effect();
-    }
-  }, [trigger]);
 }
