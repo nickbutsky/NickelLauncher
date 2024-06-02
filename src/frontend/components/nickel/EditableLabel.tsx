@@ -2,7 +2,7 @@ import * as Popover from "@radix-ui/react-popover";
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
-import { cn, useIsFirstRender } from "@/utils";
+import { cn, useTriggerEffect } from "@/utils";
 
 export const EditableLabel = React.forwardRef<
   HTMLDivElement,
@@ -29,17 +29,15 @@ export const EditableLabel = React.forwardRef<
     const labelRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
 
-    const firstRender = useIsFirstRender();
-    // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-    React.useEffect(() => {
-      if (editMode || firstRender) {
+    useTriggerEffect(() => {
+      if (editMode) {
         return;
       }
       if (labelRef.current) {
         setHeight(labelRef.current?.clientHeight);
       }
       setEditMode(true);
-    }, [editModeTrigger]);
+    }, editModeTrigger);
 
     React.useEffect(() => {
       if (editMode) {

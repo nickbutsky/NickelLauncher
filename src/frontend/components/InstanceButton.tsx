@@ -43,7 +43,7 @@ import {
 import { FormControl, FormItem } from "@/components/shadcn/form";
 import { Progress } from "@/components/shadcn/progress";
 import type { Instance } from "@/core-types";
-import { cn, useIsFirstRender, useTrigger } from "@/utils";
+import { cn, useTrigger, useTriggerEffect } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
@@ -337,13 +337,7 @@ function LaunchDialogContent({
 function ErrorDialog({ msg, trigger }: DeepReadonly<{ msg: string; trigger: boolean }>) {
   const [open, setOpen] = React.useState(false);
 
-  const firstRender = useIsFirstRender();
-  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-  React.useEffect(() => {
-    if (!firstRender) {
-      setOpen(true);
-    }
-  }, [trigger]);
+  useTriggerEffect(() => setOpen(true), trigger);
 
   return (
     <AlertDialog open={open}>
