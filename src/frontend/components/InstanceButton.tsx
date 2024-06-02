@@ -289,20 +289,23 @@ function LaunchDialogContent({
 
   const buttonRef = React.useRef<React.ElementRef<typeof Button>>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-  React.useEffect(() => {
-    if (import.meta.env.DEV) {
-      return;
-    }
-    webview.propelLaunchReport = (report) => setReport(report);
-    pywebview.api
-      .launchInstance(dirname)
-      .catch((reason: Error) => onFail(reason.message))
-      .finally(() => {
-        webview.propelLaunchReport = () => undefined;
-        buttonRef.current?.click();
-      });
-  }, [trigger]);
+  useTriggerEffect(
+    () => {
+      if (import.meta.env.DEV) {
+        return;
+      }
+      webview.propelLaunchReport = (report) => setReport(report);
+      pywebview.api
+        .launchInstance(dirname)
+        .catch((reason: Error) => onFail(reason.message))
+        .finally(() => {
+          webview.propelLaunchReport = () => undefined;
+          buttonRef.current?.click();
+        });
+    },
+    trigger,
+    true,
+  );
 
   return (
     <DialogPortal>
