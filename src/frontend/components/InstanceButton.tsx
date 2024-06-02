@@ -138,7 +138,7 @@ export const InstanceButton = React.forwardRef<
               />
             ),
             ci: <CopyInstanceDialogContent dirname={initialState.dirname} />,
-            li: <LaunchDialogContent dirname={initialState.dirname} trigger={launchTrigger} />,
+            li: <LaunchDialogContent dirname={initialState.dirname} trigger={launchTrigger} onFail={() => undefined} />,
           }[dialogContentId]
         }
       </ContextMenu>
@@ -257,7 +257,11 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
   );
 }
 
-function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: string; trigger: boolean }>) {
+function LaunchDialogContent({
+  dirname,
+  trigger,
+  onFail,
+}: DeepReadonly<{ dirname: string; trigger: boolean; onFail: (errorMsg: string) => void }>) {
   const [report, setReport] = React.useState<Parameters<typeof webview.propelLaunchReport>[0]>(null);
 
   const buttonRef = React.useRef<React.ElementRef<typeof Button>>(null);
@@ -268,10 +272,13 @@ function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: strin
       return;
     }
     webview.propelLaunchReport = (report) => setReport(report);
-    pywebview.api.launchInstance(dirname).finally(() => {
-      webview.propelLaunchReport = () => undefined;
-      buttonRef.current?.click();
-    });
+    pywebview.api
+      .launchInstance(dirname)
+      .catch((reason) => onFail(reason))
+      .finally(() => {
+        webview.propelLaunchReport = () => undefined;
+        buttonRef.current?.click();
+      });
   }, [trigger]);
 
   return (
