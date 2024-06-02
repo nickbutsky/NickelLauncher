@@ -43,7 +43,7 @@ import {
 import { FormControl, FormItem } from "@/components/shadcn/form";
 import { Progress } from "@/components/shadcn/progress";
 import type { Instance } from "@/core-types";
-import { cn, useTrigger } from "@/utils";
+import { cn, useIsFirstRender, useTrigger } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
@@ -52,13 +52,13 @@ export const InstanceButton = React.forwardRef<
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci" | "li">("ci");
   const [architectureChoice, setArchitectureChoice] = React.useState(initialState.architectureChoice);
   const [versionDisplayName, setVersionDisplayName] = React.useState(initialState.version.displayName);
-  const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
-  const [alertDialogOpen, setAlertDialogOpen] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState<string>("");
 
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 
   const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
   const [launchTrigger, fireLaunchTrigger] = useTrigger();
+  const [errorDialogTrigger, fireErrorDialogTrigger] = useTrigger();
 
   return (
     <>
@@ -156,7 +156,7 @@ export const InstanceButton = React.forwardRef<
                   trigger={launchTrigger}
                   onFail={(errorMsg) => {
                     setErrorMsg(errorMsg);
-                    setAlertDialogOpen(true);
+                    fireErrorDialogTrigger();
                   }}
                 />
               ),
@@ -164,17 +164,7 @@ export const InstanceButton = React.forwardRef<
           }
         </ContextMenu>
       </Dialog>
-      <AlertDialog open={alertDialogOpen}>
-        <AlertDialogContent className="grid-cols-1">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Error</AlertDialogTitle>
-            <AlertDialogDescription className="break-words">{errorMsg}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setAlertDialogOpen(false)}>OK</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ErrorDialog msg={errorMsg} trigger={errorDialogTrigger} />
     </>
   );
 });
@@ -341,5 +331,31 @@ function LaunchDialogContent({
         </DialogClose>
       </DialogPrimitive.Content>
     </DialogPortal>
+  );
+}
+
+function ErrorDialog({ msg, trigger }: DeepReadonly<{ msg: string; trigger: boolean }>) {
+  const [open, setOpen] = React.useState(false);
+
+  const firstRender = useIsFirstRender();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
+  React.useEffect(() => {
+    if (!firstRender) {
+      setOpen(true);
+    }
+  }, [trigger]);
+
+  return (
+    <AlertDialog open={open}>
+      <AlertDialogContent className="grid-cols-1">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Error</AlertDialogTitle>
+          <AlertDialogDescription className="break-words">{msg}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogAction onClick={() => setOpen(false)}>OK</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
