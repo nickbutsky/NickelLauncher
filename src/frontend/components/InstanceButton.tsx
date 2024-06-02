@@ -53,6 +53,7 @@ export const InstanceButton = React.forwardRef<
   const [architectureChoice, setArchitectureChoice] = React.useState(initialState.architectureChoice);
   const [versionDisplayName, setVersionDisplayName] = React.useState(initialState.version.displayName);
   const [errorMsg, setErrorMsg] = React.useState<string | undefined>(undefined);
+  const [alertDialogOpen, setAlertDialogOpen] = React.useState(false);
 
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 
@@ -149,19 +150,28 @@ export const InstanceButton = React.forwardRef<
                 />
               ),
               ci: <CopyInstanceDialogContent dirname={initialState.dirname} />,
-              li: <LaunchDialogContent dirname={initialState.dirname} trigger={launchTrigger} onFail={setErrorMsg} />,
+              li: (
+                <LaunchDialogContent
+                  dirname={initialState.dirname}
+                  trigger={launchTrigger}
+                  onFail={(errorMsg) => {
+                    setErrorMsg(errorMsg);
+                    setAlertDialogOpen(true);
+                  }}
+                />
+              ),
             }[dialogContentId]
           }
         </ContextMenu>
       </Dialog>
-      <AlertDialog open={!!errorMsg}>
+      <AlertDialog open={alertDialogOpen}>
         <AlertDialogContent className="grid-cols-1">
           <AlertDialogHeader>
             <AlertDialogTitle>Error</AlertDialogTitle>
             <AlertDialogDescription className="break-words">{errorMsg}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setErrorMsg(undefined)}>OK</AlertDialogAction>
+            <AlertDialogAction onClick={() => setAlertDialogOpen(false)}>OK</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
