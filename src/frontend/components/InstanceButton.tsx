@@ -47,6 +47,7 @@ export const InstanceButton = React.forwardRef<
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 
   const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
+  const [launchTrigger, fireLaunchTrigger] = useTrigger();
 
   return (
     <Dialog>
@@ -73,7 +74,13 @@ export const InstanceButton = React.forwardRef<
           </Button>
         </ContextMenuTrigger>
         <ContextMenuContent ref={contextMenuContentRef}>
-          <DialogTrigger onSelect={() => setDialogContentId("li")} asChild={true}>
+          <DialogTrigger
+            onSelect={() => {
+              setDialogContentId("li");
+              fireLaunchTrigger();
+            }}
+            asChild={true}
+          >
             <ContextMenuItem>Launch</ContextMenuItem>
           </DialogTrigger>
           <ContextMenuSeparator />
@@ -131,7 +138,7 @@ export const InstanceButton = React.forwardRef<
               />
             ),
             ci: <CopyInstanceDialogContent dirname={initialState.dirname} />,
-            li: <LaunchDialogContent dirname={initialState.dirname} />,
+            li: <LaunchDialogContent dirname={initialState.dirname} trigger={launchTrigger} />,
           }[dialogContentId]
         }
       </ContextMenu>
@@ -250,7 +257,7 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
   );
 }
 
-function LaunchDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
+function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: string; trigger: boolean }>) {
   const [report, setReport] = React.useState<Parameters<typeof webview.propelLaunchReport>[0]>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
@@ -259,10 +266,10 @@ function LaunchDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
       return;
     }
     webview.propelLaunchReport = (report) => setReport(report);
-    // pywebview.api.launchInstance(dirname).finally(() => {
-    //   webview.propelLaunchReport = () => undefined;
-    // });
-  }, []);
+    pywebview.api.launchInstance(dirname).finally(() => {
+      webview.propelLaunchReport = () => undefined;
+    });
+  }, [trigger]);
 
   return (
     <DialogPortal>
