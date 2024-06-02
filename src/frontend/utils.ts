@@ -42,5 +42,5 @@ export function useIsFirstRender() {
 
 export function useTrigger() {
   const [trigger, setTrigger] = React.useState(false);
-  return [trigger, () => setTrigger(!trigger)] as [boolean, () => void];
+  return [trigger, () => setTrigger(!trigger)] as const;
 }
