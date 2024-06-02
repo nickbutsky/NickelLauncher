@@ -260,6 +260,8 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
 function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: string; trigger: boolean }>) {
   const [report, setReport] = React.useState<Parameters<typeof webview.propelLaunchReport>[0]>(null);
 
+  const buttonRef = React.useRef<React.ElementRef<typeof Button>>(null);
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
     if (import.meta.env.DEV) {
@@ -268,6 +270,7 @@ function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: strin
     webview.propelLaunchReport = (report) => setReport(report);
     pywebview.api.launchInstance(dirname).finally(() => {
       webview.propelLaunchReport = () => undefined;
+      buttonRef.current?.click();
     });
   }, [trigger]);
 
@@ -292,7 +295,9 @@ function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: strin
         </div>
         <Progress value={report?.details?.processed} max={report?.details?.totalsize} />
         <DialogClose asChild={true}>
-          <Button variant="secondary">Abort</Button>
+          <Button ref={buttonRef} variant="secondary">
+            Abort
+          </Button>
         </DialogClose>
       </DialogPrimitive.Content>
     </DialogPortal>
