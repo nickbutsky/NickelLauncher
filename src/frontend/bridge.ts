@@ -2,9 +2,13 @@ import type { DeepReadonly, MarkWritable } from "ts-essentials";
 
 import type { InstanceGroup, VersionsByType } from "@/core-types";
 
-export function exposeStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
+export function initialiseStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
+  if (initialisedStaticFunctionNames.has(name)) {
+    throw new Error("A function with this name has already been initialised.");
+  }
   const staticApi = getApi().static;
   (staticApi as MarkWritable<typeof staticApi, typeof name>)[name] = func;
+  initialisedStaticFunctionNames.add(name);
 }
 
 export function exposeTemporaryFunction<
@@ -63,6 +67,8 @@ function notInitialisedStaticFunction() {
 function notExposedDynamicFunction() {
   throw new ReferenceError("This function is not exposed.");
 }
+
+const initialisedStaticFunctionNames: Set<keyof API["static"]> = new Set();
 
 (window as unknown as { webview: API }).webview = {
   static: { reloadMainArea: notInitialisedStaticFunction },
