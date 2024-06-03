@@ -17,7 +17,7 @@ export function exposeTemporaryFunction<
 >(name: N, func: API["temporary"][N], functionWithBackendCall: FwBC, parameters: Parameters<FwBC>) {
   getApi().temporary[name] = func;
   functionWithBackendCall(...parameters).finally(() => {
-    getApi().temporary[name] = notExposedDynamicFunction;
+    getApi().temporary[name] = notExposedTemporaryFunction;
   });
 }
 
@@ -64,7 +64,7 @@ function notInitialisedStaticFunction() {
   throw new ReferenceError("This function has not been initialised yet.");
 }
 
-function notExposedDynamicFunction() {
+function notExposedTemporaryFunction() {
   throw new ReferenceError("This function is not exposed.");
 }
 
@@ -72,5 +72,5 @@ const initialisedStaticFunctionNames: Set<keyof API["static"]> = new Set();
 
 (window as unknown as { webview: API }).webview = {
   static: { reloadMainArea: notInitialisedStaticFunction },
-  temporary: { propelLaunchReport: notExposedDynamicFunction },
+  temporary: { propelLaunchReport: notExposedTemporaryFunction },
 };
