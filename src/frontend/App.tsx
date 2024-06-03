@@ -2,6 +2,7 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
+import { type API, exposeStaticFunction } from "@/bridge";
 import { InstanceCreationDialogContent } from "@/components/InstanceCreationDialogContent";
 import { MainArea } from "@/components/MainArea";
 import { Button } from "@/components/shadcn/button";
@@ -10,7 +11,7 @@ import { ThemeProvider } from "@/components/shadcn/theme-provider";
 import { useReliableAsyncFunction, useTrigger } from "@/utils";
 
 export const AppContext = React.createContext<
-  Pick<typeof webview, "reloadMainArea"> &
+  Pick<API["static"], "reloadMainArea"> &
     DeepReadonly<{
       instanceGroups: Awaited<ReturnType<typeof pywebview.api.getInstanceGroups>>;
       reloadInstanceGroups: () => Promise<void>;
@@ -50,7 +51,7 @@ export function App() {
   };
 
   if (import.meta.env.PROD) {
-    webview.reloadMainArea = appContext.reloadMainArea;
+    exposeStaticFunction("reloadMainArea", fireMainAreaReloadTrigger);
   }
 
   return (

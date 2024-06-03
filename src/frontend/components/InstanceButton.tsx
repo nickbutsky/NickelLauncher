@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { AppContext } from "@/App";
 import defaultLogo from "@/assets/default.png";
+import { type API, exposeTemporaryFunction } from "@/bridge";
 import { VersionSelector } from "@/components/VersionSelector";
 import { EditableLabel } from "@/components/nickel/EditableLabel";
 import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDialogContent";
@@ -285,7 +286,7 @@ function LaunchDialogContent({
   trigger,
   onFail,
 }: DeepReadonly<{ dirname: string; trigger: boolean; onFail: (errorMsg: string) => void }>) {
-  const [report, setReport] = React.useState<Parameters<typeof webview.propelLaunchReport>[0]>(null);
+  const [report, setReport] = React.useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
 
   const buttonRef = React.useRef<React.ElementRef<typeof Button>>(null);
 
@@ -294,14 +295,16 @@ function LaunchDialogContent({
       if (import.meta.env.DEV) {
         return;
       }
-      webview.propelLaunchReport = (report) => setReport(report);
-      pywebview.api
-        .launchInstance(dirname)
-        .catch((reason: Error) => onFail(reason.message))
-        .finally(() => {
-          webview.propelLaunchReport = () => undefined;
-          buttonRef.current?.click();
-        });
+      exposeTemporaryFunction(
+        "propelLaunchReport",
+        (report) => setReport(report),
+        () =>
+          pywebview.api
+            .launchInstance(dirname)
+            .catch((reason: Error) => onFail(reason.message))
+            .finally(() => buttonRef.current?.click()),
+        [],
+      );
     },
     trigger,
     true,

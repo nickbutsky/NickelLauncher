@@ -15,9 +15,7 @@ export function useTriggerEffect(effect: React.EffectCallback, trigger: boolean,
   const firstRender = useIsFirstRender();
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
-    if (allowFirstRender) {
-      effect();
-    } else if (!firstRender) {
+    if (!firstRender || allowFirstRender) {
       effect();
     }
   }, [trigger]);

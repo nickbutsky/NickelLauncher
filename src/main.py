@@ -22,10 +22,10 @@ class FrontendAPI:
     window: webview.Window
 
     def reload_main_area(self) -> None:
-        self.window.evaluate_js("webview.reloadMainArea()")
+        self.window.evaluate_js("webview.static.reloadMainArea()")
 
     def propel_launch_report(self, report: Report) -> None:
-        self.window.evaluate_js(f"webview.propelLaunchReport({json.dumps(report.to_dict())})")
+        self.window.evaluate_js(f"webview.temporary.propelLaunchReport({json.dumps(report.to_dict())})")
 
 
 def main() -> None:

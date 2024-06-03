@@ -1,6 +1,21 @@
-import type { DeepReadonly } from "ts-essentials";
+import type { DeepReadonly, MarkWritable } from "ts-essentials";
 
 import type { InstanceGroup, VersionsByType } from "@/core-types";
+
+export function exposeStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
+  const staticApi = getApi().static;
+  (staticApi as MarkWritable<typeof staticApi, typeof name>)[name] = func;
+}
+
+export function exposeTemporaryFunction<
+  N extends keyof API["temporary"],
+  FwBC extends (...args: never[]) => Promise<void>,
+>(name: N, func: API["temporary"][N], functionWithBackendCall: FwBC, parameters: Parameters<FwBC>) {
+  getApi().temporary[name] = func;
+  functionWithBackendCall(...parameters).finally(() => {
+    getApi().temporary[name] = notExposedDynamicFunction;
+  });
+}
 
 declare global {
   const pywebview: DeepReadonly<{
@@ -21,10 +36,12 @@ declare global {
       launchInstance: (dirname: string) => Promise<void>;
     };
   }>;
+}
 
-  // This is only used to call functions from the Python side. These methods are swappable.
-  const webview: {
-    reloadMainArea: () => void;
+// biome-ignore lint/style/useNamingConvention: False positive
+export interface API {
+  readonly static: DeepReadonly<{ reloadMainArea: () => void }>;
+  readonly temporary: {
     propelLaunchReport: (
       report: DeepReadonly<{
         type: 0 | 1;
@@ -35,7 +52,19 @@ declare global {
   };
 }
 
-(window as unknown as { webview: typeof webview }).webview = {
-  reloadMainArea: () => undefined,
-  propelLaunchReport: () => undefined,
+function getApi() {
+  return (window as unknown as { webview: API }).webview;
+}
+
+function notInitialisedStaticFunction() {
+  throw new ReferenceError("This function has not been initialised yet.");
+}
+
+function notExposedDynamicFunction() {
+  throw new ReferenceError("This function is not exposed.");
+}
+
+(window as unknown as { webview: API }).webview = {
+  static: { reloadMainArea: notInitialisedStaticFunction },
+  temporary: { propelLaunchReport: notExposedDynamicFunction },
 };
