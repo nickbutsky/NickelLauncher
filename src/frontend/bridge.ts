@@ -11,12 +11,13 @@ export function initialiseStaticFunction<N extends keyof API["static"]>(name: N,
   initialisedStaticFunctionNames.add(name);
 }
 
-export function exposeTemporaryFunction<
-  N extends keyof API["temporary"],
-  FwBC extends (...args: never[]) => Promise<void>,
->(name: N, func: API["temporary"][N], functionWithBackendCall: FwBC, parameters: Parameters<FwBC>) {
+export function exposeTemporaryFunction<N extends keyof API["temporary"]>(
+  name: N,
+  func: API["temporary"][N],
+  functionWithBackendCall: () => Promise<void>,
+) {
   getApi().temporary[name] = func;
-  functionWithBackendCall(...parameters).finally(() => {
+  functionWithBackendCall().finally(() => {
     getApi().temporary[name] = notExposedTemporaryFunction;
   });
 }

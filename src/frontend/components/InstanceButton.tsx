@@ -303,7 +303,6 @@ function LaunchDialogContent({
             .launchInstance(dirname)
             .catch((reason: Error) => onFail(reason.message))
             .finally(() => buttonRef.current?.click()),
-        [],
       );
     },
     trigger,
