@@ -8,7 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export function useTrigger() {
   const [trigger, setTrigger] = React.useState(false);
-  return [trigger, () => setTrigger(!trigger)] as const;
+  const fire = React.useCallback(() => setTrigger((prev) => !prev), []);
+  return [trigger, fire] as const;
 }
 
 export function useTriggerEffect(effect: React.EffectCallback, trigger: boolean, allowFirstRender = false) {
