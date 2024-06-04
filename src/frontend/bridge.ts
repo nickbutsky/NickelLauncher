@@ -2,13 +2,13 @@ import type { DeepReadonly, MarkWritable } from "ts-essentials";
 
 import type { InstanceGroup, VersionsByType } from "@/core-types";
 
-export function initialiseStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
-  if (initialisedStaticFunctionNames.has(name)) {
-    throw new Error("A function with this name has already been initialised.");
+export function exposeStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
+  if (exposedStaticFunctionNames.has(name)) {
+    throw new Error("A function with this name has already been exposed.");
   }
   const staticApi = getApi().static;
   (staticApi as MarkWritable<typeof staticApi, typeof name>)[name] = func;
-  initialisedStaticFunctionNames.add(name);
+  exposedStaticFunctionNames.add(name);
 }
 
 export function exposeTemporaryFunction<N extends keyof API["temporary"]>(
@@ -61,17 +61,17 @@ function getApi() {
   return (window as unknown as { webview: API }).webview;
 }
 
-function notInitialisedStaticFunction() {
-  throw new ReferenceError("This function has not been initialised yet.");
+function notExposedStaticFunction() {
+  throw new ReferenceError("This function has not been exposed yet.");
 }
 
 function notExposedTemporaryFunction() {
   throw new ReferenceError("This function is not exposed.");
 }
 
-const initialisedStaticFunctionNames: Set<keyof API["static"]> = new Set();
+const exposedStaticFunctionNames: Set<keyof API["static"]> = new Set();
 
 (window as unknown as { webview: API }).webview = {
-  static: { reloadMainArea: notInitialisedStaticFunction },
+  static: { reloadMainArea: notExposedStaticFunction },
   temporary: { propelLaunchReport: notExposedTemporaryFunction },
 };

@@ -2,7 +2,7 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
-import { type API, initialiseStaticFunction } from "@/bridge";
+import { type API, exposeStaticFunction } from "@/bridge";
 import { InstanceCreationDialogContent } from "@/components/InstanceCreationDialogContent";
 import { MainArea } from "@/components/MainArea";
 import { Button } from "@/components/shadcn/button";
@@ -41,7 +41,7 @@ export function App() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
     if (import.meta.env.PROD) {
-      initialiseStaticFunction("reloadMainArea", fireMainAreaReloadTrigger);
+      exposeStaticFunction("reloadMainArea", fireMainAreaReloadTrigger);
     }
   }, []);
 
