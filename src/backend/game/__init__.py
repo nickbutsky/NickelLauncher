@@ -1,5 +1,5 @@
 from __future__ import annotations
 
-from .launch import launch
+from .launch import cancel_launch, launch
 
-__all__ = ["launch"]
+__all__ = ["launch", "cancel_launch"]

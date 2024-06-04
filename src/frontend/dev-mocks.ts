@@ -19,6 +19,7 @@ if (import.meta.env.DEV) {
       openGameDirectory: () => Promise.resolve(),
       openInstanceDirectory: () => Promise.resolve(),
       launchInstance: () => Promise.resolve(),
+      cancelInstanceLaunch: () => Promise.resolve(),
     },
   };
 

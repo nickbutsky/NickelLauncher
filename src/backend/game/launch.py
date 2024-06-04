@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 import packagemanager
 import shell
+from cancellationtoken import CancellationToken
 from report import Report
 
 from .download import download_version
@@ -18,7 +19,12 @@ if TYPE_CHECKING:
     from core.version import Architecture, Version
 
 
-def launch(instance: Instance, reporthook: Callable[[Report], object] | None = None) -> None:
+def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] | None = None) -> None:
+    if _cancellation_tokens[id_]:
+        raise IDAlreadyUsedError
+
+    _cancellation_tokens[id_] = CancellationToken()
+
     logging.info('Launching the instance "%s" at "%s"...', instance.name, instance.directory)
     if reporthook:
         reporthook(Report(Report.PROGRESS, "Checking game files"))
@@ -38,6 +44,17 @@ def launch(instance: Instance, reporthook: Callable[[Report], object] | None = N
     if reporthook:
         reporthook(Report(Report.PROGRESS, "Launching the game"))
     packagemanager.launch_package(instance.version.pfn, "App")
+
+
+def cancel_launch(id_: str) -> None:
+    _cancellation_tokens.pop(id_).cancel()
+
+
+class IDAlreadyUsedError(ValueError):
+    pass
+
+
+_cancellation_tokens: dict[str, CancellationToken] = {}
 
 
 def _grant_access(directory: Path, user_sid: str) -> None:

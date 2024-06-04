@@ -39,6 +39,7 @@ declare global {
       openGameDirectory: (dirname: string) => Promise<void>;
       openInstanceDirectory: (dirname: string) => Promise<void>;
       launchInstance: (dirname: string) => Promise<void>;
+      cancelInstanceLaunch: (id: string) => Promise<void>;
     };
   }>;
 }
