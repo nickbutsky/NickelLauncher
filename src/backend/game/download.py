@@ -13,26 +13,34 @@ from report import Report
 if TYPE_CHECKING:
     from typing import Callable
 
+    from cancellationtoken import CancellationToken
     from core.version import Architecture, Version
 
 
 def download_version(
     version: Version,
     architecture: Architecture,
+    cancellation_token: CancellationToken | None = None,
     reporthook: Callable[[Report], object] | None = None,
 ) -> None:
-    logging.debug("Retrieving a download link...")
+    if cancellation_token:
+        cancellation_token.check()
+
+    logging.debug("Retrieving download link...")
     if reporthook:
-        reporthook(Report(Report.PROGRESS, "Retrieving a download link"))
+        reporthook(Report(Report.PROGRESS, "Retrieving download link"))
     link = _get_link(secrets.choice(version.guids[architecture]))
     if not link:
-        error_msg = "Couldn't retrieve a download link"
+        error_msg = "Couldn't retrieve a download link."
         logging.error(error_msg)
         raise LinkRetrievalError(error_msg)
 
-    logging.debug('Downloading a package to "%s"...', version.packages[architecture])
+    if cancellation_token:
+        cancellation_token.check()
+
+    logging.debug('Downloading package to "%s"...', version.packages[architecture])
     temp_file = ROOT / "temp" / str(uuid4())
-    request.download_file(link, temp_file, reporthook)
+    request.download_file(link, temp_file, cancellation_token, reporthook)
     temp_file.replace(version.packages[architecture])
 
 

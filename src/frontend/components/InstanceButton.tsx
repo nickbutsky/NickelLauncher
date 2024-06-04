@@ -295,12 +295,13 @@ function LaunchDialogContent({
       if (import.meta.env.DEV) {
         return;
       }
+      const id = crypto.randomUUID();
       exposeTemporaryFunction(
         "propelLaunchReport",
         (report) => setReport(report),
         () =>
           pywebview.api
-            .launchInstance(dirname)
+            .launchInstance(dirname, id)
             .catch((reason: Error) => onFail(reason.message))
             .finally(() => buttonRef.current?.click()),
       );

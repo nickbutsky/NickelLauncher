@@ -18,7 +18,7 @@ def post_envelope(url: str, envelope: Envelope) -> Element:
 
     if res.status_code != 200:
         error_msg = ElementTree.fromstring(res.content).findtext("./{*}Body/{*}Fault/{*}Reason/{*}Text")  # noqa: S314
-        error_msg = error_msg if error_msg else "An unknown error has occurred"
+        error_msg = error_msg if error_msg else "An unknown error has occurred."
         error_msg = error_msg.strip()
         error_msg = error_msg + "." if not error_msg.endswith(".") else error_msg
         raise SOAPError(error_msg)

@@ -9,13 +9,37 @@ if TYPE_CHECKING:
     from pathlib import Path
     from typing import Callable
 
-
-def download_file(url: str, destination: Path, reporthook: Callable[[Report], object] | None = None) -> None:
-    request.urlretrieve(url, destination, _download_reporthook_wrapper(reporthook) if reporthook else None)  # noqa: S310
+    from cancellationtoken import CancellationToken
 
 
-def _download_reporthook_wrapper(reporthook: Callable[[Report], object]) -> Callable[[int, int, int], object]:
-    def download_reporthook(block_num: int, block_size: int, total_size: int) -> None:
+def download_file(
+    url: str,
+    destination: Path,
+    cancellation_token: CancellationToken | None = None,
+    reporthook: Callable[[Report], object] | None = None,
+) -> None:
+    try:
+        request.urlretrieve(  # noqa: S310
+            url,
+            destination,
+            _get_urlretrieve_reporthook(reporthook, cancellation_token),
+        )
+    except Exception:
+        destination.unlink()
+        raise
+
+
+def _get_urlretrieve_reporthook(
+    reporthook: Callable[[Report], object] | None = None,
+    cancellation_token: CancellationToken | None = None,
+) -> Callable[[int, int, int], None]:
+    def urlretrieve_reporthook(block_num: int, block_size: int, total_size: int) -> None:
+        if cancellation_token:
+            cancellation_token.check()
+
+        if not reporthook:
+            return
+
         if total_size <= 0:
             reporthook(Report(Report.PROGRESS, "Downloading"))
             return
@@ -25,4 +49,4 @@ def _download_reporthook_wrapper(reporthook: Callable[[Report], object]) -> Call
             read_so_far = rounded_total_size
         reporthook(Report(Report.PROGRESS, "Downloading", ProgressDetails(read_so_far, rounded_total_size, "MB")))
 
-    return download_reporthook
+    return urlretrieve_reporthook
