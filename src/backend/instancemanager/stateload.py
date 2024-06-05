@@ -119,7 +119,14 @@ def _load_instance_groups(
 
     groups: list[InstanceGroup] = []
     for group_model in group_models:
-        instances_of_group = [instance for instance in instances if instance.directory.name in group_model.instances]
+        instances_of_group = [
+            instance
+            for instance in (
+                next((instance for instance in instances if instance.directory.name == instance_dirname), None)
+                for instance_dirname in group_model.instances
+            )
+            if instance
+        ]
         if not instances_of_group:
             continue
         for instance in instances_of_group:
