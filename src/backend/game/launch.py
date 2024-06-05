@@ -56,7 +56,7 @@ def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] 
         if not isinstance(e, Cancelled):
             raise
     finally:
-        _cancellation_token_sources.pop(id_)
+        _cancellation_token_sources.pop(id_, None)
 
 
 def cancel_launch(id_: str) -> None:
