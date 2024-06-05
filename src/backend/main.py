@@ -25,7 +25,6 @@ def main(*args: object, **kwargs: object) -> None:
 def _create_dirs() -> None:
     (ROOT / "versions").mkdir(parents=True, exist_ok=True)
     (ROOT / "instances").mkdir(parents=True, exist_ok=True)
-    (ROOT / "temp").mkdir(parents=True, exist_ok=True)
     (ROOT / "logs").mkdir(parents=True, exist_ok=True)
 
 
