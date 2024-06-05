@@ -91,19 +91,11 @@ def _install(
 
 
 def _relink_game_files(instance: Instance, cancellation_token: CancellationToken | None = None) -> None:
-    if cancellation_token:
-        cancellation_token.check()
-
     logging.debug('Relinking to a new game folder at "%s"', instance.directory / "com.mojang")
-
     localappdata_path = os.getenv("LOCALAPPDATA")
     if not localappdata_path:
         raise FileNotFoundError
-
     default_game_directory_parent = Path(localappdata_path) / "Packages" / instance.version.pfn / "LocalState" / "games"
-
     default_game_directory_parent.mkdir(parents=True, exist_ok=True)
-
     shell.clear_directory(default_game_directory_parent, cancellation_token)
-
     (default_game_directory_parent / "com.mojang").symlink_to(instance.directory / "com.mojang", True)
