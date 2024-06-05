@@ -66,15 +66,15 @@ class State:
 
         self._instance_groups.remove(group)
 
-        if not self.instance_groups[0].unnamed:
-            unnamed_group = InstanceGroup("", group.instances)
-            self._instance_groups.insert(0, unnamed_group)
-            unnamed_group.subscribe_to_change(self._save)
-        else:
+        if self.instance_groups and self.instance_groups[0].unnamed:
             unnamed_group = self.instance_groups[0]
             instances = group.instances
             group.remove_instances(instances)
             unnamed_group.add_instances(len(unnamed_group.instances), instances)
+        else:
+            unnamed_group = InstanceGroup("", group.instances)
+            self._instance_groups.insert(0, unnamed_group)
+            unnamed_group.subscribe_to_change(self._save)
         self._save()
 
     def _save(self) -> None:
