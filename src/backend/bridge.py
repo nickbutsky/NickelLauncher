@@ -118,11 +118,7 @@ class API:
     def launchInstance(self, dirname: str, id_: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
         instancemanager.set_last_instance(instance)
-        game.launch(
-            instance,
-            id_,
-            lambda report: get_frontend_api().temporary.propel_launch_report(report),
-        )
+        game.launch(instance, id_, lambda report: get_frontend_api().temporary.propel_launch_report(report))
 
     def cancelInstanceLaunch(self, id_: str) -> None:  # noqa: N802
         game.cancel_launch(id_)
