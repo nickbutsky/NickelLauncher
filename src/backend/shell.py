@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 import shutil
 import subprocess
@@ -20,13 +21,11 @@ def clear_directory(directory: Path, cancellation_token: CancellationToken | Non
     for item in directory.iterdir():
         if cancellation_token:
             cancellation_token.check()
-        try:
+        with contextlib.suppress(OSError):
             if item.is_file() or item.is_symlink():
                 item.unlink()
             elif item.is_dir():
                 shutil.rmtree(item)
-        except OSError:
-            pass
 
 
 def create_subdirectory(desired_name: str, parent_directory: Path) -> Path:

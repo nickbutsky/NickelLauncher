@@ -52,9 +52,8 @@ def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] 
         if reporthook:
             reporthook(Report(Report.PROGRESS, "Launching Minecraft..."))
         packagemanager.launch_package(instance.version.pfn, "App", cancellation_token_source.token)
-    except Exception as e:
-        if not isinstance(e, Cancelled):
-            raise
+    except Cancelled:
+        pass
     finally:
         _cancellation_token_sources.pop(id_, None)
 
