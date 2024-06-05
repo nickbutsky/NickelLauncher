@@ -30,6 +30,8 @@ class State:
 
     @last_instance.setter
     def last_instance(self, last_instance: Instance) -> None:
+        if last_instance == self.last_instance:
+            return
         self._last_instance = last_instance
         self._save()
 
