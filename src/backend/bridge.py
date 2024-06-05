@@ -116,8 +116,10 @@ class API:
         os.startfile(self._get_instance(dirname).directory)  # noqa: S606
 
     def launchInstance(self, dirname: str, id_: str) -> None:  # noqa: N802
+        instance = self._get_instance(dirname)
+        instancemanager.set_last_instance(instance)
         game.launch(
-            self._get_instance(dirname),
+            instance,
             id_,
             lambda report: get_frontend_api().temporary.propel_launch_report(report),
         )
