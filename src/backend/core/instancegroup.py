@@ -30,7 +30,10 @@ class InstanceGroup:
     def name(self, name: str) -> None:
         if self.unnamed:
             raise InvalidUnnamedInstanceGroupManipulationError
-        self._name = name.strip()
+        stripped_name = name.strip()
+        if stripped_name == self.name:
+            return
+        self._name = stripped_name
         self._notify_subscribers()
 
     @property
