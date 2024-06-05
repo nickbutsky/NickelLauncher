@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import shutil
+import tempfile
+from pathlib import Path
 from typing import TYPE_CHECKING
 from urllib import request
+from uuid import uuid4
 
 from report import ProgressDetails, Report
 
 if TYPE_CHECKING:
-    from pathlib import Path
     from typing import Callable
 
     from cancellationtoken import CancellationToken
@@ -18,15 +21,18 @@ def download_file(
     cancellation_token: CancellationToken | None = None,
     reporthook: Callable[[Report], object] | None = None,
 ) -> None:
+    temp_file = Path(tempfile.mkdtemp()) / str(uuid4())
     try:
         request.urlretrieve(  # noqa: S310
             url,
-            destination,
+            temp_file,
             _get_urlretrieve_reporthook(reporthook, cancellation_token),
         )
     except Exception:
-        destination.unlink()
+        shutil.rmtree(temp_file.parent, True)
         raise
+    temp_file.replace(destination)
+    shutil.rmtree(temp_file.parent, True)
 
 
 def _get_urlretrieve_reporthook(

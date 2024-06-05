@@ -2,11 +2,7 @@ from __future__ import annotations
 
 import logging
 import secrets
-import shutil
-import tempfile
-from pathlib import Path
 from typing import TYPE_CHECKING
-from uuid import uuid4
 from xml.etree.ElementTree import Element, SubElement
 
 from net import request, soap
@@ -38,18 +34,8 @@ def download_version(
         logging.error(error_msg)
         raise LinkRetrievalError(error_msg)
 
-    if cancellation_token:
-        cancellation_token.check()
-
     logging.debug('Downloading package to "%s"...', version.packages[architecture])
-    temp_file = Path(tempfile.mkdtemp()) / str(uuid4())
-    try:
-        request.download_file(link, temp_file, cancellation_token, reporthook)
-    except Exception:
-        shutil.rmtree(temp_file.parent, True)
-        raise
-    temp_file.replace(version.packages[architecture])
-    shutil.rmtree(temp_file.parent, True)
+    request.download_file(link, version.packages[architecture], cancellation_token, reporthook)
 
 
 class LinkRetrievalError(Exception):
