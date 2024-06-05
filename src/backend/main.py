@@ -14,7 +14,7 @@ def main(*args: object, **kwargs: object) -> None:
     frontend_api = kwargs["frontend_api"]
     if not isinstance(frontend_api, bridge.FrontendAPI):
         error_msg = f"Invalid args {args}, {kwargs}"
-        raise SetupError(error_msg)
+        raise TypeError(error_msg)
 
     _create_dirs()
     _setup_rotating_logger(ROOT / "logs", "nl")
@@ -47,10 +47,6 @@ def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
         level=logging.DEBUG,
         handlers=[handler],
     )
-
-
-class SetupError(ValueError):
-    pass
 
 
 if __name__ == "__main__":
