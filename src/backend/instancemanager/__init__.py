@@ -64,7 +64,8 @@ def copy_instance(instance: Instance, copy_worlds: bool) -> None:
 def initialise_watchdog(on_sudden_change: Callable[[], object]) -> None:
     global _watchdog  # noqa: PLW0603
     if isinstance(_watchdog, _Watchdog):
-        raise WatchdogAlreadyInitialisedError
+        msg = "The watchdog is already initialised."
+        raise ValueError(msg)  # noqa: TRY004
 
     def callback() -> None:
         global _state  # noqa: PLW0603
@@ -73,10 +74,6 @@ def initialise_watchdog(on_sudden_change: Callable[[], object]) -> None:
 
     _watchdog = _Watchdog(ROOT / "instances", callback)
     _watchdog.run()
-
-
-class WatchdogAlreadyInitialisedError(ValueError):
-    pass
 
 
 class _WatchdogDummy:

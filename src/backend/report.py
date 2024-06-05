@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 
 class Report:
-    """A basic class to report progress of the execution of code.
+    """A basic class to report the progress of some task.
 
     This is probably an antipattern, but it works for me.
     """
@@ -13,14 +13,22 @@ class Report:
     ERROR = 1
 
     def __init__(self, type_: int, text: str, details: ProgressDetails | None = None) -> None:
-        self.type = type_
-        self.details = details
+        self._type = type_
+        self._details = details
 
         self._text = text
 
     @property
+    def type(self) -> int:
+        return self._type
+
+    @property
+    def details(self) -> ProgressDetails | None:
+        return self._details
+
+    @property
     def text(self) -> str:
-        return self._text if self.type == self.ERROR else self._text + "..."
+        return self._text
 
     def to_dict(self) -> dict[str, object]:
         return {"type": self.type, "details": self.details.to_dict() if self.details else None, "text": self.text}

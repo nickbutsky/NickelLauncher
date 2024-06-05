@@ -54,7 +54,7 @@ def run_command(
     cancellation_token: CancellationToken | None = None,
     log_stdout: bool = True,
 ) -> str:
-    logging.debug("Executing command: %s", command)
+    logging.debug('Executing command: "%s"...', command)
     with subprocess.Popen(
         command,  # noqa: S603
         stdout=subprocess.PIPE,
@@ -78,6 +78,6 @@ def run_command(
             raise subprocess.SubprocessError(error_msg)
 
         if log_stdout and stdout:
-            logging.debug("Command result: %s", stdout)
+            logging.debug('Command result: "%s".', stdout)
 
         return stdout

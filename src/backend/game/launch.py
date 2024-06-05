@@ -22,7 +22,8 @@ if TYPE_CHECKING:
 
 def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] | None = None) -> None:
     if id_ in _cancellation_token_sources:
-        raise IdAlreadyUsedError
+        error_msg = f'ID "{id_}" is already used.'
+        raise ValueError(error_msg)
 
     cancellation_token_source = CancellationTokenSource()
     _cancellation_token_sources[id_] = cancellation_token_source
@@ -30,7 +31,7 @@ def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] 
     try:
         logging.info('Launching instance "%s" at "%s"...', instance.name, instance.directory)
         if reporthook:
-            reporthook(Report(Report.PROGRESS, "Checking game files"))
+            reporthook(Report(Report.PROGRESS, "Checking game files..."))
         _grant_access(instance.directory, instance.version.user_sid, cancellation_token_source.token)
 
         if not instance.version.is_downloaded(instance.architecture_choice):
@@ -49,7 +50,7 @@ def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] 
 
         logging.info("Launching Minecraft %s...", instance.version.name)
         if reporthook:
-            reporthook(Report(Report.PROGRESS, "Launching the game"))
+            reporthook(Report(Report.PROGRESS, "Launching Minecraft..."))
         packagemanager.launch_package(instance.version.pfn, "App", cancellation_token_source.token)
     except Exception as e:
         if not isinstance(e, Cancelled):
@@ -60,10 +61,6 @@ def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] 
 
 def cancel_launch(id_: str) -> None:
     _cancellation_token_sources.pop(id_).cancel()
-
-
-class IdAlreadyUsedError(ValueError):
-    pass
 
 
 _cancellation_token_sources: dict[str, CancellationTokenSource] = {}
@@ -80,18 +77,18 @@ def _install(
     reporthook: Callable[[Report], object] | None = None,
 ) -> None:
     if reporthook:
-        reporthook(Report(Report.PROGRESS, "Unlinking the old version"))
+        reporthook(Report(Report.PROGRESS, "Unlinking old version..."))
     for package_dict in packagemanager.find_packages(version.pfn, cancellation_token):
         packagemanager.remove_package(package_dict, cancellation_token)
 
     logging.info("Installing Minecraft %s...", version.name)
     if reporthook:
-        reporthook(Report(Report.PROGRESS, "Installing the game"))
+        reporthook(Report(Report.PROGRESS, "Installing Minecraft..."))
     packagemanager.add_package(version.packages[architecture], cancellation_token)
 
 
 def _relink_game_files(instance: Instance, cancellation_token: CancellationToken | None = None) -> None:
-    logging.debug('Relinking to a new game folder at "%s"', instance.directory / "com.mojang")
+    logging.debug('Relinking to new game folder at "%s"...', instance.directory / "com.mojang")
     localappdata_path = os.getenv("LOCALAPPDATA")
     if not localappdata_path:
         raise FileNotFoundError

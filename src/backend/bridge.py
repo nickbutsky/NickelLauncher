@@ -144,7 +144,7 @@ class FrontendAPI(Protocol):
 
 def get_frontend_api() -> FrontendAPI:
     if not _frontend_api:
-        raise FrontendAPINotFoundError
+        raise FrontendAPINotSetError
     return _frontend_api
 
 
@@ -155,7 +155,7 @@ def set_frontend_api(frontend_api: FrontendAPI) -> None:
     _frontend_api = frontend_api
 
 
-class FrontendAPINotFoundError(ValueError):
+class FrontendAPINotSetError(ValueError):
     pass
 
 

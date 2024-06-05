@@ -39,7 +39,8 @@ class State:
 
     def add_instance_group(self, group: InstanceGroup) -> None:
         if group.name in [group.name for group in self.instance_groups]:
-            raise InstanceGroupNameTakenError
+            error_msg = f'An instance group with the name "{group.name}" already exists.'
+            raise ValueError(error_msg)
         if group.unnamed:
             self._instance_groups.insert(0, group)
         else:
@@ -86,7 +87,3 @@ class State:
             "groups": [group.to_dict() for group in self.instance_groups],
             "last_instance": self.last_instance.directory.name if self.last_instance else None,
         }
-
-
-class InstanceGroupNameTakenError(ValueError):
-    pass

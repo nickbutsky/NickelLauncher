@@ -13,7 +13,7 @@ from env import ROOT
 def main(*args: object, **kwargs: object) -> None:
     frontend_api = kwargs["frontend_api"]
     if not isinstance(frontend_api, bridge.FrontendAPI):
-        error_msg = f"Invalid args {args}, {kwargs}"
+        error_msg = f"Invalid args {args}, {kwargs}."
         raise TypeError(error_msg)
 
     _create_dirs()
