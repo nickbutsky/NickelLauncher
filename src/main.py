@@ -17,12 +17,32 @@ if TYPE_CHECKING:
     from backend.report import Report
 
 
-@dataclass(frozen=True, slots=True)
 class FrontendAPI:
+    def __init__(self, window: webview.Window) -> None:
+        self._window = window
+        self._frontend_api_static = FrontendAPIStatic(window)
+        self._frontend_api_temporary = FrontendAPITemporary(window)
+
+    @property
+    def static(self) -> FrontendAPIStatic:
+        return self._frontend_api_static
+
+    @property
+    def temporary(self) -> FrontendAPITemporary:
+        return self._frontend_api_temporary
+
+
+@dataclass(frozen=True, slots=True)
+class FrontendAPIStatic:
     window: webview.Window
 
     def reload_main_area(self) -> None:
         self.window.evaluate_js("webview.static.reloadMainArea()")
+
+
+@dataclass(frozen=True, slots=True)
+class FrontendAPITemporary:
+    window: webview.Window
 
     def propel_launch_report(self, report: Report) -> None:
         self.window.evaluate_js(f"webview.temporary.propelLaunchReport({json.dumps(report.to_dict())})")

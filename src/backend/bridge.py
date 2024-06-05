@@ -119,7 +119,7 @@ class API:
         game.launch(
             self._get_instance(dirname),
             id_,
-            lambda report: get_frontend_api().propel_launch_report(report),
+            lambda report: get_frontend_api().temporary.propel_launch_report(report),
         )
 
     def cancelInstanceLaunch(self, id_: str) -> None:  # noqa: N802
@@ -138,7 +138,17 @@ class API:
 
 @typing.runtime_checkable
 class FrontendAPI(Protocol):
+    @property
+    def static(self) -> FrontendAPIStatic: ...
+    @property
+    def temporary(self) -> FrontendAPITemporary: ...
+
+
+class FrontendAPIStatic(Protocol):
     def reload_main_area(self) -> None: ...
+
+
+class FrontendAPITemporary(Protocol):
     def propel_launch_report(self, report: Report) -> None: ...
 
 
