@@ -287,23 +287,29 @@ function LaunchDialogContent({
   onFail,
 }: DeepReadonly<{ dirname: string; trigger: boolean; onFail: (errorMsg: string) => void }>) {
   const [report, setReport] = React.useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
+  const [cancelling, setCancelling] = React.useState(false);
 
-  const buttonRef = React.useRef<React.ElementRef<typeof Button>>(null);
+  const launchID = React.useRef(crypto.randomUUID());
+
+  const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
 
   useTriggerEffect(
     () => {
       if (import.meta.env.DEV) {
         return;
       }
-      const id = crypto.randomUUID();
       exposeTemporaryFunction(
         "propelLaunchReport",
         (report) => setReport(report),
         () =>
           pywebview.api
-            .launchInstance(dirname, id)
+            .launchInstance(dirname, launchID.current)
             .catch((reason: Error) => onFail(reason.message))
-            .finally(() => buttonRef.current?.click()),
+            .finally(() => {
+              hiddenCloseButtonRef.current?.click();
+              launchID.current = crypto.randomUUID();
+              setCancelling(false);
+            }),
       );
     },
     trigger,
@@ -330,11 +336,17 @@ function LaunchDialogContent({
           )}
         </div>
         <Progress value={report?.details?.processed} max={report?.details?.totalsize} />
-        <DialogClose asChild={true}>
-          <Button ref={buttonRef} variant="secondary">
-            Abort
-          </Button>
-        </DialogClose>
+        <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
+        <Button
+          variant="secondary"
+          disabled={cancelling}
+          onClick={() => {
+            setCancelling(true);
+            pywebview.api.cancelInstanceLaunch(launchID.current);
+          }}
+        >
+          Abort
+        </Button>
       </DialogPrimitive.Content>
     </DialogPortal>
   );
