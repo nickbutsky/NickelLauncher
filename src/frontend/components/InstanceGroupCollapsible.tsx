@@ -44,6 +44,14 @@ export const InstanceGroupCollapsible = React.forwardRef<
           <ContextMenu>
             <ContextMenuTrigger asChild={true}>
               <EditableLabel
+                tabIndex={state.name ? 0 : -1}
+                onKeyUp={(event) => {
+                  if (event.key === "F2") {
+                    fireEditableLabelTrigger();
+                  } else if (event.key === "Delete") {
+                    pywebview.api.deleteInstanceGroup(state.name).then(appContext.refreshMainArea);
+                  }
+                }}
                 editModeTrigger={editableLabelTrigger}
                 defaultValue={state.name}
                 maxLength={50}
@@ -67,6 +75,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
                 onSelect={() => pywebview.api.deleteInstanceGroup(state.name).then(appContext.refreshMainArea)}
               >
                 Delete
+                <ContextMenuShortcut>Del</ContextMenuShortcut>
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
