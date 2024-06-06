@@ -26,9 +26,9 @@ export function InstanceCreationDialogContent() {
         versionDisplayName: appContext.versionsByType.release[0]?.displayName ?? "",
       }}
       onSubmitBeforeClose={(data) =>
-        pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then(() => {
-          appContext.refreshMainArea();
-        })
+        pywebview.api
+          .createInstance(data.instanceName, data.groupName, data.versionDisplayName)
+          .then(appContext.refreshMainArea)
       }
     >
       <DialogFormField

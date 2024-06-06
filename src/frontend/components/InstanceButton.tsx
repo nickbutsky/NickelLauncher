@@ -66,6 +66,12 @@ export const InstanceButton = React.forwardRef<
     setDialogOpen(true);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
+  const launchInstance = React.useCallback(() => {
+    openDialog("li");
+    fireLaunchTrigger();
+  }, []);
+
   return (
     <>
       <ContextMenu>
@@ -74,10 +80,7 @@ export const InstanceButton = React.forwardRef<
             className={cn("grid h-16 w-48 grid-cols-[max-content_1fr] gap-3", className)}
             ref={ref}
             variant="outline"
-            onDoubleClick={() => {
-              openDialog("li");
-              fireLaunchTrigger();
-            }}
+            onDoubleClick={launchInstance}
             {...props}
           >
             <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
@@ -95,19 +98,12 @@ export const InstanceButton = React.forwardRef<
           </Button>
         </ContextMenuTrigger>
         <ContextMenuContent ref={contextMenuContentRef}>
-          <ContextMenuItem
-            onSelect={() => {
-              openDialog("li");
-              fireLaunchTrigger();
-            }}
-          >
-            Launch
-          </ContextMenuItem>
+          <ContextMenuItem onSelect={launchInstance}>Launch</ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuRadioGroup
             value={state.architectureChoice}
             onValueChange={(value) =>
-              pywebview.api.changeArchitectureChoice(state.dirname, value).then(() => appContext.refreshMainArea())
+              pywebview.api.changeArchitectureChoice(state.dirname, value).then(appContext.refreshMainArea)
             }
           >
             {state.version.availableArchitectures.map((architecture) => (
@@ -185,7 +181,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
       onSubmitBeforeClose={(data) =>
         pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
       }
-      onSubmitAfterClose={() => appContext.refreshMainArea()}
+      onSubmitAfterClose={appContext.refreshMainArea}
     >
       <DialogFormField
         name="groupName"
@@ -224,7 +220,7 @@ function ChangeVersionDialogContent({
         versionDisplayName: currentVersionDisplayName,
       }}
       onSubmitBeforeClose={(data) =>
-        pywebview.api.changeVersion(dirname, data.versionDisplayName).then(() => appContext.refreshMainArea())
+        pywebview.api.changeVersion(dirname, data.versionDisplayName).then(appContext.refreshMainArea)
       }
     >
       <DialogFormField

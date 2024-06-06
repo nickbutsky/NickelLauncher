@@ -31,7 +31,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
     <Collapsible
       ref={ref}
       open={!state.hidden}
-      onOpenChange={() => pywebview.api.toggleInstanceGroupHidden(state.name).then(() => appContext.refreshMainArea())}
+      onOpenChange={() => pywebview.api.toggleInstanceGroupHidden(state.name).then(appContext.refreshMainArea)}
       {...props}
     >
       <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ export const InstanceGroupCollapsible = React.forwardRef<
                 applyOnAboutToSave={(value) => value.trim()}
                 isAllowedToSave={(value) => value.length > 0}
                 onSave={(value) =>
-                  pywebview.api.renameInstanceGroup(state.name, value).then(() => appContext.refreshMainArea())
+                  pywebview.api.renameInstanceGroup(state.name, value).then(appContext.refreshMainArea)
                 }
               />
             </ContextMenuTrigger>
