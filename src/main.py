@@ -51,7 +51,12 @@ class FrontendAPITemporary:
 def main() -> None:
     me = SingleInstance()  # noqa: F841  # pyright: ignore [reportUnusedVariable]
 
-    window = webview.create_window("NickelLauncher", "bundled-frontend/index.html", js_api=backend.main.bridge.API())
+    window = webview.create_window(
+        "NickelLauncher",
+        "bundled-frontend/index.html",
+        js_api=backend.main.bridge.API(),
+        min_size=(548, 610),
+    )
     backend.main.main(frontend_api=FrontendAPI(window))
     webview.start(debug="__compiled__" not in globals())
 
