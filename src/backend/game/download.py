@@ -34,6 +34,9 @@ def download_version(
         logging.error(error_msg)
         raise LinkRetrievalError(error_msg)
 
+    if cancellation_token:
+        cancellation_token.check()
+
     logging.debug('Downloading package to "%s"...', version.packages[architecture])
     request.download_file(link, version.packages[architecture], cancellation_token, reporthook)
 
