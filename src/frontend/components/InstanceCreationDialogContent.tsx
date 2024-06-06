@@ -64,7 +64,7 @@ export function InstanceCreationDialogContent() {
           <FormItem>
             <FormControl>
               <VersionSelector
-                className="h-72"
+                className="h-60"
                 versionsByType={appContext.versionsByType}
                 onRefreshRequest={() => appContext.reloadVersionsByType(true)}
                 defaultDisplayName={field.value}
