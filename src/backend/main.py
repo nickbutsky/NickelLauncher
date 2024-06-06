@@ -42,7 +42,7 @@ def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
     handler.namer = namer
 
     logging.basicConfig(
-        format="%(asctime)s | %(threadName)-10s | %(levelname)-5s | %(name)-22s | %(lineno)06d | %(message)s",
+        format="%(asctime)s | %(threadName)-17s | %(levelname)-5s | %(name)-22s | %(lineno)06d | %(message)s",
         level=logging.DEBUG,
         handlers=[handler],
     )
