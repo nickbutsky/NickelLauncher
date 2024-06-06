@@ -81,6 +81,13 @@ export const InstanceButton = React.forwardRef<
             ref={ref}
             variant="outline"
             onDoubleClick={launchInstance}
+            onKeyUp={(event) => {
+              if (event.key === "Enter") {
+                launchInstance();
+              } else if (event.key === "F2") {
+                fireEditableLabelTrigger();
+              }
+            }}
             {...props}
           >
             <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
