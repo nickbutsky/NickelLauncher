@@ -137,6 +137,7 @@ def _load_instance_groups(
                 instances_of_group,
                 group_model.hidden
                 if last_instance_dirname not in [instance.directory.name for instance in instances_of_group]
+                and group_model.name != ""
                 else False,
             ),
         )
