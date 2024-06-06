@@ -22,8 +22,11 @@ export const InstanceGroupCollapsible = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof Collapsible> & DeepReadonly<{ initialState: InstanceGroup }>
 >(({ defaultOpen, onOpenChange, initialState, ...props }, ref) => {
   const [name, setName] = React.useState(initialState.name);
+  const [open, setOpen] = React.useState(!initialState.hidden);
 
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
+
+  React.useEffect(() => setOpen(!initialState.hidden), [initialState.hidden]);
 
   const appContext = React.useContext(AppContext);
 
@@ -32,8 +35,8 @@ export const InstanceGroupCollapsible = React.forwardRef<
   return (
     <Collapsible
       ref={ref}
-      defaultOpen={!initialState.hidden}
-      onOpenChange={() => pywebview.api.toggleInstanceGroupHidden(name)}
+      open={open}
+      onOpenChange={() => pywebview.api.toggleInstanceGroupHidden(name).then(() => setOpen(!open))}
       {...props}
     >
       <div className="flex items-center gap-2">
