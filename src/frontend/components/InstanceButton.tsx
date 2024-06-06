@@ -39,7 +39,6 @@ import {
   DialogOverlay,
   DialogPortal,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/shadcn/dialog";
 import { FormControl, FormItem } from "@/components/shadcn/form";
 import { Progress } from "@/components/shadcn/progress";
@@ -50,6 +49,7 @@ export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
   Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ state: Instance }>
 >(({ className, variant, state, ...props }, ref) => {
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci" | "li">("ci");
   const [errorMsg, setErrorMsg] = React.useState<string>("");
 
@@ -61,106 +61,104 @@ export const InstanceButton = React.forwardRef<
   const [launchTrigger, fireLaunchTrigger] = useTrigger();
   const [errorDialogTrigger, fireErrorDialogTrigger] = useTrigger();
 
+  const openDialog = React.useCallback((dialogContentId: "cg" | "cv" | "ci" | "li") => {
+    setDialogContentId(dialogContentId);
+    setDialogOpen(true);
+  }, []);
+
   return (
     <>
-      <Dialog>
-        <ContextMenu>
-          <ContextMenuTrigger asChild={true}>
-            <Button
-              className={cn("grid h-16 w-48 grid-cols-[max-content_1fr] gap-3", className)}
-              ref={ref}
-              variant="outline"
-              {...props}
-            >
-              <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
-              <div className="grid grid-rows-2 text-left">
-                <EditableLabel
-                  editModeTrigger={editableLabelTrigger}
-                  defaultValue={state.name}
-                  maxLength={20}
-                  applyOnAboutToSave={(value) => value.trim()}
-                  isAllowedToSave={(value) => value.length > 0}
-                  onSave={(value) => pywebview.api.renameInstance(state.dirname, value)}
-                />
-                <div>{state.version.displayName}</div>
-              </div>
-            </Button>
-          </ContextMenuTrigger>
-          <ContextMenuContent ref={contextMenuContentRef}>
-            <DialogTrigger
-              onSelect={() => {
-                setDialogContentId("li");
-                fireLaunchTrigger();
-              }}
-              asChild={true}
-            >
-              <ContextMenuItem>Launch</ContextMenuItem>
-            </DialogTrigger>
-            <ContextMenuSeparator />
-            <ContextMenuRadioGroup
-              value={state.architectureChoice}
-              onValueChange={(value) =>
-                pywebview.api.changeArchitectureChoice(state.dirname, value).then(() => appContext.refreshMainArea())
-              }
-            >
-              {state.version.availableArchitectures.map((architecture) => (
-                <ContextMenuRadioItem key={architecture} value={architecture}>
-                  {architecture}
-                </ContextMenuRadioItem>
-              ))}
-            </ContextMenuRadioGroup>
-            <ContextMenuSeparator />
-            <ContextMenuItem
-              onSelect={() =>
-                contextMenuContentRef.current?.addEventListener("animationend", () =>
-                  setTimeout(fireEditableLabelTrigger),
-                )
-              }
-            >
-              Rename
-              <ContextMenuShortcut>F2</ContextMenuShortcut>
-            </ContextMenuItem>
-            <DialogTrigger onSelect={() => setDialogContentId("cg")} asChild={true}>
-              <ContextMenuItem>Change Group</ContextMenuItem>
-            </DialogTrigger>
-            <DialogTrigger onSelect={() => setDialogContentId("cv")} asChild={true}>
-              <ContextMenuItem>Change Version</ContextMenuItem>
-            </DialogTrigger>
-            <ContextMenuSeparator />
-            <ContextMenuItem onSelect={() => pywebview.api.openGameDirectory(state.dirname)}>
-              Minecraft Folder
-            </ContextMenuItem>
-            <ContextMenuItem onSelect={() => pywebview.api.openInstanceDirectory(state.dirname)}>
-              Instance Folder
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-            <DialogTrigger onSelect={() => setDialogContentId("ci")} asChild={true}>
-              <ContextMenuItem>Copy Instance</ContextMenuItem>
-            </DialogTrigger>
-          </ContextMenuContent>
+      <ContextMenu>
+        <ContextMenuTrigger asChild={true}>
+          <Button
+            className={cn("grid h-16 w-48 grid-cols-[max-content_1fr] gap-3", className)}
+            ref={ref}
+            variant="outline"
+            {...props}
+          >
+            <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
+            <div className="grid grid-rows-2 text-left">
+              <EditableLabel
+                editModeTrigger={editableLabelTrigger}
+                defaultValue={state.name}
+                maxLength={20}
+                applyOnAboutToSave={(value) => value.trim()}
+                isAllowedToSave={(value) => value.length > 0}
+                onSave={(value) => pywebview.api.renameInstance(state.dirname, value)}
+              />
+              <div>{state.version.displayName}</div>
+            </div>
+          </Button>
+        </ContextMenuTrigger>
+        <ContextMenuContent ref={contextMenuContentRef}>
+          <ContextMenuItem
+            onSelect={() => {
+              openDialog("li");
+              fireLaunchTrigger();
+            }}
+          >
+            Launch
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuRadioGroup
+            value={state.architectureChoice}
+            onValueChange={(value) =>
+              pywebview.api.changeArchitectureChoice(state.dirname, value).then(() => appContext.refreshMainArea())
+            }
+          >
+            {state.version.availableArchitectures.map((architecture) => (
+              <ContextMenuRadioItem key={architecture} value={architecture}>
+                {architecture}
+              </ContextMenuRadioItem>
+            ))}
+          </ContextMenuRadioGroup>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            onSelect={() =>
+              contextMenuContentRef.current?.addEventListener("animationend", () =>
+                setTimeout(fireEditableLabelTrigger),
+              )
+            }
+          >
+            Rename
+            <ContextMenuShortcut>F2</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuItem onSelect={() => openDialog("cg")}>Change Group</ContextMenuItem>
+          <ContextMenuItem onSelect={() => openDialog("cv")}>Change Version</ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem onSelect={() => pywebview.api.openGameDirectory(state.dirname)}>
+            Minecraft Folder
+          </ContextMenuItem>
+          <ContextMenuItem onSelect={() => pywebview.api.openInstanceDirectory(state.dirname)}>
+            Instance Folder
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem onSelect={() => openDialog("ci")}>Copy Instance</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(!dialogOpen)}>
+        {
           {
-            {
-              cg: <ChangeGroupDialogContent dirname={state.dirname} />,
-              cv: (
-                <ChangeVersionDialogContent
-                  dirname={state.dirname}
-                  currentVersionDisplayName={state.version.displayName}
-                />
-              ),
-              ci: <CopyInstanceDialogContent dirname={state.dirname} />,
-              li: (
-                <LaunchDialogContent
-                  dirname={state.dirname}
-                  trigger={launchTrigger}
-                  onFail={(errorMsg) => {
-                    setErrorMsg(errorMsg);
-                    fireErrorDialogTrigger();
-                  }}
-                />
-              ),
-            }[dialogContentId]
-          }
-        </ContextMenu>
+            cg: <ChangeGroupDialogContent dirname={state.dirname} />,
+            cv: (
+              <ChangeVersionDialogContent
+                dirname={state.dirname}
+                currentVersionDisplayName={state.version.displayName}
+              />
+            ),
+            ci: <CopyInstanceDialogContent dirname={state.dirname} />,
+            li: (
+              <LaunchDialogContent
+                dirname={state.dirname}
+                trigger={launchTrigger}
+                onFail={(errorMsg) => {
+                  setErrorMsg(errorMsg);
+                  fireErrorDialogTrigger();
+                }}
+              />
+            ),
+          }[dialogContentId]
+        }
       </Dialog>
       <ErrorDialog msg={errorMsg} trigger={errorDialogTrigger} />
     </>
@@ -353,14 +351,14 @@ function ErrorDialog({ msg, trigger }: DeepReadonly<{ msg: string; trigger: bool
   useTriggerEffect(() => setOpen(true), trigger);
 
   return (
-    <AlertDialog open={open}>
+    <AlertDialog open={open} onOpenChange={() => setOpen(!open)}>
       <AlertDialogContent className="grid-cols-1">
         <AlertDialogHeader>
           <AlertDialogTitle>Error</AlertDialogTitle>
           <AlertDialogDescription className="break-words">{msg}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={() => setOpen(false)}>OK</AlertDialogAction>
+          <AlertDialogAction>OK</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
