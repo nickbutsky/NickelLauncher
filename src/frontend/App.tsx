@@ -11,7 +11,7 @@ import { ThemeProvider } from "@/components/shadcn/theme-provider";
 import { useReliableAsyncFunction, useTrigger } from "@/utils";
 
 export const AppContext = React.createContext<
-  Pick<API["static"], "reloadMainArea"> &
+  DeepReadonly<{ refreshMainArea: API["static"]["reloadMainArea"] }> &
     DeepReadonly<{
       instanceGroups: Awaited<ReturnType<typeof pywebview.api.getInstanceGroups>>;
       reloadInstanceGroups: () => Promise<void>;
@@ -19,7 +19,7 @@ export const AppContext = React.createContext<
       reloadVersionsByType: (remotely: boolean) => Promise<void>;
     }>
 >({
-  reloadMainArea: () => undefined,
+  refreshMainArea: () => undefined,
   instanceGroups: [],
   reloadInstanceGroups: () => Promise.resolve(),
   versionsByType: { release: [], beta: [], preview: [] },
@@ -27,7 +27,7 @@ export const AppContext = React.createContext<
 });
 
 export function App() {
-  const [mainAreaReloadTrigger, fireMainAreaReloadTrigger] = useTrigger();
+  const [mainAreaRefreshTrigger, fireMainAreaRefreshTrigger] = useTrigger();
 
   const [instanceGroups, groupsReady, reuseGetInstanceGroups] = useReliableAsyncFunction(
     pywebview.api.getInstanceGroups,
@@ -41,7 +41,7 @@ export function App() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
     if (import.meta.env.PROD) {
-      exposeStaticFunction("reloadMainArea", fireMainAreaReloadTrigger);
+      exposeStaticFunction("reloadMainArea", fireMainAreaRefreshTrigger);
     }
   }, []);
 
@@ -50,7 +50,7 @@ export function App() {
   }
 
   const appContext = {
-    reloadMainArea: fireMainAreaReloadTrigger,
+    refreshMainArea: fireMainAreaRefreshTrigger,
     instanceGroups,
     reloadInstanceGroups: () => reuseGetInstanceGroups([]),
     versionsByType,
@@ -60,7 +60,7 @@ export function App() {
   return (
     <ThemeProvider defaultTheme="dark">
       <AppContext.Provider value={appContext}>
-        <MainArea reloadTrigger={mainAreaReloadTrigger} />
+        <MainArea refreshTrigger={mainAreaRefreshTrigger} />
         <Dialog>
           <DialogTrigger asChild={true}>
             <Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">

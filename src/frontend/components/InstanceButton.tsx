@@ -48,14 +48,14 @@ import { cn, useTrigger, useTriggerEffect } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
-  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ initialState: Instance }>
->(({ className, variant, initialState, ...props }, ref) => {
+  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ state: Instance }>
+>(({ className, variant, state, ...props }, ref) => {
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci" | "li">("ci");
-  const [architectureChoice, setArchitectureChoice] = React.useState(initialState.architectureChoice);
-  const [versionDisplayName, setVersionDisplayName] = React.useState(initialState.version.displayName);
   const [errorMsg, setErrorMsg] = React.useState<string>("");
 
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
+
+  const appContext = React.useContext(AppContext);
 
   const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
   const [launchTrigger, fireLaunchTrigger] = useTrigger();
@@ -76,13 +76,13 @@ export const InstanceButton = React.forwardRef<
               <div className="grid grid-rows-2 text-left">
                 <EditableLabel
                   editModeTrigger={editableLabelTrigger}
-                  defaultValue={initialState.name}
+                  defaultValue={state.name}
                   maxLength={20}
                   applyOnAboutToSave={(value) => value.trim()}
                   isAllowedToSave={(value) => value.length > 0}
-                  onSave={(value) => pywebview.api.renameInstance(initialState.dirname, value)}
+                  onSave={(value) => pywebview.api.renameInstance(state.dirname, value)}
                 />
-                <div>{versionDisplayName}</div>
+                <div>{state.version.displayName}</div>
               </div>
             </Button>
           </ContextMenuTrigger>
@@ -98,14 +98,12 @@ export const InstanceButton = React.forwardRef<
             </DialogTrigger>
             <ContextMenuSeparator />
             <ContextMenuRadioGroup
-              value={architectureChoice}
+              value={state.architectureChoice}
               onValueChange={(value) =>
-                pywebview.api
-                  .changeArchitectureChoice(initialState.dirname, value)
-                  .then(() => setArchitectureChoice(value))
+                pywebview.api.changeArchitectureChoice(state.dirname, value).then(() => appContext.refreshMainArea())
               }
             >
-              {initialState.version.availableArchitectures.map((architecture) => (
+              {state.version.availableArchitectures.map((architecture) => (
                 <ContextMenuRadioItem key={architecture} value={architecture}>
                   {architecture}
                 </ContextMenuRadioItem>
@@ -129,10 +127,10 @@ export const InstanceButton = React.forwardRef<
               <ContextMenuItem>Change Version</ContextMenuItem>
             </DialogTrigger>
             <ContextMenuSeparator />
-            <ContextMenuItem onSelect={() => pywebview.api.openGameDirectory(initialState.dirname)}>
+            <ContextMenuItem onSelect={() => pywebview.api.openGameDirectory(state.dirname)}>
               Minecraft Folder
             </ContextMenuItem>
-            <ContextMenuItem onSelect={() => pywebview.api.openInstanceDirectory(initialState.dirname)}>
+            <ContextMenuItem onSelect={() => pywebview.api.openInstanceDirectory(state.dirname)}>
               Instance Folder
             </ContextMenuItem>
             <ContextMenuSeparator />
@@ -142,18 +140,17 @@ export const InstanceButton = React.forwardRef<
           </ContextMenuContent>
           {
             {
-              cg: <ChangeGroupDialogContent dirname={initialState.dirname} />,
+              cg: <ChangeGroupDialogContent dirname={state.dirname} />,
               cv: (
                 <ChangeVersionDialogContent
-                  dirname={initialState.dirname}
-                  currentVersionDisplayName={initialState.version.displayName}
-                  onSubmit={setVersionDisplayName}
+                  dirname={state.dirname}
+                  currentVersionDisplayName={state.version.displayName}
                 />
               ),
-              ci: <CopyInstanceDialogContent dirname={initialState.dirname} />,
+              ci: <CopyInstanceDialogContent dirname={state.dirname} />,
               li: (
                 <LaunchDialogContent
-                  dirname={initialState.dirname}
+                  dirname={state.dirname}
                   trigger={launchTrigger}
                   onFail={(errorMsg) => {
                     setErrorMsg(errorMsg);
@@ -186,7 +183,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
       onSubmitBeforeClose={(data) =>
         pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
       }
-      onSubmitAfterClose={() => appContext.reloadMainArea()}
+      onSubmitAfterClose={() => appContext.refreshMainArea()}
     >
       <DialogFormField
         name="groupName"
@@ -210,11 +207,9 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
 function ChangeVersionDialogContent({
   dirname,
   currentVersionDisplayName,
-  onSubmit,
 }: DeepReadonly<{
   dirname: string;
   currentVersionDisplayName: string;
-  onSubmit: (versionDisplayName: string) => void;
 }>) {
   const appContext = React.useContext(AppContext);
 
@@ -227,7 +222,7 @@ function ChangeVersionDialogContent({
         versionDisplayName: currentVersionDisplayName,
       }}
       onSubmitBeforeClose={(data) =>
-        pywebview.api.changeVersion(dirname, data.versionDisplayName).then(() => onSubmit(data.versionDisplayName))
+        pywebview.api.changeVersion(dirname, data.versionDisplayName).then(() => appContext.refreshMainArea())
       }
     >
       <DialogFormField
@@ -260,7 +255,7 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
     (copyWorlds: boolean) =>
       pywebview.api
         .copyInstance(dirname, copyWorlds)
-        .then(() => dialogContentRef.current?.addEventListener("animationend", appContext.reloadMainArea)),
+        .then(() => dialogContentRef.current?.addEventListener("animationend", appContext.refreshMainArea)),
     [dirname],
   );
 

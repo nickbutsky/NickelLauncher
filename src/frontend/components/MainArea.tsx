@@ -6,17 +6,17 @@ import { InstanceGroupCollapsible } from "@/components/InstanceGroupCollapsible"
 import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { useTriggerEffect } from "@/utils";
 
-export function MainArea({ reloadTrigger }: DeepReadonly<{ reloadTrigger: boolean }>) {
+export function MainArea({ refreshTrigger }: DeepReadonly<{ refreshTrigger: boolean }>) {
   const appContext = React.useContext(AppContext);
 
   useTriggerEffect(() => {
     appContext.reloadInstanceGroups();
-  }, reloadTrigger);
+  }, refreshTrigger);
 
   return (
     <ScrollArea className="h-screen" type="always">
       {appContext.instanceGroups.map((group) => (
-        <InstanceGroupCollapsible key={group.name} initialState={group} />
+        <InstanceGroupCollapsible key={group.name} state={group} />
       ))}
     </ScrollArea>
   );

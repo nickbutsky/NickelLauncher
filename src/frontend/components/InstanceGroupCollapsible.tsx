@@ -19,14 +19,9 @@ import { useTrigger } from "@/utils";
 
 export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
-  React.ComponentPropsWithoutRef<typeof Collapsible> & DeepReadonly<{ initialState: InstanceGroup }>
->(({ defaultOpen, onOpenChange, initialState, ...props }, ref) => {
-  const [name, setName] = React.useState(initialState.name);
-  const [open, setOpen] = React.useState(!initialState.hidden);
-
+  React.ComponentPropsWithoutRef<typeof Collapsible> & DeepReadonly<{ state: InstanceGroup }>
+>(({ defaultOpen, onOpenChange, state, ...props }, ref) => {
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
-
-  React.useEffect(() => setOpen(!initialState.hidden), [initialState.hidden]);
 
   const appContext = React.useContext(AppContext);
 
@@ -35,8 +30,8 @@ export const InstanceGroupCollapsible = React.forwardRef<
   return (
     <Collapsible
       ref={ref}
-      open={open}
-      onOpenChange={() => pywebview.api.toggleInstanceGroupHidden(name).then(() => setOpen(!open))}
+      open={!state.hidden}
+      onOpenChange={() => pywebview.api.toggleInstanceGroupHidden(state.name).then(() => appContext.refreshMainArea())}
       {...props}
     >
       <div className="flex items-center gap-2">
@@ -45,25 +40,17 @@ export const InstanceGroupCollapsible = React.forwardRef<
             <CaretDownIcon />
           </Button>
         </CollapsibleTrigger>
-        {initialState.name && (
+        {state.name && (
           <ContextMenu>
             <ContextMenuTrigger asChild={true}>
               <EditableLabel
                 editModeTrigger={editableLabelTrigger}
-                defaultValue={initialState.name}
+                defaultValue={state.name}
                 maxLength={50}
                 applyOnAboutToSave={(value) => value.trim()}
                 isAllowedToSave={(value) => value.length > 0}
                 onSave={(value) =>
-                  pywebview.api
-                    .getInstanceGroups()
-                    .then((groups) =>
-                      pywebview.api
-                        .renameInstanceGroup(name, value)
-                        .then(() =>
-                          groups.find((group) => group.name === value) ? appContext.reloadMainArea() : setName(value),
-                        ),
-                    )
+                  pywebview.api.renameInstanceGroup(state.name, value).then(() => appContext.refreshMainArea())
                 }
               />
             </ContextMenuTrigger>
@@ -76,7 +63,9 @@ export const InstanceGroupCollapsible = React.forwardRef<
                 Rename
                 <ContextMenuShortcut>F2</ContextMenuShortcut>
               </ContextMenuItem>
-              <ContextMenuItem onSelect={() => pywebview.api.deleteInstanceGroup(name).then(appContext.reloadMainArea)}>
+              <ContextMenuItem
+                onSelect={() => pywebview.api.deleteInstanceGroup(state.name).then(appContext.refreshMainArea)}
+              >
                 Delete
               </ContextMenuItem>
             </ContextMenuContent>
@@ -84,8 +73,8 @@ export const InstanceGroupCollapsible = React.forwardRef<
         )}
       </div>
       <CollapsibleContent className="my-1 flex flex-wrap gap-3 data-[state=closed]:hidden" forceMount={true}>
-        {initialState.instances.map((instance) => (
-          <InstanceButton key={instance.name} initialState={instance} />
+        {state.instances.map((instance) => (
+          <InstanceButton key={instance.name} state={instance} />
         ))}
       </CollapsibleContent>
     </Collapsible>
