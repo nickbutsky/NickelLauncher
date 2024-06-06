@@ -114,7 +114,14 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
           onFocus?.(event);
         }}
         onChange={(event) => {
-          event.currentTarget.value = event.currentTarget.value.trimStart();
+          const trimmedValue = event.currentTarget.value.trimStart();
+          const selectionRange = [
+            event.currentTarget.value !== trimmedValue ? 0 : event.currentTarget.selectionStart,
+            event.currentTarget.value !== trimmedValue ? 0 : event.currentTarget.selectionEnd,
+            event.currentTarget.selectionDirection === null ? undefined : event.currentTarget.selectionDirection,
+          ] as const;
+          event.currentTarget.value = trimmedValue;
+          event.currentTarget.setSelectionRange(...selectionRange);
           adjustInputWidth(event);
           onChange?.(event);
         }}
