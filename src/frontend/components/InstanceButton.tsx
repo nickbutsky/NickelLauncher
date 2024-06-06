@@ -74,6 +74,10 @@ export const InstanceButton = React.forwardRef<
             className={cn("grid h-16 w-48 grid-cols-[max-content_1fr] gap-3", className)}
             ref={ref}
             variant="outline"
+            onDoubleClick={() => {
+              openDialog("li");
+              fireLaunchTrigger();
+            }}
             {...props}
           >
             <img src={defaultLogo} alt="Instance logo" width="32" height="32" />
