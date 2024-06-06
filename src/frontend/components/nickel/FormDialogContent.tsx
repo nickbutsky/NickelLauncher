@@ -55,7 +55,7 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
     <DialogContent
       ref={dialogContentRef}
       onCloseAutoFocus={(event) => {
-        form.reset();
+        form.reset(defaultValues);
         onCloseAutoFocus?.(event);
       }}
       {...props}
