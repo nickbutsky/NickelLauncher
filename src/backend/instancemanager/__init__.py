@@ -13,7 +13,7 @@ from . import stateload as _stateload
 from .watchdog import Watchdog as _Watchdog
 
 if TYPE_CHECKING:
-    from typing import Callable, Generator, Sequence
+    from typing import Callable, Sequence
 
     from core.instance import Instance
     from core.version import Version
@@ -82,9 +82,8 @@ def initialise_watchdog(on_sudden_change: Callable[[], object]) -> None:
 
 class _WatchdogDummy:
     @staticmethod
-    @contextlib.contextmanager
-    def disable_dir_created_event_tracking() -> Generator[None, None, None]:
-        yield
+    def disable_dir_created_event_tracking() -> contextlib.nullcontext[None]:
+        return contextlib.nullcontext()
 
 
 _state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
