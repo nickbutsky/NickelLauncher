@@ -22,13 +22,15 @@ def create_instance(name: str, group_name: str, version: Version, state: State) 
     )
     instance.populate_directory()
 
-    group = next((group for group in state.instance_groups if group.name == group_name), None)
-    if group:
-        group.add_instances(len(group.instances), [instance])
-        if group.hidden:
-            group.toggle_hidden()
-    else:
+    try:
+        group = next(group for group in state.instance_groups if group.name == group_name)
+    except StopIteration:
         state.add_instance_group(InstanceGroup(group_name, [instance]))
+        return
+
+    group.add_instances(len(group.instances), [instance])
+    if group.hidden:
+        group.toggle_hidden()
 
 
 def copy_instance(instance: Instance, copy_worlds: bool, state: State) -> None:
