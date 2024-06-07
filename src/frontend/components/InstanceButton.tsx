@@ -49,10 +49,13 @@ export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
   Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ state: Instance }>
 >(({ className, variant, state, ...props }, ref) => {
+  React.useImperativeHandle(ref, () => buttonRef.current as Exclude<typeof buttonRef.current, null>);
+
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci" | "li">("ci");
   const [errorMsg, setErrorMsg] = React.useState<string>("");
 
+  const buttonRef = React.useRef<React.ElementRef<typeof Button>>(null);
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 
   const appContext = React.useContext(AppContext);
@@ -60,6 +63,20 @@ export const InstanceButton = React.forwardRef<
   const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
   const [launchTrigger, fireLaunchTrigger] = useTrigger();
   const [errorDialogTrigger, fireErrorDialogTrigger] = useTrigger();
+
+  useTriggerEffect(
+    () => {
+      if (appContext.instanceDirnameToScrollTo !== state.dirname || !buttonRef.current) {
+        return;
+      }
+      const scrollMarginBlock = buttonRef.current.style.scrollMarginBlock;
+      buttonRef.current.style.scrollMarginBlock = "10px";
+      buttonRef.current.scrollIntoView({ block: "nearest" });
+      buttonRef.current.style.scrollMarginBlock = scrollMarginBlock;
+    },
+    appContext.scrollTrigger,
+    true,
+  );
 
   const openDialog = React.useCallback((dialogContentId: "cg" | "cv" | "ci" | "li") => {
     setDialogContentId(dialogContentId);
@@ -78,7 +95,7 @@ export const InstanceButton = React.forwardRef<
         <ContextMenuTrigger asChild={true}>
           <Button
             className={cn("grid h-16 w-48 grid-cols-[max-content_1fr] gap-3", className)}
-            ref={ref}
+            ref={buttonRef}
             variant="outline"
             onDoubleClick={launchInstance}
             onKeyUp={(event) => {
