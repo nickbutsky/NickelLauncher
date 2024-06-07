@@ -23,6 +23,10 @@ def get_instance_groups() -> tuple[InstanceGroup, ...]:
     return _state.instance_groups
 
 
+def get_last_instance() -> Instance | None:
+    return _state.last_instance
+
+
 def set_last_instance(instance: Instance) -> None:
     _state.last_instance = instance
 
