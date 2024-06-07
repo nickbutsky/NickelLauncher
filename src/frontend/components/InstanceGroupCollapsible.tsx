@@ -65,7 +65,9 @@ export const InstanceGroupCollapsible = React.forwardRef<
             <ContextMenuContent ref={contextMenuContentRef}>
               <ContextMenuItem
                 onSelect={() =>
-                  contextMenuContentRef.current?.addEventListener("animationend", fireEditableLabelTrigger)
+                  contextMenuContentRef.current?.addEventListener("animationend", () =>
+                    setTimeout(fireEditableLabelTrigger),
+                  )
                 }
               >
                 Rename
