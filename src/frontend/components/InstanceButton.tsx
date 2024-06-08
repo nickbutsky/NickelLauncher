@@ -69,10 +69,13 @@ export const InstanceButton = React.forwardRef<
       if (appContext.instanceDirnameToScrollTo !== state.dirname || !buttonRef.current) {
         return;
       }
-      const scrollMarginBlock = buttonRef.current.style.scrollMarginBlock;
-      buttonRef.current.style.scrollMarginBlock = "10px";
+      const scrollMarginTop = buttonRef.current.style.scrollMarginTop;
+      const scrollMarginBottom = buttonRef.current.style.scrollMarginBottom;
+      buttonRef.current.style.scrollMarginTop = "40px";
+      buttonRef.current.style.scrollMarginBottom = "25px";
       buttonRef.current.scrollIntoView({ block: "nearest" });
-      buttonRef.current.style.scrollMarginBlock = scrollMarginBlock;
+      buttonRef.current.style.scrollMarginTop = scrollMarginTop;
+      buttonRef.current.style.scrollMarginBottom = scrollMarginBottom;
     },
     appContext.scrollTrigger,
     true,
