@@ -1,7 +1,7 @@
 #define AppId "{52CE7B35-D314-43D5-99E9-9745A77976E4}"
 
 #define AppExeName AppName + ".exe"
-#define AppSourceDir "dist\" + AppName
+#define AppSourceDir "..\dist\" + AppName
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -10,17 +10,14 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
 AppPublisher={#AppPublisher}
-AppPublisherURL={#AppURL}
-AppSupportURL={#AppURL}
-AppUpdatesURL={#AppURL}
 DefaultDirName={localappdata}\Programs\{#AppName}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 DisableReadyPage=yes
 OutputBaseFilename={#AppName}-{#AppVersion}
-SetupIconFile=icon.ico
-OutputDir=dist
+SetupIconFile=..\icon.ico
+OutputDir=..\dist
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 Compression=lzma
@@ -37,7 +34,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "{#AppSourceDir}\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#AppSourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "UninsIS.dll"; Flags: dontcopy
+Source: "..\UninsIS.dll"; Flags: dontcopy
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

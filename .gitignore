@@ -1,5 +1,6 @@
 /.vscode/
 /src/bundled-frontend/
+UninsIS.dll
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

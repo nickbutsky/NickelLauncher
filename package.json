@@ -1,11 +1,15 @@
 {
   "name": "nickel-launcher",
   "private": true,
+  "displayName": "NickelLauncher",
+  "author": {
+    "name": "Nick Butsky"
+  },
   "version": "0.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite build && py src/main.py",
-    "build": "tsc && vite build && nuitka --output-filename=\"NickelLauncher\" --company-name=\"Nick Butsky\" --product-version=\"%npm_package_version%\" --file-version=\"%npm_package_version%\" --output-dir=\"dist\" --windows-uac-admin --standalone --remove-output --windows-disable-console src\\main.py"
+    "build": "tsc && py scripts/build.py"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
