@@ -102,8 +102,8 @@ class API:
     def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802
         instancemanager.copy_instance(self._get_instance(dirname), copy_worlds)
 
-    def createInstance(self, name: str, group_name: str, version_display_name: str) -> None:  # noqa: N802
-        instancemanager.create_instance(
+    def createInstance(self, name: str, group_name: str, version_display_name: str) -> str:  # noqa: N802
+        return instancemanager.create_instance(
             name,
             group_name,
             next(
@@ -111,7 +111,7 @@ class API:
                 for version in versionretrieve.get_versions_locally()
                 if version.display_name == version_display_name
             ),
-        )
+        ).name
 
     def openGameDirectory(self, dirname: str) -> None:  # noqa: N802
         os.startfile(self._get_instance(dirname).directory / "com.mojang")  # noqa: S606

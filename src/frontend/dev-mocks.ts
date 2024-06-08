@@ -16,7 +16,7 @@ if (import.meta.env.DEV) {
       changeVersion: () => Promise.resolve(),
       changeArchitectureChoice: () => Promise.resolve(),
       copyInstance: () => Promise.resolve(),
-      createInstance: () => Promise.resolve(),
+      createInstance: () => Promise.resolve(""),
       openGameDirectory: () => Promise.resolve(),
       openInstanceDirectory: () => Promise.resolve(),
       launchInstance: () => Promise.resolve(),
