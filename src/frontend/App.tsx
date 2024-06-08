@@ -17,7 +17,7 @@ export const AppContext = React.createContext<
       reloadInstanceGroups: () => Promise<void>;
       versionsByType: Awaited<ReturnType<typeof pywebview.api.getVersionsByType>>;
       reloadVersionsByType: (remotely: boolean) => Promise<void>;
-      instanceDirnameToScrollTo: string | undefined;
+      instanceDirnameToScrollTo: string | null;
       setInstanceDirnameToScrollTo: (dirname: string) => void;
       scrollTrigger: boolean;
       fireScrollTrigger: () => void;
@@ -28,14 +28,14 @@ export const AppContext = React.createContext<
   reloadInstanceGroups: () => Promise.resolve(),
   versionsByType: { release: [], beta: [], preview: [] },
   reloadVersionsByType: () => Promise.resolve(),
-  instanceDirnameToScrollTo: undefined,
+  instanceDirnameToScrollTo: null,
   setInstanceDirnameToScrollTo: () => undefined,
   scrollTrigger: false,
   fireScrollTrigger: () => undefined,
 });
 
 export function App() {
-  const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = React.useState<string | undefined>(undefined);
+  const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = React.useState<string | null>(null);
 
   const [mainAreaRefreshTrigger, fireMainAreaRefreshTrigger] = useTrigger();
   const [scrollTrigger, fireScrollTrigger] = useTrigger();
@@ -48,7 +48,10 @@ export function App() {
     pywebview.api.getVersionsByType,
     [],
   );
-  const [lastInstance, lastInstanceReady] = useReliableAsyncFunction(pywebview.api.getLastInstance, []);
+  const [lastInstanceDirname, lastInstanceDirnameReady] = useReliableAsyncFunction(
+    pywebview.api.getLastInstanceDirname,
+    [],
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
@@ -59,13 +62,13 @@ export function App() {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
-    if (lastInstanceReady) {
-      setInstanceDirnameToScrollTo(lastInstance?.dirname);
+    if (lastInstanceDirnameReady) {
+      setInstanceDirnameToScrollTo(lastInstanceDirname);
       fireScrollTrigger();
     }
-  }, [lastInstanceReady]);
+  }, [lastInstanceDirnameReady]);
 
-  if (!(groupsReady && versionsByTypeReady && lastInstanceReady)) {
+  if (!(groupsReady && versionsByTypeReady && lastInstanceDirnameReady)) {
     return;
   }
 

@@ -39,21 +39,9 @@ class API:
             for group in instancemanager.get_instance_groups()
         ]
 
-    def getLastInstance(self) -> dict[str, object] | None:  # noqa: N802
+    def getLastInstanceDirname(self) -> str | None:  # noqa: N802
         instance = instancemanager.get_last_instance()
-        return (
-            {
-                "name": instance.name,
-                "dirname": instance.directory.name,
-                "version": {
-                    "displayName": instance.version.display_name,
-                    "availableArchitectures": list(instance.version.available_architectures),
-                },
-                "architectureChoice": instance.architecture_choice,
-            }
-            if instance
-            else None
-        )
+        return instance.directory.name if instance else None
 
     def getVersionsByType(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
         return {

@@ -6,6 +6,7 @@ if (import.meta.env.DEV) {
   (window as unknown as { pywebview: typeof pywebview }).pywebview = {
     api: {
       getInstanceGroups: () => Promise.resolve(instanceGroups),
+      getLastInstanceDirname: () => Promise.resolve(null),
       getVersionsByType: () => Promise.resolve(versionsByType),
       renameInstanceGroup: () => Promise.resolve(),
       toggleInstanceGroupHidden: () => Promise.resolve(),
