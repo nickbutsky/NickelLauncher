@@ -8,29 +8,26 @@ from core.instance import Instance
 from core.instancegroup import InstanceGroup
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from core.version import Version
 
     from .state import State
 
 
-def create_instance(name: str, group_name: str, version: Version, state: State) -> None:
-    instance = Instance(
-        name,
-        version,
-        version.available_architectures[0],
-        shell.create_subdirectory(name, state.directory),
-    )
+def create_instance(name: str, group_name: str, version: Version, state: State) -> Path:
+    directory = shell.create_subdirectory(name, state.directory)
+    instance = Instance(name, version, version.available_architectures[0], directory)
     instance.populate_directory()
-
     try:
         group = next(group for group in state.instance_groups if group.name == group_name)
     except StopIteration:
         state.add_instance_group(InstanceGroup(group_name, [instance]))
-        return
-
+        return directory
     group.add_instances(len(group.instances), [instance])
     if group.hidden:
         group.toggle_hidden()
+    return directory
 
 
 def copy_instance(instance: Instance, copy_worlds: bool, state: State) -> None:

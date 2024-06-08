@@ -13,6 +13,7 @@ from . import stateload as _stateload
 from .watchdog import Watchdog as _Watchdog
 
 if TYPE_CHECKING:
+    from pathlib import Path
     from typing import Callable, Sequence
 
     from core.instance import Instance
@@ -59,9 +60,9 @@ def move_instances(position: int, group_name: str, instances: Sequence[Instance]
             delete_instance_group(group)
 
 
-def create_instance(name: str, group_name: str, version: Version) -> None:
+def create_instance(name: str, group_name: str, version: Version) -> Path:
     with _watchdog.disable_dir_created_event_tracking():
-        _instancecreate.create_instance(name, group_name, version, _state)
+        return _instancecreate.create_instance(name, group_name, version, _state)
 
 
 def copy_instance(instance: Instance, copy_worlds: bool) -> None:
