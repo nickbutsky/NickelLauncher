@@ -28,7 +28,9 @@ export function InstanceCreationDialogContent() {
       onSubmitBeforeClose={(data) =>
         pywebview.api
           .createInstance(data.instanceName, data.groupName, data.versionDisplayName)
+          .then(appContext.setInstanceDirnameToScrollTo)
           .then(appContext.refreshMainArea)
+          .then(appContext.fireScrollTrigger)
       }
     >
       <DialogFormField
