@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import string
+import typing
 from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
 from backend.core.instance import Instance
 from backend.core.instancegroup import InstanceGroup
+from backend.core.version import Architecture
 
 from .state import State
 
@@ -181,7 +183,12 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
     except (OSError, ValidationError, StopIteration):
         return None
 
-    return Instance(instance_model.name, version, instance_model.version.architecture_choice, directory)  # pyright: ignore [reportArgumentType]
+    return Instance(
+        instance_model.name,
+        version,
+        typing.cast(Architecture, instance_model.version.architecture_choice),
+        directory,
+    )
 
 
 def _get_last_instance(instance_dirname: str | None, instance_groups: list[InstanceGroup]) -> Instance | None:

@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import ctypes
 import json
+import typing
+import winreg
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import webview  # pyright: ignore [reportMissingTypeStubs]
+from pydantic import BaseModel, ValidationError
 from tendo.singleton import SingleInstance
+from webview.platforms.winforms import BrowserView, WinForms  # pyright: ignore [reportMissingTypeStubs]
 
 import backend
 
@@ -44,15 +49,92 @@ class FrontendAPITemporary:
         self.window.evaluate_js(f"webview.temporary.propelLaunchReport({json.dumps(report.to_dict())})")
 
 
+class GeometryModel(BaseModel):
+    width: int = 800
+    height: int = 600
+    x: int | None = None
+    y: int | None = None
+    maximised: bool = False
+
+
+def get_geometry_model() -> GeometryModel:
+    try:
+        with winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r, winreg.OpenKey(
+            r,
+            r"Software\Nickel59\NickelLauncher",
+        ) as k:
+            value, type_id = winreg.QueryValueEx(k, "geometry")
+    except FileNotFoundError:
+        return GeometryModel()
+    if type_id != winreg.REG_SZ:
+        return GeometryModel()
+    try:
+        array = json.loads(value)
+    except json.JSONDecodeError:
+        return GeometryModel()
+    if not isinstance(array, list) or len(array) != 5:  # pyright: ignore [reportUnknownArgumentType]
+        return GeometryModel()
+    try:
+        return GeometryModel.model_validate(
+            {"width": array[0], "height": array[1], "x": array[2], "y": array[3], "maximised": array[4]},
+            strict=True,
+        )
+    except ValidationError:
+        return GeometryModel()
+
+
+def save_geometry(window: webview.Window) -> None:
+    form = BrowserView.instances[window.uid]  # pyright: ignore [reportUnknownMemberType, reportUnknownVariableType]
+
+    divisor = {96: 1, 120: 1.25, 144: 1.5, 192: 2}[ctypes.windll.user32.GetDpiForWindow(form.Handle.ToInt32())]  # pyright: ignore [reportUnknownMemberType]
+
+    with winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r, winreg.CreateKeyEx(
+        r,
+        r"Software\Nickel59\NickelLauncher",
+        access=winreg.KEY_SET_VALUE,
+    ) as k:
+        winreg.SetValueEx(
+            k,
+            "geometry",
+            0,
+            winreg.REG_SZ,
+            json.dumps(
+                [
+                    round(typing.cast(int, form.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(typing.cast(int, form.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    form.Location.X,  # pyright: ignore [reportUnknownMemberType]
+                    form.Location.Y,  # pyright: ignore [reportUnknownMemberType]
+                    False,
+                ]
+                if form.WindowState == WinForms.FormWindowState.Normal  # pyright: ignore [reportUnknownMemberType]
+                else [
+                    round(typing.cast(int, form.RestoreBounds.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(typing.cast(int, form.RestoreBounds.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    form.RestoreBounds.Location.X,  # pyright: ignore [reportUnknownMemberType]
+                    form.RestoreBounds.Location.Y,  # pyright: ignore [reportUnknownMemberType]
+                    form.WindowState == WinForms.FormWindowState.Maximized,  # pyright: ignore [reportUnknownMemberType]
+                ],
+            ),
+        )
+
+
 def main() -> None:
     me = SingleInstance()  # noqa: F841  # pyright: ignore [reportUnusedVariable]
+
+    geometry_model = get_geometry_model()
 
     window = webview.create_window(
         "NickelLauncher",
         "bundled-frontend/index.html",
         js_api=backend.bridge.API(),
+        width=geometry_model.width,
+        height=geometry_model.height,
+        x=geometry_model.x,
+        y=geometry_model.y,
         min_size=(548, 610),
+        maximized=geometry_model.maximised,
     )
+    window.events.closing += lambda: save_geometry(window)
     backend.main(FrontendAPI(window))
     webview.start(debug="__compiled__" not in globals())
 
