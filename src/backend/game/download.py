@@ -5,14 +5,14 @@ import secrets
 from typing import TYPE_CHECKING
 from xml.etree.ElementTree import Element, SubElement
 
-from net import request, soap
-from report import Report
+from backend.net import request, soap
+from backend.report import Report
 
 if TYPE_CHECKING:
     from typing import Callable
 
-    from cancellationtoken import CancellationToken
-    from core.version import Architecture, Version
+    from backend.cancellationtoken import CancellationToken
+    from backend.core.version import Architecture, Version
 
 
 def download_version(

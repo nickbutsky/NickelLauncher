@@ -5,17 +5,11 @@ import os
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-import bridge
-import instancemanager
-from env import ROOT
+from . import bridge, instancemanager
+from .env import ROOT
 
 
-def main(*args: object, **kwargs: object) -> None:
-    frontend_api = kwargs["frontend_api"]
-    if not isinstance(frontend_api, bridge.FrontendAPI):
-        error_msg = f"Invalid args {args}, {kwargs}."
-        raise TypeError(error_msg)
-
+def main(frontend_api: bridge.FrontendAPI) -> None:
     _create_dirs()
     _setup_rotating_logger(ROOT / "logs", "nl")
     bridge.set_frontend_api(frontend_api)
@@ -46,7 +40,3 @@ def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
         level=logging.DEBUG,
         handlers=[handler],
     )
-
-
-if __name__ == "__main__":
-    main()

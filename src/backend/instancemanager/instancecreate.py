@@ -3,14 +3,14 @@ from __future__ import annotations
 import shutil
 from typing import TYPE_CHECKING
 
-import shell
-from core.instance import Instance
-from core.instancegroup import InstanceGroup
+from backend import shell
+from backend.core.instance import Instance
+from backend.core.instancegroup import InstanceGroup
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from core.version import Version
+    from backend.core.version import Version
 
     from .state import State
 

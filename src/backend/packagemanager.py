@@ -3,12 +3,12 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-import shell
+from . import shell
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from cancellationtoken import CancellationToken
+    from .cancellationtoken import CancellationToken
 
 
 def find_packages(

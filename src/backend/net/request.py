@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING
 from urllib import request
 from uuid import uuid4
 
-from report import ProgressDetails, Report
+from backend.report import ProgressDetails, Report
 
 if TYPE_CHECKING:
     from typing import Callable
 
-    from cancellationtoken import CancellationToken
+    from backend.cancellationtoken import CancellationToken
 
 
 def download_file(

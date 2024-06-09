@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 import json
-import sys
 from dataclasses import dataclass
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import webview  # pyright: ignore [reportMissingTypeStubs]
 from tendo.singleton import SingleInstance
 
-sys.path.append(str(Path(__file__).parent / "backend"))
-
-import backend.main
+import backend
 
 if TYPE_CHECKING:
     from backend.report import Report
@@ -54,10 +50,10 @@ def main() -> None:
     window = webview.create_window(
         "NickelLauncher",
         "bundled-frontend/index.html",
-        js_api=backend.main.bridge.API(),
+        js_api=backend.bridge.API(),
         min_size=(548, 610),
     )
-    backend.main.main(frontend_api=FrontendAPI(window))
+    backend.main(FrontendAPI(window))
     webview.start(debug="__compiled__" not in globals())
 
 

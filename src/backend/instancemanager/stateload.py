@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
-from core.instance import Instance
-from core.instancegroup import InstanceGroup
+from backend.core.instance import Instance
+from backend.core.instancegroup import InstanceGroup
 
 from .state import State
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from pathlib import Path
     from typing import Iterable, Self
 
-    from core.version import Version
+    from backend.core.version import Version
 
 
 def load_state(directory: Path, versions: Iterable[Version]) -> State:

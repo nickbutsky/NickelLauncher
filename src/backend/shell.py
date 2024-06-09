@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 import pathvalidate
 
-from cancellationtoken import Cancelled
+from .cancellationtoken import Cancelled
 
 if TYPE_CHECKING:
     from pathlib import Path

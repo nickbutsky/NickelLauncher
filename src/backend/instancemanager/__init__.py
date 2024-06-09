@@ -4,9 +4,9 @@ import contextlib
 from itertools import chain
 from typing import TYPE_CHECKING
 
-import versionretrieve
-from core.instancegroup import InstanceGroup
-from env import ROOT
+from backend import versionretrieve
+from backend.core.instancegroup import InstanceGroup
+from backend.env import ROOT
 
 from . import instancecreate as _instancecreate
 from . import stateload as _stateload
@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from pathlib import Path
     from typing import Callable, Sequence
 
-    from core.instance import Instance
-    from core.version import Version
+    from backend.core.instance import Instance
+    from backend.core.version import Version
 
 
 def get_instance_groups() -> tuple[InstanceGroup, ...]:

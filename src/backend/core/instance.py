@@ -3,12 +3,12 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from core.version import UnavailableArchitectureError
+from backend.core.version import UnavailableArchitectureError
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from core.version import Architecture, Version
+    from backend.core.version import Architecture, Version
 
 
 class Instance:

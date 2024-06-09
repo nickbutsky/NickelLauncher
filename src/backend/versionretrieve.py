@@ -3,8 +3,8 @@ from __future__ import annotations
 import requests
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
-from core.version import Architecture, Version, VersionType
-from env import ROOT
+from .core.version import Architecture, Version, VersionType
+from .env import ROOT
 
 SUPPORTED_ARCHITECTURES = frozenset({Architecture.X64, Architecture.X86})
 

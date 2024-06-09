@@ -5,19 +5,18 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import packagemanager
-import shell
-from cancellationtoken import CancellationTokenSource, Cancelled
-from report import Report
+from backend import packagemanager, shell
+from backend.cancellationtoken import CancellationTokenSource, Cancelled
+from backend.report import Report
 
 from .download import download_version
 
 if TYPE_CHECKING:
     from typing import Callable
 
-    from cancellationtoken import CancellationToken
-    from core.instance import Instance
-    from core.version import Architecture, Version
+    from backend.cancellationtoken import CancellationToken
+    from backend.core.instance import Instance
+    from backend.core.version import Architecture, Version
 
 
 def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] | None = None) -> None:

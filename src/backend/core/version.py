@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from ordered_set import OrderedSet
 
-import packagemanager
+from backend import packagemanager
 
 if TYPE_CHECKING:
     from pathlib import Path

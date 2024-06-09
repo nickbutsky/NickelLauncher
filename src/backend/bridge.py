@@ -5,16 +5,14 @@ import typing
 from itertools import chain
 from typing import TYPE_CHECKING, Protocol
 
-import game
-import instancemanager
-import versionretrieve
-from core.version import VersionType
+from . import game, instancemanager, versionretrieve
+from .core.version import VersionType
 
 if TYPE_CHECKING:
-    from core.instance import Instance
-    from core.instancegroup import InstanceGroup
-    from core.version import Architecture
-    from report import Report
+    from .core.instance import Instance
+    from .core.instancegroup import InstanceGroup
+    from .core.version import Architecture
+    from .report import Report
 
 
 class API:
