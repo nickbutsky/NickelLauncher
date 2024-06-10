@@ -72,7 +72,7 @@ def get_geometry_model() -> GeometryModel:
         array = json.loads(value)
     except json.JSONDecodeError:
         return GeometryModel()
-    if not isinstance(array, list) or len(array) != 5:  # pyright: ignore [reportUnknownArgumentType]
+    if not isinstance(array, list) or len(typing.cast(list[object], array)) != 5:
         return GeometryModel()
     try:
         return GeometryModel.model_validate(
