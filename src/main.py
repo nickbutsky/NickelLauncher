@@ -133,6 +133,7 @@ def main() -> None:
         y=geometry_model.y,
         min_size=(548, 610),
         maximized=geometry_model.maximised,
+        background_color="#0a0a0a",
     )
     window.events.closing += lambda: save_geometry(window)
     backend.main(FrontendAPI(window))
