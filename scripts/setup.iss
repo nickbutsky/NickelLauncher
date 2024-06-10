@@ -7,20 +7,19 @@
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 AppId={{#AppId}
 AppName={#AppName}
-AppVersion={#AppVersion}
-AppVerName={#AppName} {#AppVersion}
 AppPublisher={#AppPublisher}
+AppVerName={#AppName} {#AppVersion}
+AppVersion={#AppVersion}
+Compression=lzma
 DefaultDirName={localappdata}\Programs\{#AppName}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 DisableReadyPage=yes
 OutputBaseFilename={#AppName}-{#AppVersion}
-SetupIconFile=..\icon.ico
 OutputDir=..\dist
-; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
-Compression=lzma
+SetupIconFile=..\icon.ico
 SolidCompression=yes
 UninstallDisplayIcon={uninstallexe}
 UninstallDisplayName={#AppName}
@@ -40,7 +39,11 @@ Source: "..\UninsIS.dll"; Flags: dontcopy
 [Icons]
 Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExeName}"
 
+[Registry]
+Root: HKCU; Subkey: "Software\Nickel59\NickelLauncher"; Flags: dontcreatekey uninsdeletekey
+
 [Code]
+{ ---------------------------------------------------IMPORTS START---------------------------------------------------- }
 function DLLIsISPackageInstalled(AppId: string; Is64BitInstallMode, IsAdminInstallMode: DWORD): DWORD;
   external 'IsISPackageInstalled@files:UninsIS.dll stdcall setuponly';
 
@@ -49,7 +52,9 @@ function DLLCompareISPackageVersion(AppId, InstallingVersion: string; Is64BitIns
 
 function DLLUninstallISPackage(AppId: string; Is64BitInstallMode, IsAdminInstallMode: DWORD): DWORD;
   external 'UninstallISPackage@files:UninsIS.dll stdcall setuponly';
+{ ----------------------------------------------------IMPORTS END----------------------------------------------------- }
 
+{ ---------------------------------------------------WRAPPERS START--------------------------------------------------- }
 // Wrapper for UninsIS.dll IsISPackageInstalled() function
 // Returns true if package is detected as installed, or false otherwise
 function IsISPackageInstalled(): Boolean;
@@ -64,7 +69,7 @@ end;
 // > 0 if version we are installing is > installed version
 function CompareISPackageVersion(): LongInt;
 begin
-  Result := DLLCompareISPackageVersion('{#AppId}', '{#AppVersion}', DWORD(Is64BitInstallMode()), DWORD(IsAdminInstallMode()));                          
+  Result := DLLCompareISPackageVersion('{#AppId}', '{#AppVersion}', DWORD(Is64BitInstallMode()), DWORD(IsAdminInstallMode()));
 end;
 
 // Wrapper for UninsIS.dll UninstallISPackage() function
@@ -73,6 +78,7 @@ function UninstallISPackage(): DWORD;
 begin
   Result := DLLUninstallISPackage('{#AppId}', DWORD(Is64BitInstallMode()), DWORD(IsAdminInstallMode()));
 end;
+{ ----------------------------------------------------WRAPPERS END---------------------------------------------------- }
 
 function InitializeSetup(): Boolean;
 begin
