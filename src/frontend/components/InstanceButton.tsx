@@ -1,4 +1,3 @@
-import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
@@ -36,8 +35,6 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogOverlay,
-  DialogPortal,
   DialogTitle,
 } from "@/components/shadcn/dialog";
 import { FormControl, FormItem } from "@/components/shadcn/form";
@@ -142,8 +139,10 @@ export const InstanceButton = React.forwardRef<
           <ContextMenuSeparator />
           <ContextMenuItem
             onSelect={() =>
-              contextMenuContentRef.current?.addEventListener("animationend", () =>
-                setTimeout(fireEditableLabelTrigger),
+              contextMenuContentRef.current?.addEventListener(
+                "animationend",
+                () => setTimeout(fireEditableLabelTrigger),
+                { once: true },
               )
             }
           >
@@ -271,31 +270,45 @@ function ChangeVersionDialogContent({
 }
 
 function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
+  const [copying, setCopying] = React.useState(false);
+
   const dialogContentRef = React.useRef<React.ElementRef<typeof DialogContent>>(null);
+  const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
 
   const appContext = React.useContext(AppContext);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   const copyInstance = React.useCallback(
-    (copyWorlds: boolean) =>
-      pywebview.api
-        .copyInstance(dirname, copyWorlds)
-        .then(() => dialogContentRef.current?.addEventListener("animationend", appContext.refreshMainArea)),
+    (copyWorlds: boolean) => {
+      setCopying(true);
+      pywebview.api.copyInstance(dirname, copyWorlds).then(() => {
+        dialogContentRef.current?.addEventListener(
+          "animationend",
+          () => {
+            appContext.refreshMainArea();
+            setCopying(false);
+          },
+          { once: true },
+        );
+        hiddenCloseButtonRef.current?.click();
+      });
+    },
     [dirname],
   );
 
   return (
-    <DialogContent ref={dialogContentRef}>
+    <DialogContent ref={dialogContentRef} closeable={!copying}>
       <DialogHeader>
         <DialogTitle>Do you want to copy your worlds?</DialogTitle>
       </DialogHeader>
+      <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
       <DialogFooter className="gap-y-1.5">
-        <DialogClose onClick={() => copyInstance(true)} asChild={true}>
-          <Button type="submit">Yes</Button>
-        </DialogClose>
-        <DialogClose onClick={() => copyInstance(false)} asChild={true}>
-          <Button type="submit">No</Button>
-        </DialogClose>
+        <Button type="submit" onClick={() => copyInstance(true)} disabled={copying}>
+          Yes
+        </Button>
+        <Button type="submit" onClick={() => copyInstance(false)} disabled={copying}>
+          No
+        </Button>
       </DialogFooter>
     </DialogContent>
   );
@@ -337,38 +350,29 @@ function LaunchDialogContent({
   );
 
   return (
-    <DialogPortal>
-      <DialogOverlay />
-      <DialogPrimitive.Content
-        className={cn(
-          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=open]:animate-in sm:rounded-lg",
+    <DialogContent closeable={false}>
+      <div className="flex">
+        <div>{report?.text}</div>
+        <div className="flex-1" />
+        {report?.details && (
+          <div>{`${report?.details?.processed.toFixed(1)}/${report?.details?.totalsize.toFixed(1)} ${
+            report?.details?.unit
+          }`}</div>
         )}
-        onPointerDownOutside={(event) => event.preventDefault()}
-        onInteractOutside={(event) => event.preventDefault()}
+      </div>
+      <Progress value={report?.details?.processed} max={report?.details?.totalsize} />
+      <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
+      <Button
+        variant="secondary"
+        disabled={cancelling}
+        onClick={() => {
+          setCancelling(true);
+          pywebview.api.cancelInstanceLaunch(launchID.current);
+        }}
       >
-        <div className="flex">
-          <div>{report?.text}</div>
-          <div className="flex-1" />
-          {report?.details && (
-            <div>{`${report?.details?.processed.toFixed(1)}/${report?.details?.totalsize.toFixed(1)} ${
-              report?.details?.unit
-            }`}</div>
-          )}
-        </div>
-        <Progress value={report?.details?.processed} max={report?.details?.totalsize} />
-        <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
-        <Button
-          variant="secondary"
-          disabled={cancelling}
-          onClick={() => {
-            setCancelling(true);
-            pywebview.api.cancelInstanceLaunch(launchID.current);
-          }}
-        >
-          Abort
-        </Button>
-      </DialogPrimitive.Content>
-    </DialogPortal>
+        Abort
+      </Button>
+    </DialogContent>
   );
 }
 

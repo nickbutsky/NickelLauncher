@@ -69,7 +69,9 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
           onSubmit={form.handleSubmit(async (data) => {
             await onSubmitBeforeClose?.(data);
             hiddenCloseButtonRef.current?.click();
-            dialogContentRef.current?.addEventListener("animationend", () => onSubmitAfterClose?.(data));
+            dialogContentRef.current?.addEventListener("animationend", () => onSubmitAfterClose?.(data), {
+              once: true,
+            });
           })}
         >
           {React.Children.map(children, (child) => (

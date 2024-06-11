@@ -17,5 +17,5 @@ function createRoot() {
 if (import.meta.env.DEV) {
   createRoot();
 } else {
-  window.addEventListener("pywebviewready", createRoot);
+  window.addEventListener("pywebviewready", createRoot, { once: true });
 }
