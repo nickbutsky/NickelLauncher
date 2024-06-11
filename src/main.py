@@ -4,6 +4,7 @@ import ctypes
 import json
 import typing
 import winreg
+from ctypes import wintypes
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -134,6 +135,13 @@ def main() -> None:
         min_size=(548, 610),
         maximized=geometry_model.maximised,
         background_color="#0a0a0a",
+    )
+    dwmapi = ctypes.windll.LoadLibrary("dwmapi")
+    window.events.shown += lambda: dwmapi.DwmSetWindowAttribute(
+        BrowserView.instances[window.uid].Handle.ToInt32(),  # pyright: ignore [reportUnknownMemberType]
+        20,
+        ctypes.byref(ctypes.c_bool(True)),
+        ctypes.sizeof(wintypes.BOOL),
     )
     window.events.closing += lambda: save_geometry(window)
     backend.main(FrontendAPI(window))
