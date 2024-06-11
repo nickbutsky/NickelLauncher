@@ -41,7 +41,9 @@ def copy_instance(instance: Instance, copy_worlds: bool, state: State) -> None:
     shutil.copytree(
         instance.directory / "com.mojang",
         copied_instance.directory / "com.mojang",
-        ignore=lambda src, _: ["minecraftWorlds"] if (src == str(instance.directory)) and (not copy_worlds) else [],
+        ignore=lambda src, _: ["minecraftWorlds"]
+        if (src == str(instance.directory / "com.mojang")) and (not copy_worlds)
+        else [],
         dirs_exist_ok=True,
     )
     (copied_instance.directory / "com.mojang" / "minecraftWorlds").mkdir(exist_ok=True)
