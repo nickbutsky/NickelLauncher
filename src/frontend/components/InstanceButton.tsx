@@ -1,3 +1,4 @@
+import { ReloadIcon } from "@radix-ui/react-icons";
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
@@ -270,7 +271,7 @@ function ChangeVersionDialogContent({
 }
 
 function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
-  const [copying, setCopying] = React.useState(false);
+  const [copying, setCopying] = React.useState<"w" | "nw" | undefined>(undefined);
 
   const dialogContentRef = React.useRef<React.ElementRef<typeof DialogContent>>(null);
   const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
@@ -280,13 +281,13 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   const copyInstance = React.useCallback(
     (copyWorlds: boolean) => {
-      setCopying(true);
+      setCopying(copyWorlds ? "w" : "nw");
       pywebview.api.copyInstance(dirname, copyWorlds).then(() => {
         dialogContentRef.current?.addEventListener(
           "animationend",
           () => {
             appContext.refreshMainArea();
-            setCopying(false);
+            setCopying(undefined);
           },
           { once: true },
         );
@@ -303,11 +304,11 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
       </DialogHeader>
       <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
       <DialogFooter className="gap-y-1.5">
-        <Button type="submit" onClick={() => copyInstance(true)} disabled={copying}>
-          Yes
+        <Button type="submit" onClick={() => copyInstance(true)} disabled={!!copying}>
+          {copying === "w" ? <ReloadIcon className="animate-spin" /> : "Yes"}
         </Button>
-        <Button type="submit" onClick={() => copyInstance(false)} disabled={copying}>
-          No
+        <Button type="submit" onClick={() => copyInstance(false)} disabled={!!copying}>
+          {copying === "nw" ? <ReloadIcon className="animate-spin" /> : "No"}
         </Button>
       </DialogFooter>
     </DialogContent>
