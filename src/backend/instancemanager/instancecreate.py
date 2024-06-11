@@ -50,4 +50,3 @@ def copy_instance(instance: Instance, copy_worlds: bool, state: State) -> None:
 
     group = next(group for group in state.instance_groups if instance in group.instances)
     group.add_instances(group.instances.index(instance) + 1, [copied_instance])
-    state.last_instance = copied_instance
