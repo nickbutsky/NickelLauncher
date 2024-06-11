@@ -65,7 +65,7 @@ function TopBar({
   const [refreshing, setRefreshing] = React.useState(false);
 
   const versionTypeSelector = (
-    <TabsList className="grid grid-cols-3">
+    <TabsList className="grid grid-cols-3 bg-transparent">
       {versionTypes.map((versionType) => (
         <TabsTrigger key={versionType} value={versionType}>
           {versionType.charAt(0).toUpperCase() + versionType.slice(1)}
@@ -79,7 +79,7 @@ function TopBar({
       className={{ lr: "", rl: "", cr: "ml-auto", cl: "mr-auto" }[variant]}
       type="button"
       size="icon"
-      variant="secondary"
+      variant="link"
       disabled={refreshing}
       onClick={async () => {
         setRefreshing(true);
