@@ -29,4 +29,4 @@ class Report:
             return {"processed": self.processed, "totalsize": self.totalsize, "unit": self.unit}
 
     def to_dict(self) -> dict[str, object]:
-        return {"type": self.type, "details": self.details.to_dict() if self.details else None, "text": self.text}
+        return {"type": self.type.value, "details": self.details.to_dict() if self.details else None, "text": self.text}
