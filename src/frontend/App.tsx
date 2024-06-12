@@ -27,6 +27,7 @@ export const AppContext = React.createContext<
     }>
 >({
   refreshMainArea: () => undefined,
+
   instanceGroups: [],
   reloadInstanceGroups: () => Promise.resolve(),
   versionsByType: { release: [], beta: [], preview: [] },
