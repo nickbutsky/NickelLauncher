@@ -56,9 +56,9 @@ def compile_app(name: str, company_name: str, version: str) -> None:
         ),
         check=True,
     )
-    dist_directory = Path("dist") / "main.dist"
-    dist_directory = dist_directory.replace(dist_directory.with_name(name))
-    (Path("src") / "bundled-frontend").replace(dist_directory / "bundled-frontend")
+    app_dist_directory = Path("dist") / "main.dist"
+    app_dist_directory = app_dist_directory.replace(app_dist_directory.with_name(name))
+    (Path("src") / "bundled-frontend").replace(app_dist_directory / "bundled-frontend")
 
 
 def get_iscc_executable() -> Path | None:
