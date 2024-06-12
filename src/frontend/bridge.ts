@@ -39,8 +39,8 @@ declare global {
       createInstance: (name: string, groupName: string, versionDisplayName: string) => Promise<string>;
       openGameDirectory: (dirname: string) => Promise<void>;
       openInstanceDirectory: (dirname: string) => Promise<void>;
-      launchInstance: (dirname: string, id: string) => Promise<void>;
-      cancelInstanceLaunch: (id: string) => Promise<void>;
+      launchInstance: (dirname: string) => Promise<void>;
+      cancelInstanceLaunch: () => Promise<void>;
     };
   }>;
 }

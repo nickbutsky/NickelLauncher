@@ -323,8 +323,6 @@ function LaunchDialogContent({
   const [report, setReport] = React.useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
   const [cancelling, setCancelling] = React.useState(false);
 
-  const launchID = React.useRef(crypto.randomUUID());
-
   const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
 
   useTriggerEffect(
@@ -337,11 +335,10 @@ function LaunchDialogContent({
         (report) => setReport(report),
         () =>
           pywebview.api
-            .launchInstance(dirname, launchID.current)
+            .launchInstance(dirname)
             .catch((reason: Error) => onFail(reason.message))
             .finally(() => {
               hiddenCloseButtonRef.current?.click();
-              launchID.current = crypto.randomUUID();
               setCancelling(false);
             }),
       );
@@ -368,7 +365,7 @@ function LaunchDialogContent({
         disabled={cancelling}
         onClick={() => {
           setCancelling(true);
-          pywebview.api.cancelInstanceLaunch(launchID.current);
+          pywebview.api.cancelInstanceLaunch();
         }}
       >
         Abort
