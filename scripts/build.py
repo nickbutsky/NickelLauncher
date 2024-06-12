@@ -56,6 +56,7 @@ def compile_app(name: str, company_name: str, version: str) -> None:
             f'--product-version="{version}"',
             f'--file-version="{version}"',
             '--windows-icon-from-ico="icon.ico"',
+            '--include-data-files="icon.ico"="icon.ico"',
             '--include-data-dir="src/bundled-frontend"="bundled-frontend"',
             '--output-dir="dist"',
             "--windows-console-mode=disable",

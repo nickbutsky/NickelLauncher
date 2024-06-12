@@ -6,7 +6,6 @@ import typing
 import winreg
 from ctypes import wintypes
 from dataclasses import dataclass
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import webview  # pyright: ignore [reportMissingTypeStubs]
@@ -153,7 +152,7 @@ def main() -> None:
             ctypes.byref(ctypes.c_bool(True)),
             ctypes.sizeof(wintypes.BOOL),
         )
-        form.Icon = Icon(str(Path(__file__).parent.parent / "icon.ico"))
+        form.Icon = Icon("icon.ico")
 
     window.events.shown += on_shown
     window.events.closing += lambda: save_geometry(window)
