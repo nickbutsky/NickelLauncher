@@ -13,12 +13,14 @@
     "indentStyle": "space",
     "lineWidth": 120
   },
+  "javascript": {
+    "globals": [
+      "pywebview"
+    ]
+  },
   "linter": {
     "rules": {
       "all": true,
-      "correctness": {
-        "noUndeclaredVariables": "off"
-      },
       "nursery": {
         "all": true,
         "noReactSpecificProps": "off",
