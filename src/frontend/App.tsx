@@ -18,10 +18,11 @@ export const AppContext = React.createContext<
       reloadInstanceGroups: () => Promise<void>;
       versionsByType: Awaited<ReturnType<typeof pywebview.api.getVersionsByType>>;
       reloadVersionsByType: (remotely: boolean) => Promise<void>;
+
+      scrollToInstance: (dirname: string) => void;
       instanceDirnameToScrollTo: string | null;
-      setInstanceDirnameToScrollTo: (dirname: string) => void;
       scrollTrigger: boolean;
-      fireScrollTrigger: () => void;
+
       showErrorDialog: (msg: string) => void;
     }>
 >({
@@ -30,10 +31,11 @@ export const AppContext = React.createContext<
   reloadInstanceGroups: () => Promise.resolve(),
   versionsByType: { release: [], beta: [], preview: [] },
   reloadVersionsByType: () => Promise.resolve(),
+
+  scrollToInstance: () => undefined,
   instanceDirnameToScrollTo: null,
-  setInstanceDirnameToScrollTo: () => undefined,
   scrollTrigger: false,
-  fireScrollTrigger: () => undefined,
+
   showErrorDialog: () => undefined,
 });
 
@@ -68,27 +70,33 @@ export function App() {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   React.useEffect(() => {
-    if (lastInstanceDirnameReady) {
-      setInstanceDirnameToScrollTo(lastInstanceDirname);
-      fireScrollTrigger();
+    if (lastInstanceDirnameReady && lastInstanceDirname !== null) {
+      scrollToInstance(lastInstanceDirname);
     }
   }, [lastInstanceDirnameReady]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
+  const scrollToInstance = React.useCallback<React.ContextType<typeof AppContext>["scrollToInstance"]>((dirname) => {
+    setInstanceDirnameToScrollTo(dirname);
+    fireScrollTrigger();
+  }, []);
 
   if (!(groupsReady && versionsByTypeReady && lastInstanceDirnameReady)) {
     return;
   }
 
-  const appContext = {
+  const appContext: React.ContextType<typeof AppContext> = {
     refreshMainArea: fireMainAreaRefreshTrigger,
     instanceGroups,
     reloadInstanceGroups: () => reuseGetInstanceGroups([]),
     versionsByType,
     reloadVersionsByType: (remotely?: boolean) => reuseGetVersionsByType([remotely]),
+
+    scrollToInstance,
     instanceDirnameToScrollTo,
-    setInstanceDirnameToScrollTo,
     scrollTrigger,
-    fireScrollTrigger,
-    showErrorDialog: (msg: string) => {
+
+    showErrorDialog: (msg) => {
       errorMsg.current = msg;
       fireErrorDialogTrigger();
     },

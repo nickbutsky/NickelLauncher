@@ -26,11 +26,10 @@ export function InstanceCreationDialogContent() {
         versionDisplayName: appContext.versionsByType.release[0]?.displayName ?? "",
       }}
       onSubmitBeforeClose={(data) =>
-        pywebview.api
-          .createInstance(data.instanceName, data.groupName, data.versionDisplayName)
-          .then(appContext.setInstanceDirnameToScrollTo)
-          .then(appContext.refreshMainArea)
-          .then(appContext.fireScrollTrigger)
+        pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then((dirname) => {
+          appContext.refreshMainArea();
+          appContext.scrollToInstance(dirname);
+        })
       }
     >
       <DialogFormField
