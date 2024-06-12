@@ -88,6 +88,7 @@ export function App() {
 
   const appContext: React.ContextType<typeof AppContext> = {
     refreshMainArea: fireMainAreaRefreshTrigger,
+
     instanceGroups,
     reloadInstanceGroups: () => reuseGetInstanceGroups([]),
     versionsByType,
