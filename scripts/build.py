@@ -23,20 +23,30 @@ class AuthorModel(BaseModel):
 
 
 def main() -> None:
+    shutil.rmtree("dist", True)
+
     with Path("package.json").open() as f:
         data = f.read()
     package_model = PackageModel.model_validate_json(data, strict=True)
 
-    compile_app(package_model.displayName, package_model.author.name, package_model.version)
+    try:
+        compile_app(package_model.displayName, package_model.author.name, package_model.version)
 
-    iscc_executable = get_iscc_executable()
-    if iscc_executable:
-        build_installer(iscc_executable, package_model.displayName, package_model.author.name, package_model.version)
+        iscc_executable = get_iscc_executable()
+        if iscc_executable:
+            build_installer(
+                iscc_executable,
+                package_model.displayName,
+                package_model.author.name,
+                package_model.version,
+            )
+    except:
+        shutil.rmtree("dist", True)
+        raise
 
 
 def compile_app(name: str, company_name: str, version: str) -> None:
     subprocess.run(("powershell", "vite build"), check=True)  # noqa: S603
-    shutil.rmtree("dist", True)
     subprocess.run(
         (  # noqa: S603
             "powershell",
@@ -46,6 +56,7 @@ def compile_app(name: str, company_name: str, version: str) -> None:
             f'--product-version="{version}"',
             f'--file-version="{version}"',
             '--windows-icon-from-ico="icon.ico"',
+            '--include-data-dir="src/bundled-frontend"="bundled-frontend"',
             '--output-dir="dist"',
             "--windows-console-mode=disable",
             "--windows-uac-admin",
@@ -56,9 +67,9 @@ def compile_app(name: str, company_name: str, version: str) -> None:
         ),
         check=True,
     )
-    app_dist_directory = (Path("dist") / "main.dist").resolve()
-    app_dist_directory = app_dist_directory.replace(app_dist_directory.with_name(name))
-    (Path("src") / "bundled-frontend").replace(app_dist_directory / "bundled-frontend")
+    app_dist_directory = Path("dist") / "main.dist"
+    new_app_dist_directory = app_dist_directory.replace(app_dist_directory.with_name(name))
+    print(f"""Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.""")  # noqa: T201
 
 
 def get_iscc_executable() -> Path | None:
