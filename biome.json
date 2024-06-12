@@ -3,9 +3,10 @@
   "files": {
     "ignore": [
       "node_modules/",
+      "src/frontend/components/shadcn/",
+      "src/bundled-frontend/",
       "postcss.config.js",
-      "tailwind.config.js",
-      "src/frontend/components/shadcn"
+      "tailwind.config.js"
     ]
   },
   "formatter": {
