@@ -6,14 +6,22 @@ import typing
 import winreg
 from ctypes import wintypes
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import webview  # pyright: ignore [reportMissingTypeStubs]
 from pydantic import BaseModel, ValidationError
 from tendo.singleton import SingleInstance
-from webview.platforms.winforms import BrowserView, WinForms  # pyright: ignore [reportMissingTypeStubs]
+from webview.platforms.winforms import (  # pyright: ignore [reportMissingTypeStubs]
+    BrowserView,
+    Icon,  # pyright: ignore [reportAttributeAccessIssue, reportUnknownVariableType]
+    WinForms,
+)
 
 import backend
+
+dwmapi = ctypes.windll.LoadLibrary("dwmapi")
+
 
 if TYPE_CHECKING:
     from backend.report import Report
@@ -136,13 +144,18 @@ def main() -> None:
         maximized=geometry_model.maximised,
         background_color="#0a0a0a",
     )
-    dwmapi = ctypes.windll.LoadLibrary("dwmapi")
-    window.events.shown += lambda: dwmapi.DwmSetWindowAttribute(
-        BrowserView.instances[window.uid].Handle.ToInt32(),  # pyright: ignore [reportUnknownMemberType]
-        20,
-        ctypes.byref(ctypes.c_bool(True)),
-        ctypes.sizeof(wintypes.BOOL),
-    )
+
+    def on_shown() -> None:
+        form = BrowserView.instances[window.uid]  # pyright: ignore [reportUnknownMemberType, reportUnknownVariableType]
+        dwmapi.DwmSetWindowAttribute(
+            form.Handle.ToInt32(),  # pyright: ignore [reportUnknownMemberType]
+            20,
+            ctypes.byref(ctypes.c_bool(True)),
+            ctypes.sizeof(wintypes.BOOL),
+        )
+        form.Icon = Icon(str(Path(__file__).parent.parent / "icon.ico"))
+
+    window.events.shown += on_shown
     window.events.closing += lambda: save_geometry(window)
     backend.main(FrontendAPI(window))
     webview.start(debug="__compiled__" not in globals())
