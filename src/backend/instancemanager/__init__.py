@@ -4,7 +4,7 @@ import contextlib
 from itertools import chain
 from typing import TYPE_CHECKING
 
-from backend import versionretrieve
+from backend import game, versionretrieve
 from backend.core.instancegroup import InstanceGroup
 from backend.env import ROOT
 
@@ -79,6 +79,11 @@ def initialise_watchdog(on_sudden_change: Callable[[], object]) -> None:
     def callback() -> None:
         global _state  # noqa: PLW0603
         _state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
+        launched_instance = game.get_launched_instance()
+        if launched_instance and launched_instance.directory.name not in chain.from_iterable(
+            (instance.directory.name for instance in group.instances) for group in _state.instance_groups
+        ):
+            game.cancel_launch()
         on_sudden_change()
 
     _watchdog = _Watchdog(ROOT / "instances", callback)
