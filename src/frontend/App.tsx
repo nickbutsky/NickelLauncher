@@ -5,6 +5,7 @@ import type { DeepReadonly } from "ts-essentials";
 import { type API, exposeStaticFunction } from "@/bridge";
 import { InstanceCreationDialogContent } from "@/components/InstanceCreationDialogContent";
 import { MainArea } from "@/components/MainArea";
+import { ErrorDialog } from "@/components/nickel/ErrorDialog";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
 import { ThemeProvider } from "@/components/shadcn/theme-provider";
@@ -21,6 +22,7 @@ export const AppContext = React.createContext<
       setInstanceDirnameToScrollTo: (dirname: string) => void;
       scrollTrigger: boolean;
       fireScrollTrigger: () => void;
+      showErrorDialog: (msg: string) => void;
     }>
 >({
   refreshMainArea: () => undefined,
@@ -32,13 +34,17 @@ export const AppContext = React.createContext<
   setInstanceDirnameToScrollTo: () => undefined,
   scrollTrigger: false,
   fireScrollTrigger: () => undefined,
+  showErrorDialog: () => undefined,
 });
 
 export function App() {
   const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = React.useState<string | null>(null);
 
+  const errorMsg = React.useRef("");
+
   const [mainAreaRefreshTrigger, fireMainAreaRefreshTrigger] = useTrigger();
   const [scrollTrigger, fireScrollTrigger] = useTrigger();
+  const [errorDialogTrigger, fireErrorDialogTrigger] = useTrigger();
 
   const [instanceGroups, groupsReady, reuseGetInstanceGroups] = useReliableAsyncFunction(
     pywebview.api.getInstanceGroups,
@@ -82,6 +88,10 @@ export function App() {
     setInstanceDirnameToScrollTo,
     scrollTrigger,
     fireScrollTrigger,
+    showErrorDialog: (msg: string) => {
+      errorMsg.current = msg;
+      fireErrorDialogTrigger();
+    },
   };
 
   return (
@@ -96,6 +106,7 @@ export function App() {
           </DialogTrigger>
           <InstanceCreationDialogContent />
         </Dialog>
+        <ErrorDialog msg={errorMsg.current} trigger={errorDialogTrigger} />
       </AppContext.Provider>
     </ThemeProvider>
   );

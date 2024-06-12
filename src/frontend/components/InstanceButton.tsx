@@ -10,15 +10,6 @@ import { VersionSelector } from "@/components/VersionSelector";
 import { EditableLabel } from "@/components/nickel/EditableLabel";
 import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDialogContent";
 import { InputWithOptions } from "@/components/nickel/InputWithOptions";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/shadcn/alert-dialog";
 import { Button } from "@/components/shadcn/button";
 import {
   ContextMenu,
@@ -51,7 +42,6 @@ export const InstanceButton = React.forwardRef<
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci" | "li">("ci");
-  const [errorMsg, setErrorMsg] = React.useState<string>("");
 
   const buttonRef = React.useRef<React.ElementRef<typeof Button>>(null);
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
@@ -60,7 +50,6 @@ export const InstanceButton = React.forwardRef<
 
   const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
   const [launchTrigger, fireLaunchTrigger] = useTrigger();
-  const [errorDialogTrigger, fireErrorDialogTrigger] = useTrigger();
 
   useTriggerEffect(
     () => {
@@ -174,20 +163,10 @@ export const InstanceButton = React.forwardRef<
               />
             ),
             ci: <CopyInstanceDialogContent dirname={state.dirname} />,
-            li: (
-              <LaunchDialogContent
-                dirname={state.dirname}
-                trigger={launchTrigger}
-                onFail={(errorMsg) => {
-                  setErrorMsg(errorMsg);
-                  fireErrorDialogTrigger();
-                }}
-              />
-            ),
+            li: <LaunchDialogContent dirname={state.dirname} trigger={launchTrigger} />,
           }[dialogContentId]
         }
       </Dialog>
-      <ErrorDialog msg={errorMsg} trigger={errorDialogTrigger} />
     </>
   );
 });
@@ -315,15 +294,13 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
   );
 }
 
-function LaunchDialogContent({
-  dirname,
-  trigger,
-  onFail,
-}: DeepReadonly<{ dirname: string; trigger: boolean; onFail: (errorMsg: string) => void }>) {
+function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: string; trigger: boolean }>) {
   const [report, setReport] = React.useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
   const [cancelling, setCancelling] = React.useState(false);
 
   const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
+
+  const appContext = React.useContext(AppContext);
 
   useTriggerEffect(
     () => {
@@ -336,7 +313,7 @@ function LaunchDialogContent({
         () =>
           pywebview.api
             .launchInstance(dirname)
-            .catch((reason: Error) => onFail(reason.message))
+            .catch((reason: Error) => appContext.showErrorDialog(reason.message))
             .finally(() => {
               hiddenCloseButtonRef.current?.click();
               setCancelling(false);
@@ -371,25 +348,5 @@ function LaunchDialogContent({
         Abort
       </Button>
     </DialogContent>
-  );
-}
-
-function ErrorDialog({ msg, trigger }: DeepReadonly<{ msg: string; trigger: boolean }>) {
-  const [open, setOpen] = React.useState(false);
-
-  useTriggerEffect(() => setOpen(true), trigger);
-
-  return (
-    <AlertDialog open={open} onOpenChange={() => setOpen(!open)}>
-      <AlertDialogContent className="grid-cols-1">
-        <AlertDialogHeader>
-          <AlertDialogTitle>Error</AlertDialogTitle>
-          <AlertDialogDescription className="break-words">{msg}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogAction>OK</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
   );
 }
