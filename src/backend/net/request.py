@@ -28,7 +28,7 @@ def download_file(
             temp_file,
             _get_urlretrieve_reporthook(reporthook, cancellation_token),
         )
-    except Exception:
+    except:
         shutil.rmtree(temp_file.parent, True)
         raise
     temp_file.replace(destination)
