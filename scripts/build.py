@@ -70,7 +70,7 @@ def compile_app(name: str, company_name: str, version: str) -> None:
     )
     app_dist_directory = Path("dist") / "main.dist"
     new_app_dist_directory = app_dist_directory.replace(app_dist_directory.with_name(name))
-    print(f"""Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.""")  # noqa: T201
+    print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.")  # noqa: T201
 
 
 def get_iscc_executable() -> Path | None:
