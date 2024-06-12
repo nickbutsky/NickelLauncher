@@ -43,9 +43,10 @@ class _EventHandler(FileSystemEventHandler):
     def on_any_event(self, event: FileSystemEvent) -> None:
         if isinstance(
             event,
-            (
-                FileDeletedEvent,
-                DirMovedEvent if self.ignore_dir_created_event else DirCreatedEvent,
+            (FileDeletedEvent, DirMovedEvent)
+            if self.ignore_dir_created_event
+            else (
+                DirCreatedEvent,
                 FileDeletedEvent,
                 DirMovedEvent,
             ),
