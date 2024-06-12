@@ -27,7 +27,7 @@ def download_version(
     msg = "Retrieving download link..."
     logging.debug(msg)
     if reporthook:
-        reporthook(Report(Report.PROGRESS, msg))
+        reporthook(Report(Report.Type.PROGRESS, msg))
     link = _get_link(secrets.choice(version.guids[architecture]))
     if not link:
         error_msg = "Couldn't retrieve a download link."

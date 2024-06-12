@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from urllib import request
 from uuid import uuid4
 
-from backend.report import ProgressDetails, Report
+from backend.report import Report
 
 if TYPE_CHECKING:
     from typing import Callable
@@ -47,12 +47,18 @@ def _get_urlretrieve_reporthook(
             return
 
         if total_size <= 0:
-            reporthook(Report(Report.PROGRESS, "Downloading..."))
+            reporthook(Report(Report.Type.PROGRESS, "Downloading..."))
             return
         read_so_far = round(float(block_num * block_size) / pow(1024, 2), 1)
         rounded_total_size = round(float(total_size) / pow(1024, 2), 1)
         if read_so_far > rounded_total_size:
             read_so_far = rounded_total_size
-        reporthook(Report(Report.PROGRESS, "Downloading...", ProgressDetails(read_so_far, rounded_total_size, "MB")))
+        reporthook(
+            Report(
+                Report.Type.PROGRESS,
+                "Downloading...",
+                Report.ProgressDetails(read_so_far, rounded_total_size, "MB"),
+            ),
+        )
 
     return urlretrieve_reporthook

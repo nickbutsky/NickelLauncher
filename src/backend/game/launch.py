@@ -30,7 +30,7 @@ def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] 
     try:
         logging.info('Launching instance "%s" at "%s"...', instance.name, instance.directory)
         if reporthook:
-            reporthook(Report(Report.PROGRESS, "Checking game files..."))
+            reporthook(Report(Report.Type.PROGRESS, "Checking game files..."))
         _grant_access(instance.directory, instance.version.user_sid, cancellation_token_source.token)
 
         if not instance.version.is_downloaded(instance.architecture_choice):
@@ -49,7 +49,7 @@ def launch(instance: Instance, id_: str, reporthook: Callable[[Report], object] 
 
         logging.info("Launching Minecraft %s...", instance.version.name)
         if reporthook:
-            reporthook(Report(Report.PROGRESS, "Launching Minecraft..."))
+            reporthook(Report(Report.Type.PROGRESS, "Launching Minecraft..."))
         packagemanager.launch_package(instance.version.pfn, "App", cancellation_token_source.token)
     except Cancelled:
         pass
@@ -75,13 +75,13 @@ def _install(
     reporthook: Callable[[Report], object] | None = None,
 ) -> None:
     if reporthook:
-        reporthook(Report(Report.PROGRESS, "Unlinking old version..."))
+        reporthook(Report(Report.Type.PROGRESS, "Unlinking old version..."))
     for package_dict in packagemanager.find_packages(version.pfn, cancellation_token):
         packagemanager.remove_package(package_dict, cancellation_token)
 
     logging.info("Installing Minecraft %s...", version.name)
     if reporthook:
-        reporthook(Report(Report.PROGRESS, "Installing Minecraft..."))
+        reporthook(Report(Report.Type.PROGRESS, "Installing Minecraft..."))
     packagemanager.add_package(version.packages[architecture], cancellation_token)
 
 
