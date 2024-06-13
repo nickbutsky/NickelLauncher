@@ -34,11 +34,8 @@ def find_packages(
     return deserialized_output
 
 
-def remove_package(package_dict: dict[object, object], cancellation_token: CancellationToken | None = None) -> None:
-    shell.run_command(
-        ("powershell", f"Remove-AppxPackage -Package {package_dict['PackageFullName']}"),
-        cancellation_token,
-    )
+def remove_package(package_full_name: str, cancellation_token: CancellationToken | None = None) -> None:
+    shell.run_command(("powershell", f"Remove-AppxPackage -Package {package_full_name}"), cancellation_token)
 
 
 def add_package(package: Path, cancellation_token: CancellationToken | None = None) -> None:
