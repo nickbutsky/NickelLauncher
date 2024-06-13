@@ -38,5 +38,5 @@ def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
     logging.basicConfig(
         format="%(asctime)s | %(threadName)-17s | %(levelname)-5s | %(name)-22s | %(lineno)06d | %(message)s",
         level=logging.DEBUG,
-        handlers=[handler],
+        handlers=[handler] if "__compiled__" in globals() else (handler, logging.StreamHandler()),
     )
