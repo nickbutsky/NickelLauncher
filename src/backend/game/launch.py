@@ -38,7 +38,7 @@ def launch(instance: Instance, reporthook: Callable[[Report], object] | None = N
         logging.info('Launching instance "%s" at "%s"...', instance.name, instance.directory)
         if reporthook:
             reporthook(Report(Report.Type.PROGRESS, "Checking game files..."))
-        _grant_access(instance.directory, instance.version.user_sid, cancellation_token_source.token)
+        _grant_access(instance.directory / "com.mojang", instance.version.user_sid, cancellation_token_source.token)
 
         if not instance.version.is_downloaded(instance.architecture_choice):
             logging.info("Downloading Minecraft %s...", instance.version.name)
