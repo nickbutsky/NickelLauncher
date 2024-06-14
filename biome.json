@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "ignore": [
+      "node_modules/",
+      "src/frontend/components/shadcn/",
+      "src/bundled-frontend/",
+      "postcss.config.js",
+      "tailwind.config.js"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "lineWidth": 120
+  },
+  "javascript": {
+    "globals": [
+      "pywebview"
+    ]
+  },
+  "linter": {
+    "rules": {
+      "all": true,
+      "nursery": {
+        "all": true,
+        "noReactSpecificProps": "off",
+        "noUndeclaredDependencies": "off"
+      },
+      "style": {
+        "noNamespaceImport": "off",
+        "useNamingConvention": {
+          "level": "warn",
+          "options": {
+            "strictCase": false
+          }
+        }
+      }
+    }
+  }
+}
