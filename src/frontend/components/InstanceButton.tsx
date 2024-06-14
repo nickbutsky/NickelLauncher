@@ -325,28 +325,58 @@ function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: strin
   );
 
   return (
-    <DialogContent closeable={false}>
-      <div className="flex">
-        <div>{report?.text}</div>
-        <div className="flex-1" />
-        {report?.details && (
-          <div>{`${report?.details?.processed.toFixed(1)}/${report?.details?.totalsize.toFixed(1)} ${
-            report?.details?.unit
-          }`}</div>
+    <>
+      <DialogContent closeable={false}>
+        <div className="flex">
+          <div>{report?.text}</div>
+          <div className="flex-1" />
+          {report?.details && (
+            <div>{`${report.details.processed.toFixed(1)}/${report.details.totalsize.toFixed(1)} ${
+              report.details.unit
+            }`}</div>
+          )}
+        </div>
+        {report?.details ? (
+          <Progress value={report.details.processed} max={report.details.totalsize} />
+        ) : (
+          <div className="h-2 w-full overflow-hidden rounded-full bg-primary/20">
+            <div className="progress left-right h-full w-full bg-primary" />
+          </div>
         )}
-      </div>
-      <Progress value={report?.details?.processed} max={report?.details?.totalsize} />
-      <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
-      <Button
-        variant="secondary"
-        disabled={cancelling}
-        onClick={() => {
-          setCancelling(true);
-          pywebview.api.cancelInstanceLaunch();
-        }}
-      >
-        Abort
-      </Button>
-    </DialogContent>
+        <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
+        <Button
+          variant="secondary"
+          disabled={cancelling}
+          onClick={() => {
+            setCancelling(true);
+            pywebview.api.cancelInstanceLaunch();
+          }}
+        >
+          Abort
+        </Button>
+      </DialogContent>
+      <style>
+        {`
+          .progress {
+            animation: progress 1s infinite linear;
+          }
+
+          .left-right {
+              transform-origin: 0% 50%;
+          }
+              @keyframes progress {
+              0% {
+                  transform:  translateX(0) scaleX(0);
+              }
+              40% {
+                  transform:  translateX(0) scaleX(0.4);
+              }
+              100% {
+                  transform:  translateX(100%) scaleX(0.5);
+              }
+          }
+        `}
+      </style>
+    </>
   );
 }
