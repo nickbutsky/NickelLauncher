@@ -38,7 +38,7 @@ def launch(instance: Instance, reporthook: Callable[[Report], object] | None = N
         logging.info('Launching instance "%s" at "%s"...', instance.name, instance.directory)
         if reporthook:
             reporthook(Report(Report.Type.PROGRESS, "Checking game files..."))
-        _grant_access(instance.directory / "com.mojang", instance.version.user_sid, cancellation_token_source.token)
+        _grant_access(instance.directory / "com.mojang", instance.version.user_sid)
 
         if not instance.version.is_downloaded(instance.architecture_choice):
             logging.info("Downloading Minecraft %s...", instance.version.name)
@@ -83,8 +83,8 @@ class _LaunchingState:
 _launching_state: _LaunchingState = _LaunchingState(None, None)
 
 
-def _grant_access(directory: Path, user_sid: str, cancellation_token: CancellationToken | None = None) -> None:
-    shell.run_command(f'icacls "{directory}" /grant:r *{user_sid}:(OI)(CI)F /t', cancellation_token, False)
+def _grant_access(directory: Path, user_sid: str) -> None:
+    shell.run_command(f'icacls "{directory}" /grant:r *{user_sid}:(OI)(CI)F /t', log_stdout=False)
 
 
 def _install(
