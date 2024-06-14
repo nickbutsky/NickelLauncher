@@ -35,7 +35,7 @@ def find_packages(
 
 
 def remove_package(package_full_name: str, cancellation_token: CancellationToken | None = None) -> None:
-    shell.run_command(("powershell", f"Remove-AppxPackage -Package {package_full_name}"), cancellation_token)
+    shell.run_command(("powershell", f'Remove-AppxPackage -Package "{package_full_name}"'), cancellation_token)
 
 
 def add_package(package: Path, cancellation_token: CancellationToken | None = None) -> None:
