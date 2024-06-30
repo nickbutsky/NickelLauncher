@@ -28,11 +28,7 @@ def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
         filename = (filename.replace(".log", "") + ".log").lstrip(".")
         return str(Path(parent_directory_path) / filename)
 
-    handler = RotatingFileHandler(
-        logs_directory / (filename_base + ".log"),
-        maxBytes=1024 * 200,
-        backupCount=15,
-    )
+    handler = RotatingFileHandler(logs_directory / (filename_base + ".log"), maxBytes=1024 * 200, backupCount=15)
     handler.namer = namer
 
     logging.basicConfig(
