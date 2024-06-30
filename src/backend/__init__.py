@@ -29,7 +29,7 @@ def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
         return str(Path(parent_directory_path) / filename)
 
     handler = RotatingFileHandler(
-        str(logs_directory / (filename_base + ".log")),
+        logs_directory / (filename_base + ".log"),
         maxBytes=1024 * 200,
         backupCount=15,
     )
