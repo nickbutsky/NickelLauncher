@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from ordered_set import OrderedSet
 
 if TYPE_CHECKING:
-    from typing import Callable, Sequence
+    from collections.abc import Callable, Sequence
 
     from backend.core.instance import Instance
 

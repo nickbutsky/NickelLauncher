@@ -9,7 +9,7 @@ from backend.net import request, soap
 from backend.report import Report
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from collections.abc import Callable
 
     from backend.cancellationtoken import CancellationToken
     from backend.core.version import Architecture, Version

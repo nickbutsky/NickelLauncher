@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import os
-import typing
 from itertools import chain
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from . import game, instancemanager, versionretrieve
 from .core.version import VersionType
@@ -136,7 +135,7 @@ class API:
         )
 
 
-@typing.runtime_checkable
+@runtime_checkable
 class FrontendAPI(Protocol):
     @property
     def static(self) -> FrontendAPIStatic: ...

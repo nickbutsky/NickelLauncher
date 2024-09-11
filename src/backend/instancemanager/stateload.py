@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import string
-import typing
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
@@ -13,8 +12,9 @@ from backend.core.version import Architecture
 from .state import State
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from pathlib import Path
-    from typing import Iterable, Self
+    from typing import Self
 
     from backend.core.version import Version
 
@@ -186,7 +186,7 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
     return Instance(
         instance_model.name,
         version,
-        typing.cast(Architecture, instance_model.version.architecture_choice),
+        cast(Architecture, instance_model.version.architecture_choice),
         directory,
     )
 

@@ -10,7 +10,7 @@ from uuid import uuid4
 from backend.report import Report
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from collections.abc import Callable
 
     from backend.cancellationtoken import CancellationToken
 
