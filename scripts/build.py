@@ -47,8 +47,8 @@ def main() -> None:
 
 def compile_app(name: str, company_name: str, version: str) -> None:
     subprocess.run(("powershell", "vite build"), check=True)  # noqa: S603
-    subprocess.run(
-        (  # noqa: S603
+    subprocess.run(  # noqa: S603
+        (
             "powershell",
             "nuitka",
             f'--output-filename="{name}"',
@@ -100,8 +100,8 @@ def build_installer(iscc_executable: Path, name: str, publisher: str, version: s
         (archive.parent / "UninsIS.dll").replace(uninsis_dll)
         shutil.rmtree(archive.parent, True)
 
-    subprocess.run(
-        (  # noqa: S603
+    subprocess.run(  # noqa: S603
+        (
             "powershell",
             f'&"{iscc_executable}"',
             f'/DAppName="{name}"',
