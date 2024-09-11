@@ -9,8 +9,8 @@ from ordered_set import OrderedSet
 from backend import packagemanager
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
     from pathlib import Path
-    from typing import Mapping, Sequence
 
 
 class VersionType(StrEnum):

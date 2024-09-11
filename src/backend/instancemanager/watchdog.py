@@ -9,8 +9,8 @@ from watchdog.events import DirCreatedEvent, DirMovedEvent, FileDeletedEvent, Fi
 from watchdog.observers import Observer
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Generator
     from pathlib import Path
-    from typing import Callable, Generator
 
 
 class Watchdog:

@@ -11,8 +11,8 @@ import pathvalidate
 from .cancellationtoken import Cancelled
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from pathlib import Path
-    from typing import Sequence
 
     from cancellationtoken import CancellationToken
 

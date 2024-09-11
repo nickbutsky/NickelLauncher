@@ -13,8 +13,8 @@ from . import stateload as _stateload
 from .watchdog import Watchdog as _Watchdog
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
     from pathlib import Path
-    from typing import Callable, Sequence
 
     from backend.core.instance import Instance
     from backend.core.version import Version

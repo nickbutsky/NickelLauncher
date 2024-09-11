@@ -10,7 +10,7 @@ from uuid import uuid4
 from backend.report import Report
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from collections.abc import Callable
 
     from backend.cancellationtoken import CancellationToken
 
@@ -49,15 +49,16 @@ def _get_urlretrieve_reporthook(
         if total_size <= 0:
             reporthook(Report(Report.Type.PROGRESS, "Downloading..."))
             return
-        read_so_far = round(float(block_num * block_size) / pow(1024, 2), 1)
         rounded_total_size = round(float(total_size) / pow(1024, 2), 1)
-        if read_so_far > rounded_total_size:
-            read_so_far = rounded_total_size
         reporthook(
             Report(
                 Report.Type.PROGRESS,
                 "Downloading...",
-                Report.ProgressDetails(read_so_far, rounded_total_size, "MB"),
+                Report.ProgressDetails(
+                    min(round(float(block_num * block_size) / pow(1024, 2), 1), rounded_total_size),
+                    rounded_total_size,
+                    "MB",
+                ),
             ),
         )
 
