@@ -14,7 +14,7 @@ from tendo.singleton import SingleInstance
 from webview.platforms.winforms import (  # pyright: ignore [reportMissingTypeStubs]
     BrowserView,
     Icon,  # pyright: ignore [reportAttributeAccessIssue, reportUnknownVariableType]
-    WinForms,
+    WinForms,  # pyright: ignore [reportPrivateImportUsage]
 )
 
 import backend
@@ -67,10 +67,13 @@ class GeometryModel(BaseModel):
 
 def get_geometry_model() -> GeometryModel:
     try:
-        with winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r, winreg.OpenKey(
-            r,
-            r"Software\Nickel59\NickelLauncher",
-        ) as k:
+        with (
+            winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r,
+            winreg.OpenKey(
+                r,
+                r"Software\Nickel59\NickelLauncher",
+            ) as k,
+        ):
             value, type_id = winreg.QueryValueEx(k, "geometry")
     except FileNotFoundError:
         return GeometryModel()
@@ -97,11 +100,14 @@ def save_geometry(window: webview.Window) -> None:
     dpi_for_window_to_divisor: dict[int, float] = {96: 1, 120: 1.25, 144: 1.5, 192: 2}
     divisor = dpi_for_window_to_divisor[ctypes.windll.user32.GetDpiForWindow(form.Handle.ToInt32())]  # pyright: ignore [reportUnknownMemberType]
 
-    with winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r, winreg.CreateKeyEx(
-        r,
-        r"Software\Nickel59\NickelLauncher",
-        access=winreg.KEY_SET_VALUE,
-    ) as k:
+    with (
+        winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r,
+        winreg.CreateKeyEx(
+            r,
+            r"Software\Nickel59\NickelLauncher",
+            access=winreg.KEY_SET_VALUE,
+        ) as k,
+    ):
         winreg.SetValueEx(
             k,
             "geometry",
