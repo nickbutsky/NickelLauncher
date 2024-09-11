@@ -236,8 +236,8 @@ function ChangeVersionDialogContent({
             <FormControl>
               <VersionSelector
                 className="h-72"
-                versionsByType={appContext.versionsByType}
-                onRefreshRequest={() => appContext.reloadVersionsByType(true)}
+                versionTypeToVersions={appContext.versionTypeToVersions}
+                onRefreshRequest={() => appContext.reloadVersionTypeToVersions(true)}
                 defaultDisplayName={field.value}
                 onDisplayNameChange={field.onChange}
               />

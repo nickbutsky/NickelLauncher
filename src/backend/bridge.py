@@ -40,7 +40,7 @@ class API:
         instance = instancemanager.get_last_instance()
         return instance.directory.name if instance else None
 
-    def getVersionsByType(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
+    def getVersionTypeToVersions(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
         return {
             version_type: [
                 {"displayName": version.display_name, "availableArchitectures": list(version.available_architectures)}

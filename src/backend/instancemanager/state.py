@@ -29,10 +29,10 @@ class State:
         return self._last_instance
 
     @last_instance.setter
-    def last_instance(self, last_instance: Instance) -> None:
-        if last_instance == self.last_instance:
+    def last_instance(self, value: Instance) -> None:
+        if value == self.last_instance:
             return
-        self._last_instance = last_instance
+        self._last_instance = value
         self._save()
 
     @property
@@ -40,7 +40,7 @@ class State:
         return tuple(self._instance_groups)
 
     def add_instance_group(self, group: InstanceGroup) -> None:
-        if group.name in [group.name for group in self.instance_groups]:
+        if group.name in (group.name for group in self.instance_groups):
             error_msg = f'An instance group with the name "{group.name}" already exists.'
             raise ValueError(error_msg)
         if group.unnamed:

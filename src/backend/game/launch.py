@@ -100,7 +100,7 @@ def _install(
     logging.info("Installing Minecraft %s...", version.name)
     if reporthook:
         reporthook(Report(Report.Type.PROGRESS, "Installing Minecraft..."))
-    packagemanager.add_package(version.packages[architecture], cancellation_token)
+    packagemanager.add_package(version.architecture_to_package[architecture], cancellation_token)
 
 
 def _relink_game_files(instance: Instance, cancellation_token: CancellationToken | None = None) -> None:

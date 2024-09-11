@@ -28,7 +28,7 @@ def download_version(
     logging.debug(msg)
     if reporthook:
         reporthook(Report(Report.Type.PROGRESS, msg))
-    link = _get_link(secrets.choice(version.guids[architecture]))
+    link = _get_link(secrets.choice(version.architecture_to_guids[architecture]))
     if not link:
         error_msg = "Couldn't retrieve a download link."
         logging.error(error_msg)
@@ -37,8 +37,8 @@ def download_version(
     if cancellation_token:
         cancellation_token.check()
 
-    logging.debug('Downloading package to "%s"...', version.packages[architecture])
-    request.download_file(link, version.packages[architecture], cancellation_token, reporthook)
+    logging.debug('Downloading package to "%s"...', version.architecture_to_package[architecture])
+    request.download_file(link, version.architecture_to_package[architecture], cancellation_token, reporthook)
 
 
 class LinkRetrievalError(Exception):

@@ -9,6 +9,7 @@ import { ErrorDialog } from "@/components/nickel/ErrorDialog";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
 import { ThemeProvider } from "@/components/shadcn/theme-provider";
+import type { VersionTypeToVersions } from "@/core-types";
 import { useReliableAsyncFunction, useTrigger } from "@/utils";
 
 export const AppContext = React.createContext<
@@ -16,8 +17,8 @@ export const AppContext = React.createContext<
     DeepReadonly<{
       instanceGroups: Awaited<ReturnType<typeof pywebview.api.getInstanceGroups>>;
       reloadInstanceGroups: () => Promise<void>;
-      versionsByType: Awaited<ReturnType<typeof pywebview.api.getVersionsByType>>;
-      reloadVersionsByType: (remotely: boolean) => Promise<void>;
+      versionTypeToVersions: VersionTypeToVersions;
+      reloadVersionTypeToVersions: (remotely: boolean) => Promise<void>;
 
       scrollToInstance: (dirname: string) => void;
       instanceDirnameToScrollTo: string | null;
@@ -30,8 +31,8 @@ export const AppContext = React.createContext<
 
   instanceGroups: [],
   reloadInstanceGroups: () => Promise.resolve(),
-  versionsByType: { release: [], beta: [], preview: [] },
-  reloadVersionsByType: () => Promise.resolve(),
+  versionTypeToVersions: { release: [], beta: [], preview: [] },
+  reloadVersionTypeToVersions: () => Promise.resolve(),
 
   scrollToInstance: () => undefined,
   instanceDirnameToScrollTo: null,
@@ -53,8 +54,8 @@ export function App() {
     pywebview.api.getInstanceGroups,
     [],
   );
-  const [versionsByType, versionsByTypeReady, reuseGetVersionsByType] = useReliableAsyncFunction(
-    pywebview.api.getVersionsByType,
+  const [versionTypeToVersions, versionTypeToVersionsReady, reuseGetVersionTypeToVersions] = useReliableAsyncFunction(
+    pywebview.api.getVersionTypeToVersions,
     [],
   );
   const [lastInstanceDirname, lastInstanceDirnameReady] = useReliableAsyncFunction(
@@ -82,31 +83,31 @@ export function App() {
     fireScrollTrigger();
   }, []);
 
-  if (!(groupsReady && versionsByTypeReady && lastInstanceDirnameReady)) {
+  if (!(groupsReady && versionTypeToVersionsReady && lastInstanceDirnameReady)) {
     return;
   }
 
-  const appContext: React.ContextType<typeof AppContext> = {
-    refreshMainArea: fireMainAreaRefreshTrigger,
-
-    instanceGroups,
-    reloadInstanceGroups: () => reuseGetInstanceGroups([]),
-    versionsByType,
-    reloadVersionsByType: (remotely?: boolean) => reuseGetVersionsByType([remotely]),
-
-    scrollToInstance,
-    instanceDirnameToScrollTo,
-    scrollTrigger,
-
-    showErrorDialog: (msg) => {
-      errorMsg.current = msg;
-      fireErrorDialogTrigger();
-    },
-  };
-
   return (
     <ThemeProvider defaultTheme="dark">
-      <AppContext.Provider value={appContext}>
+      <AppContext.Provider
+        value={{
+          refreshMainArea: fireMainAreaRefreshTrigger,
+
+          instanceGroups,
+          reloadInstanceGroups: () => reuseGetInstanceGroups([]),
+          versionTypeToVersions,
+          reloadVersionTypeToVersions: (remotely?: boolean) => reuseGetVersionTypeToVersions([remotely]),
+
+          scrollToInstance,
+          instanceDirnameToScrollTo,
+          scrollTrigger,
+
+          showErrorDialog: (msg) => {
+            errorMsg.current = msg;
+            fireErrorDialogTrigger();
+          },
+        }}
+      >
         <MainArea refreshTrigger={mainAreaRefreshTrigger} />
         <Dialog>
           <DialogTrigger asChild={true}>

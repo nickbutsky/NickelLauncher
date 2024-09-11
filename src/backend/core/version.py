@@ -29,8 +29,8 @@ class Architecture(StrEnum):
 class Version:
     name: str
     type: VersionType
-    guids: Mapping[Architecture, Sequence[str]]
-    packages: Mapping[Architecture, Path]
+    architecture_to_guids: Mapping[Architecture, Sequence[str]]
+    architecture_to_package: Mapping[Architecture, Path]
 
     @property
     def display_name(self) -> str:
@@ -46,7 +46,7 @@ class Version:
 
     @property
     def available_architectures(self) -> OrderedSet[Architecture]:
-        return OrderedSet(self.guids.keys())
+        return OrderedSet(self.architecture_to_guids.keys())
 
     @property
     def pfn(self) -> str:
@@ -66,7 +66,7 @@ class Version:
 
     def is_downloaded(self, architecture: Architecture) -> bool:
         try:
-            return self.packages[architecture].is_file()
+            return self.architecture_to_package[architecture].is_file()
         except KeyError:
             raise UnavailableArchitectureError from None
 

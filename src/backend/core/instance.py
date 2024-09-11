@@ -30,11 +30,11 @@ class Instance:
         return self._name
 
     @name.setter
-    def name(self, name: str) -> None:
-        stripped_name = name.strip()
-        if stripped_name == self.name:
+    def name(self, value: str) -> None:
+        name = value.strip()
+        if name == self.name:
             return
-        self._name = stripped_name
+        self._name = name
         self._save()
 
     @property
@@ -42,12 +42,12 @@ class Instance:
         return self._version
 
     @version.setter
-    def version(self, version: Version) -> None:
-        if version == self.version:
+    def version(self, value: Version) -> None:
+        if value == self.version:
             return
-        self._version = version
-        if self.architecture_choice not in self.version.available_architectures:
-            self.architecture_choice = self.version.available_architectures[0]
+        self._version = value
+        if self.architecture_choice not in value.available_architectures:
+            self.architecture_choice = value.available_architectures[0]
         self._save()
 
     @property
@@ -55,12 +55,12 @@ class Instance:
         return self._architecture_choice
 
     @architecture_choice.setter
-    def architecture_choice(self, architecture: Architecture) -> None:
-        if architecture == self.architecture_choice:
+    def architecture_choice(self, value: Architecture) -> None:
+        if value == self.architecture_choice:
             return
-        if architecture not in self.version.available_architectures:
+        if value not in self.version.available_architectures:
             raise UnavailableArchitectureError
-        self._architecture_choice = architecture
+        self._architecture_choice = value
         self._save()
 
     @property

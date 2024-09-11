@@ -1,6 +1,6 @@
 import type { DeepReadonly, MarkWritable } from "ts-essentials";
 
-import type { InstanceGroup, VersionsByType } from "@/core-types";
+import type { InstanceGroup, VersionTypeToVersions } from "@/core-types";
 
 export function exposeStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
   if (exposedStaticFunctionNames.has(name)) {
@@ -27,7 +27,7 @@ declare global {
     api: {
       getInstanceGroups: () => Promise<DeepReadonly<InstanceGroup[]>>;
       getLastInstanceDirname: () => Promise<string | null>;
-      getVersionsByType: (remotely?: boolean) => Promise<DeepReadonly<VersionsByType>>;
+      getVersionTypeToVersions: (remotely?: boolean) => Promise<DeepReadonly<VersionTypeToVersions>>;
       renameInstanceGroup: (oldName: string, newName: string) => Promise<void>;
       toggleInstanceGroupHidden: (name: string) => Promise<void>;
       deleteInstanceGroup: (name: string) => Promise<void>;

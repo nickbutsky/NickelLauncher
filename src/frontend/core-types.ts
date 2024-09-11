@@ -12,7 +12,7 @@ export interface Version extends DeepReadonly<{ displayName: string; availableAr
 
 export const versionTypes = ["release", "beta", "preview"] as const;
 
-export type VersionsByType = DeepReadonly<{ [K in (typeof versionTypes)[number]]: Version[] }>;
+export type VersionTypeToVersions = DeepReadonly<{ [K in (typeof versionTypes)[number]]: Version[] }>;
 
 export interface InstanceGroup
   extends DeepReadonly<{

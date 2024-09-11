@@ -27,13 +27,13 @@ class InstanceGroup:
         return self._name
 
     @name.setter
-    def name(self, name: str) -> None:
+    def name(self, value: str) -> None:
         if self.unnamed:
             raise InvalidUnnamedInstanceGroupManipulationError
-        stripped_name = name.strip()
-        if stripped_name == self.name:
+        name = value.strip()
+        if name == self.name:
             return
-        self._name = stripped_name
+        self._name = name
         self._notify_subscribers()
 
     @property

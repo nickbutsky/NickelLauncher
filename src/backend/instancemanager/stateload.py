@@ -49,14 +49,13 @@ class _GroupsModel(BaseModel):
 
     @field_validator("last_instance")
     @classmethod
-    def _validate_last_instance_dirname(cls, last_instance_dirname: str | None) -> str | None:
-        if (last_instance_dirname is not None) and (
-            any(whitespace_character in last_instance_dirname for whitespace_character in string.whitespace)
-            or not last_instance_dirname
+    def _validate_last_instance_dirname(cls, value: str | None) -> str | None:
+        if (value is not None) and (
+            any(whitespace_character in value for whitespace_character in string.whitespace) or not value
         ):
             error_msg = "Whitespace and empty strings are not allowed."
             raise ValueError(error_msg)
-        return last_instance_dirname
+        return value
 
     @model_validator(mode="after")
     def _finish_validation(self) -> Self:
@@ -86,23 +85,23 @@ class _GroupModel(BaseModel):
 
     @field_validator("name")
     @classmethod
-    def _validate_name(cls, name: str) -> str:
-        if name.strip() != name:
+    def _validate_name(cls, value: str) -> str:
+        if value.strip() != value:
             error_msg = "Leading and trailing whitespace is not allowed."
             raise ValueError(error_msg)
-        return name
+        return value
 
     @field_validator("instances")
     @classmethod
-    def _validate_instance_dirnames(cls, instance_dirnames: list[str]) -> list[str]:
-        for instance_dirname in instance_dirnames:
+    def _validate_instance_dirnames(cls, value: list[str]) -> list[str]:
+        for instance_dirname in value:
             if (
                 any(whitespace_character in instance_dirname for whitespace_character in string.whitespace)
                 or not instance_dirname
             ):
                 error_msg = "Whitespace and empty strings are not allowed."
                 raise ValueError(error_msg)
-        return instance_dirnames
+        return value
 
 
 def _load_instance_groups(

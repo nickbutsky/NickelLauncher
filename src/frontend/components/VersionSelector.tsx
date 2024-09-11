@@ -6,12 +6,12 @@ import { Button } from "@/components/shadcn/button";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
-import { type Version, type VersionsByType, versionTypes } from "@/core-types";
+import { type Version, type VersionTypeToVersions, versionTypes } from "@/core-types";
 import { cn } from "@/utils";
 
 interface Props
   extends DeepReadonly<{
-    versionsByType: VersionsByType;
+    versionTypeToVersions: VersionTypeToVersions;
     onRefreshRequest: () => Promise<void>;
     defaultDisplayName?: string;
     onDisplayNameChange?: (displayName: string) => void;
@@ -22,7 +22,15 @@ export const VersionSelector = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof Tabs> & Props
 >(
   (
-    { className, defaultValue, versionsByType, onRefreshRequest, defaultDisplayName, onDisplayNameChange, ...props },
+    {
+      className,
+      defaultValue,
+      versionTypeToVersions,
+      onRefreshRequest,
+      defaultDisplayName,
+      onDisplayNameChange,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -31,7 +39,7 @@ export const VersionSelector = React.forwardRef<
         ref={ref}
         defaultValue={
           versionTypes.find((versionType) =>
-            versionsByType[versionType].find((version) => version.displayName === defaultDisplayName),
+            versionTypeToVersions[versionType].find((version) => version.displayName === defaultDisplayName),
           ) ?? versionTypes[0]
         }
         {...props}
@@ -47,7 +55,7 @@ export const VersionSelector = React.forwardRef<
             asChild={true}
           >
             <InnerVersionSelector
-              versions={versionsByType[versionType]}
+              versions={versionTypeToVersions[versionType]}
               defaultDisplayName={defaultDisplayName}
               onDisplayNameChange={onDisplayNameChange}
             />

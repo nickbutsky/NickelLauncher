@@ -23,7 +23,7 @@ export function InstanceCreationDialogContent() {
       defaultValues={{
         instanceName: "",
         groupName: "",
-        versionDisplayName: appContext.versionsByType.release[0]?.displayName ?? "",
+        versionDisplayName: appContext.versionTypeToVersions.release[0]?.displayName ?? "",
       }}
       onSubmitBeforeClose={(data) =>
         pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then((dirname) => {
@@ -66,8 +66,8 @@ export function InstanceCreationDialogContent() {
             <FormControl>
               <VersionSelector
                 className="h-60"
-                versionsByType={appContext.versionsByType}
-                onRefreshRequest={() => appContext.reloadVersionsByType(true)}
+                versionTypeToVersions={appContext.versionTypeToVersions}
+                onRefreshRequest={() => appContext.reloadVersionTypeToVersions(true)}
                 defaultDisplayName={field.value}
                 onDisplayNameChange={field.onChange}
               />
