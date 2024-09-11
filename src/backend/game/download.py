@@ -56,7 +56,7 @@ def _extract_link(response_envelope: Element) -> str:
     file_locations = response_envelope.find(
         "./{*}Body/{*}GetExtendedUpdateInfo2Response/{*}GetExtendedUpdateInfo2Result/{*}FileLocations",
     )
-    if not file_locations:
+    if file_locations is None:
         return ""
     for file_location in file_locations:
         url = file_location.findtext("./{*}Url")
