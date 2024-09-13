@@ -14,6 +14,7 @@ export function InstanceCreationDialogContent() {
   const versionTypeToVersions = useStore((state) => state.versionTypeToVersions);
   const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
   const instanceGroups = useStore((state) => state.instanceGroups);
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   return (
     <FormDialogContent
@@ -31,7 +32,7 @@ export function InstanceCreationDialogContent() {
       }}
       onSubmitBeforeClose={(data) =>
         pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then((dirname) => {
-          appContext.refreshMainArea();
+          reloadInstanceGroups();
           appContext.scrollToInstance(dirname);
         })
       }
