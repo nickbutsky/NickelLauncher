@@ -41,7 +41,7 @@ class API:
         return instance.directory.name if instance else None
 
     def getVersionTypeToVersions(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
-        versions = versionretrieve.get_versions_locally() if not remotely else versionretrieve.get_versions_remotely()
+        versions = versionretrieve.get_versions_remotely() if remotely else versionretrieve.get_versions_locally()
         return {
             version_type: [
                 {"displayName": version.display_name, "availableArchitectures": list(version.available_architectures)}
