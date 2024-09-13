@@ -52,6 +52,8 @@ export const InstanceButton = React.forwardRef<
   const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
   const [launchTrigger, fireLaunchTrigger] = useTrigger();
 
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
+
   useTriggerEffect(
     () => {
       if (appContext.instanceDirnameToScrollTo !== state.dirname || !buttonRef.current) {
@@ -118,7 +120,7 @@ export const InstanceButton = React.forwardRef<
           <ContextMenuRadioGroup
             value={state.architectureChoice}
             onValueChange={(value) =>
-              pywebview.api.changeArchitectureChoice(state.dirname, value).then(appContext.refreshMainArea)
+              pywebview.api.changeArchitectureChoice(state.dirname, value).then(reloadInstanceGroups)
             }
           >
             {state.version.availableArchitectures.map((architecture) => (
@@ -173,8 +175,8 @@ export const InstanceButton = React.forwardRef<
 });
 
 function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
-  const appContext = React.useContext(AppContext);
   const instanceGroups = useStore((state) => state.instanceGroups);
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   return (
     <FormDialogContent
@@ -188,7 +190,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
       onSubmitBeforeClose={(data) =>
         pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
       }
-      onSubmitAfterClose={appContext.refreshMainArea}
+      onSubmitAfterClose={reloadInstanceGroups}
     >
       <DialogFormField
         name="groupName"
@@ -216,9 +218,9 @@ function ChangeVersionDialogContent({
   dirname: string;
   currentVersionDisplayName: string;
 }>) {
-  const appContext = React.useContext(AppContext);
   const versionTypeToVersions = useStore((state) => state.versionTypeToVersions);
   const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   return (
     <FormDialogContent
@@ -229,7 +231,7 @@ function ChangeVersionDialogContent({
         versionDisplayName: currentVersionDisplayName,
       }}
       onSubmitBeforeClose={(data) =>
-        pywebview.api.changeVersion(dirname, data.versionDisplayName).then(appContext.refreshMainArea)
+        pywebview.api.changeVersion(dirname, data.versionDisplayName).then(reloadInstanceGroups)
       }
     >
       <DialogFormField
@@ -258,7 +260,7 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
   const dialogContentRef = React.useRef<React.ElementRef<typeof DialogContent>>(null);
   const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
 
-  const appContext = React.useContext(AppContext);
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   const copyInstance = React.useCallback(
@@ -268,7 +270,7 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
         dialogContentRef.current?.addEventListener(
           "animationend",
           () => {
-            appContext.refreshMainArea();
+            reloadInstanceGroups();
             setCopying(undefined);
           },
           { once: true },

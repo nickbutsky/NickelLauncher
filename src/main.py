@@ -44,8 +44,8 @@ class FrontendAPI:
 class FrontendAPIStatic:
     window: webview.Window
 
-    def reload_main_area(self) -> None:
-        self.window.evaluate_js("webview.static.reloadMainArea()")
+    def on_sudden_change(self) -> None:
+        self.window.evaluate_js("webview.static.onSuddenChange()")
 
 
 @dataclass(frozen=True, slots=True)

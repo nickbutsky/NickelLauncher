@@ -47,7 +47,7 @@ declare global {
 
 // biome-ignore lint/style/useNamingConvention: False positive
 export interface API {
-  readonly static: DeepReadonly<{ reloadMainArea: () => void }>;
+  readonly static: DeepReadonly<{ onSuddenChange: () => void }>;
   readonly temporary: {
     propelLaunchReport: (
       report: DeepReadonly<{
@@ -74,6 +74,6 @@ function notExposedTemporaryFunction() {
 const exposedStaticFunctionNames: Set<keyof API["static"]> = new Set();
 
 (window as unknown as { webview: API }).webview = {
-  static: { reloadMainArea: notExposedStaticFunction },
+  static: { onSuddenChange: notExposedStaticFunction },
   temporary: { propelLaunchReport: notExposedTemporaryFunction },
 };

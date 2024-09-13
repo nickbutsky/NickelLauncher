@@ -143,7 +143,7 @@ class FrontendAPI(Protocol):
 
 
 class FrontendAPIStatic(Protocol):
-    def reload_main_area(self) -> None: ...
+    def on_sudden_change(self) -> None: ...
 
 
 class FrontendAPITemporary(Protocol):

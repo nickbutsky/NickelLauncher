@@ -13,7 +13,7 @@ def main(frontend_api: bridge.FrontendAPI) -> None:
     _create_dirs()
     _setup_rotating_logger(ROOT / "logs", "nl")
     bridge.set_frontend_api(frontend_api)
-    instancemanager.initialise_watchdog(frontend_api.static.reload_main_area)
+    instancemanager.initialise_watchdog(frontend_api.static.on_sudden_change)
 
 
 def _create_dirs() -> None:
