@@ -3,12 +3,11 @@ import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
 import { type API, exposeStaticFunction } from "@/bridge";
-import { InstanceCreationDialogContent } from "@/components/InstanceCreationDialogContent";
-import { MainArea } from "@/components/MainArea";
-import { ErrorDialog } from "@/components/nickel/ErrorDialog";
+import { InstanceCreationDialogContent } from "@/components/instance-creation-dialog-content";
+import { MainArea } from "@/components/main-area";
+import { ErrorDialog } from "@/components/nickel/error-dialog";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
-import { ThemeProvider } from "@/components/shadcn/theme-provider";
 import type { VersionTypeToVersions } from "@/core-types";
 import { useReliableAsyncFunction, useTrigger } from "@/utils";
 
@@ -88,37 +87,35 @@ export function App() {
   }
 
   return (
-    <ThemeProvider defaultTheme="dark">
-      <AppContext.Provider
-        value={{
-          refreshMainArea: fireMainAreaRefreshTrigger,
+    <AppContext.Provider
+      value={{
+        refreshMainArea: fireMainAreaRefreshTrigger,
 
-          instanceGroups,
-          reloadInstanceGroups: () => reuseGetInstanceGroups([]),
-          versionTypeToVersions,
-          reloadVersionTypeToVersions: (remotely?: boolean) => reuseGetVersionTypeToVersions([remotely]),
+        instanceGroups,
+        reloadInstanceGroups: () => reuseGetInstanceGroups([]),
+        versionTypeToVersions,
+        reloadVersionTypeToVersions: (remotely?: boolean) => reuseGetVersionTypeToVersions([remotely]),
 
-          scrollToInstance,
-          instanceDirnameToScrollTo,
-          scrollTrigger,
+        scrollToInstance,
+        instanceDirnameToScrollTo,
+        scrollTrigger,
 
-          showErrorDialog: (msg) => {
-            errorMsg.current = msg;
-            fireErrorDialogTrigger();
-          },
-        }}
-      >
-        <MainArea refreshTrigger={mainAreaRefreshTrigger} />
-        <Dialog>
-          <DialogTrigger asChild={true}>
-            <Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">
-              <PlusIcon />
-            </Button>
-          </DialogTrigger>
-          <InstanceCreationDialogContent />
-        </Dialog>
-        <ErrorDialog msg={errorMsg.current} trigger={errorDialogTrigger} />
-      </AppContext.Provider>
-    </ThemeProvider>
+        showErrorDialog: (msg) => {
+          errorMsg.current = msg;
+          fireErrorDialogTrigger();
+        },
+      }}
+    >
+      <MainArea refreshTrigger={mainAreaRefreshTrigger} />
+      <Dialog>
+        <DialogTrigger asChild={true}>
+          <Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">
+            <PlusIcon />
+          </Button>
+        </DialogTrigger>
+        <InstanceCreationDialogContent />
+      </Dialog>
+      <ErrorDialog msg={errorMsg.current} trigger={errorDialogTrigger} />
+    </AppContext.Provider>
   );
 }

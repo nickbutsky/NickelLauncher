@@ -3,13 +3,12 @@ import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
 
-import { AppContext } from "@/App";
+import { AppContext } from "@/app";
 import defaultLogo from "@/assets/default.png";
 import { type API, exposeTemporaryFunction } from "@/bridge";
-import { VersionSelector } from "@/components/VersionSelector";
-import { EditableLabel } from "@/components/nickel/EditableLabel";
-import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDialogContent";
-import { InputWithOptions } from "@/components/nickel/InputWithOptions";
+import { EditableLabel } from "@/components/nickel/editable-label";
+import { DialogFormField, FormDialogContent } from "@/components/nickel/form-dialog-content";
+import { InputWithOptions } from "@/components/nickel/input-with-options";
 import { Button } from "@/components/shadcn/button";
 import {
   ContextMenu,
@@ -31,6 +30,7 @@ import {
 } from "@/components/shadcn/dialog";
 import { FormControl, FormItem } from "@/components/shadcn/form";
 import { Progress } from "@/components/shadcn/progress";
+import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
 import { cn, useTrigger, useTriggerEffect } from "@/utils";
 
@@ -340,7 +340,7 @@ function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: strin
           <Progress value={report.details.processed} max={report.details.totalsize} />
         ) : (
           <div className="h-2 w-full overflow-hidden rounded-full bg-primary/20">
-            <div className="progress left-right h-full w-full bg-primary" />
+            <div className="progress h-full w-full bg-primary" />
           </div>
         )}
         <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
@@ -359,21 +359,19 @@ function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: strin
         {`
           .progress {
             animation: progress 1s infinite linear;
+            transform-origin: 0% 50%;
           }
 
-          .left-right {
-              transform-origin: 0% 50%;
-          }
-              @keyframes progress {
-              0% {
-                  transform:  translateX(0) scaleX(0);
-              }
-              40% {
-                  transform:  translateX(0) scaleX(0.4);
-              }
-              100% {
-                  transform:  translateX(100%) scaleX(0.5);
-              }
+          @keyframes progress {
+            0% {
+              transform: translateX(0) scaleX(0);
+            }
+            40% {
+              transform: translateX(0) scaleX(0.4);
+            }
+            100% {
+              transform: translateX(100%) scaleX(0.5);
+            }
           }
         `}
       </style>

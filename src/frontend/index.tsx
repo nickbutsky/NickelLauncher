@@ -1,15 +1,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 
-import { App } from "@/App";
+import { App } from "@/app";
 import "@/bridge";
+import { ThemeProvider } from "@/components/shadcn/theme-provider";
 import "@/dev-mocks";
 import "@/globals.css";
 
 function createRoot() {
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
-      <App />
+      <ThemeProvider defaultTheme="dark">
+        <App />
+      </ThemeProvider>
     </React.StrictMode>,
   );
 }

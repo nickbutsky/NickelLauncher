@@ -116,8 +116,8 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
         onChange={(event) => {
           const trimmedValue = event.currentTarget.value.trimStart();
           const selectionRange = [
-            event.currentTarget.value !== trimmedValue ? 0 : event.currentTarget.selectionStart,
-            event.currentTarget.value !== trimmedValue ? 0 : event.currentTarget.selectionEnd,
+            event.currentTarget.value === trimmedValue ? event.currentTarget.selectionStart : 0,
+            event.currentTarget.value === trimmedValue ? event.currentTarget.selectionEnd : 0,
             event.currentTarget.selectionDirection === null ? undefined : event.currentTarget.selectionDirection,
           ] as const;
           event.currentTarget.value = trimmedValue;

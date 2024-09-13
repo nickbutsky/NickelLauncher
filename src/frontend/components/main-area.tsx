@@ -1,8 +1,8 @@
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
-import { AppContext } from "@/App";
-import { InstanceGroupCollapsible } from "@/components/InstanceGroupCollapsible";
+import { AppContext } from "@/app";
+import { InstanceGroupCollapsible } from "@/components/instance-group-collapsible";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { useTriggerEffect } from "@/utils";
 

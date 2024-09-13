@@ -1,12 +1,12 @@
 import * as React from "react";
 import { z } from "zod";
 
-import { AppContext } from "@/App";
-import { VersionSelector } from "@/components/VersionSelector";
-import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDialogContent";
-import { InputWithOptions } from "@/components/nickel/InputWithOptions";
+import { AppContext } from "@/app";
+import { DialogFormField, FormDialogContent } from "@/components/nickel/form-dialog-content";
+import { InputWithOptions } from "@/components/nickel/input-with-options";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input";
+import { VersionSelector } from "@/components/version-selector";
 
 export function InstanceCreationDialogContent() {
   const appContext = React.useContext(AppContext);

@@ -2,9 +2,9 @@ import { CaretDownIcon } from "@radix-ui/react-icons";
 import * as React from "react";
 import type { DeepReadonly } from "ts-essentials";
 
-import { AppContext } from "@/App";
-import { InstanceButton } from "@/components/InstanceButton";
-import { EditableLabel } from "@/components/nickel/EditableLabel";
+import { AppContext } from "@/app";
+import { InstanceButton } from "@/components/instance-button";
+import { EditableLabel } from "@/components/nickel/editable-label";
 import { Button } from "@/components/shadcn/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/shadcn/collapsible";
 import {
