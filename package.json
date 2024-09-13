@@ -34,7 +34,8 @@
     "react-hook-form": "^7",
     "tailwind-merge": "^2",
     "tailwindcss-animate": "^1",
-    "zod": "^3"
+    "zod": "^3",
+    "zustand": "^4"
   },
   "devDependencies": {
     "@biomejs/biome": "1.7.1",

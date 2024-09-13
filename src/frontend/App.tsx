@@ -8,17 +8,11 @@ import { MainArea } from "@/components/main-area";
 import { ErrorDialog } from "@/components/nickel/error-dialog";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
-import type { VersionTypeToVersions } from "@/core-types";
 import { useReliableAsyncFunction, useTrigger } from "@/utils";
 
 export const AppContext = React.createContext<
   DeepReadonly<{ refreshMainArea: API["static"]["reloadMainArea"] }> &
     DeepReadonly<{
-      instanceGroups: Awaited<ReturnType<typeof pywebview.api.getInstanceGroups>>;
-      reloadInstanceGroups: () => Promise<void>;
-      versionTypeToVersions: VersionTypeToVersions;
-      reloadVersionTypeToVersions: (remotely: boolean) => Promise<void>;
-
       scrollToInstance: (dirname: string) => void;
       instanceDirnameToScrollTo: string | null;
       scrollTrigger: boolean;
@@ -27,11 +21,6 @@ export const AppContext = React.createContext<
     }>
 >({
   refreshMainArea: () => undefined,
-
-  instanceGroups: [],
-  reloadInstanceGroups: () => Promise.resolve(),
-  versionTypeToVersions: { release: [], beta: [], preview: [] },
-  reloadVersionTypeToVersions: () => Promise.resolve(),
 
   scrollToInstance: () => undefined,
   instanceDirnameToScrollTo: null,
@@ -49,14 +38,6 @@ export function App() {
   const [scrollTrigger, fireScrollTrigger] = useTrigger();
   const [errorDialogTrigger, fireErrorDialogTrigger] = useTrigger();
 
-  const [instanceGroups, groupsReady, reuseGetInstanceGroups] = useReliableAsyncFunction(
-    pywebview.api.getInstanceGroups,
-    [],
-  );
-  const [versionTypeToVersions, versionTypeToVersionsReady, reuseGetVersionTypeToVersions] = useReliableAsyncFunction(
-    pywebview.api.getVersionTypeToVersions,
-    [],
-  );
   const [lastInstanceDirname, lastInstanceDirnameReady] = useReliableAsyncFunction(
     pywebview.api.getLastInstanceDirname,
     [],
@@ -82,7 +63,7 @@ export function App() {
     fireScrollTrigger();
   }, []);
 
-  if (!(groupsReady && versionTypeToVersionsReady && lastInstanceDirnameReady)) {
+  if (!lastInstanceDirnameReady) {
     return;
   }
 
@@ -90,11 +71,6 @@ export function App() {
     <AppContext.Provider
       value={{
         refreshMainArea: fireMainAreaRefreshTrigger,
-
-        instanceGroups,
-        reloadInstanceGroups: () => reuseGetInstanceGroups([]),
-        versionTypeToVersions,
-        reloadVersionTypeToVersions: (remotely?: boolean) => reuseGetVersionTypeToVersions([remotely]),
 
         scrollToInstance,
         instanceDirnameToScrollTo,

@@ -32,6 +32,7 @@ import { FormControl, FormItem } from "@/components/shadcn/form";
 import { Progress } from "@/components/shadcn/progress";
 import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
+import { useStore } from "@/store";
 import { cn, useTrigger, useTriggerEffect } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
@@ -173,6 +174,7 @@ export const InstanceButton = React.forwardRef<
 
 function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
   const appContext = React.useContext(AppContext);
+  const instanceGroups = useStore((state) => state.instanceGroups);
 
   return (
     <FormDialogContent
@@ -181,8 +183,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
       schema={z.object({ groupName: z.string() })}
       defaultValues={{
         groupName:
-          appContext.instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))
-            ?.name ?? "",
+          instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
       }}
       onSubmitBeforeClose={(data) =>
         pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
@@ -197,7 +198,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
               <InputWithOptions
                 placeholder="Group name"
                 maxLength={50}
-                options={appContext.instanceGroups.map((group) => group.name).filter((name) => name !== "")}
+                options={instanceGroups.map((group) => group.name).filter((name) => name !== "")}
                 {...field}
               />
             </FormControl>
@@ -216,6 +217,8 @@ function ChangeVersionDialogContent({
   currentVersionDisplayName: string;
 }>) {
   const appContext = React.useContext(AppContext);
+  const versionTypeToVersions = useStore((state) => state.versionTypeToVersions);
+  const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
 
   return (
     <FormDialogContent
@@ -236,8 +239,8 @@ function ChangeVersionDialogContent({
             <FormControl>
               <VersionSelector
                 className="h-72"
-                versionTypeToVersions={appContext.versionTypeToVersions}
-                onRefreshRequest={() => appContext.reloadVersionTypeToVersions(true)}
+                versionTypeToVersions={versionTypeToVersions}
+                onRefreshRequest={async () => reloadVersionTypeToVersions(true)}
                 defaultDisplayName={field.value}
                 onDisplayNameChange={field.onChange}
               />
