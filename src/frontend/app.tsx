@@ -62,37 +62,35 @@ export function App() {
     fireScrollTrigger();
   }, []);
 
-  if (!ready) {
-    return;
-  }
-
   return (
-    <AppContext.Provider
-      value={{
-        scrollToInstance,
-        instanceDirnameToScrollTo,
-        scrollTrigger,
+    ready && (
+      <AppContext.Provider
+        value={{
+          scrollToInstance,
+          instanceDirnameToScrollTo,
+          scrollTrigger,
 
-        showErrorDialog: (msg) => {
-          errorMsg.current = msg;
-          fireErrorDialogTrigger();
-        },
-      }}
-    >
-      <ScrollArea className="h-screen" type="always">
-        {instanceGroups.map((group) => (
-          <InstanceGroupCollapsible key={group.name} state={group} />
-        ))}
-      </ScrollArea>
-      <Dialog>
-        <DialogTrigger asChild={true}>
-          <Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">
-            <PlusIcon />
-          </Button>
-        </DialogTrigger>
-        <InstanceCreationDialogContent />
-      </Dialog>
-      <ErrorDialog msg={errorMsg.current} trigger={errorDialogTrigger} />
-    </AppContext.Provider>
+          showErrorDialog: (msg) => {
+            errorMsg.current = msg;
+            fireErrorDialogTrigger();
+          },
+        }}
+      >
+        <ScrollArea className="h-screen" type="always">
+          {instanceGroups.map((group) => (
+            <InstanceGroupCollapsible key={group.name} state={group} />
+          ))}
+        </ScrollArea>
+        <Dialog>
+          <DialogTrigger asChild={true}>
+            <Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">
+              <PlusIcon />
+            </Button>
+          </DialogTrigger>
+          <InstanceCreationDialogContent />
+        </Dialog>
+        <ErrorDialog msg={errorMsg.current} trigger={errorDialogTrigger} />
+      </AppContext.Provider>
+    )
   );
 }
