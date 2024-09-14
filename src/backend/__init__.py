@@ -6,20 +6,20 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 from . import bridge, instancemanager
-from .env import ROOT
+from .path import ROOT_DIRECTORY
 
 
 def main(frontend_api: bridge.FrontendAPI) -> None:
     _create_dirs()
-    _setup_rotating_logger(ROOT / "logs", "nl")
+    _setup_rotating_logger(ROOT_DIRECTORY / "logs", "nl")
     bridge.set_frontend_api(frontend_api)
     instancemanager.initialise_watchdog(frontend_api.static.on_sudden_change)
 
 
 def _create_dirs() -> None:
-    (ROOT / "versions").mkdir(parents=True, exist_ok=True)
-    (ROOT / "instances").mkdir(parents=True, exist_ok=True)
-    (ROOT / "logs").mkdir(parents=True, exist_ok=True)
+    (ROOT_DIRECTORY / "versions").mkdir(parents=True, exist_ok=True)
+    (ROOT_DIRECTORY / "instances").mkdir(parents=True, exist_ok=True)
+    (ROOT_DIRECTORY / "logs").mkdir(parents=True, exist_ok=True)
 
 
 def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:

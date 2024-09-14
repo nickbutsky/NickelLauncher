@@ -92,7 +92,7 @@ def build_installer(iscc_executable: Path, name: str, publisher: str, version: s
                 "https://github.com/Bill-Stewart/UninsIS/releases/download/v1.0.1/UninsIS-1.0.1.zip",
                 archive,
             )
-        except Exception:
+        except:
             shutil.rmtree(archive.parent, True)
             raise
         with ZipFile(archive) as z:

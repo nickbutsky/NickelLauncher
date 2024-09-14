@@ -111,9 +111,7 @@ def _load_instance_groups(
     versions: Iterable[Version],
 ) -> list[InstanceGroup]:
     instances = [
-        instance
-        for instance in (_load_instance(item, versions) for item in directory.iterdir() if item.is_dir())
-        if instance
+        instance for item in directory.iterdir() if item.is_dir() if (instance := _load_instance(item, versions))
     ]
     if not instances:
         return []
@@ -122,11 +120,13 @@ def _load_instance_groups(
     for group_model in group_models:
         instances_of_group = [
             instance
-            for instance in (
-                next((instance for instance in instances if instance.directory.name == instance_dirname), None)
-                for instance_dirname in group_model.instances
+            for instance_dirname in group_model.instances
+            if (
+                instance := next(
+                    (instance for instance in instances if instance.directory.name == instance_dirname),
+                    None,
+                )
             )
-            if instance
         ]
         if not instances_of_group:
             continue
@@ -136,10 +136,10 @@ def _load_instance_groups(
             InstanceGroup(
                 group_model.name,
                 instances_of_group,
-                group_model.hidden
-                if last_instance_dirname not in [instance.directory.name for instance in instances_of_group]
-                and group_model.name != ""
-                else False,
+                False
+                if last_instance_dirname in [instance.directory.name for instance in instances_of_group]
+                or group_model.name == ""
+                else group_model.hidden,
             ),
         )
     if not instances:

@@ -37,8 +37,7 @@ class API:
         ]
 
     def getLastInstanceDirname(self) -> str | None:  # noqa: N802
-        instance = instancemanager.get_last_instance()
-        return instance.directory.name if instance else None
+        return instance.directory.name if (instance := instancemanager.get_last_instance()) else None
 
     def getVersionTypeToVersions(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
         versions = versionretrieve.get_versions_remotely() if remotely else versionretrieve.get_versions_locally()
