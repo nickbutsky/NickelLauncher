@@ -37,6 +37,7 @@ export function App() {
   const [scrollTrigger, fireScrollTrigger] = useTrigger();
   const [errorDialogTrigger, fireErrorDialogTrigger] = useTrigger();
 
+  const storeReady = useStore((state) => state.ready);
   const instanceGroups = useStore((state) => state.instanceGroups);
   const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
@@ -60,6 +61,7 @@ export function App() {
   }, []);
 
   return (
+    storeReady &&
     ready && (
       <AppContext.Provider
         value={{
