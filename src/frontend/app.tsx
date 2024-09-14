@@ -45,9 +45,6 @@ export function App() {
     if (import.meta.env.PROD) {
       exposeStaticFunction("onSuddenChange", reloadInstanceGroups);
     }
-  }, []);
-
-  React.useEffect(() => {
     pywebview.api.getLastInstanceDirname().then((dirname) => {
       if (dirname !== null) {
         scrollToInstance(dirname);
