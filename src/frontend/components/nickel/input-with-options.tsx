@@ -17,7 +17,7 @@ export const InputWithOptions = React.forwardRef<
   const inputRef = React.useRef<React.ElementRef<typeof Input>>(null);
   const selectTriggerRef = React.useRef<React.ElementRef<typeof SelectTrigger>>(null);
 
-  return options.length ? (
+  return options.length > 0 ? (
     <div className="flex">
       <Input
         className={cn("rounded-r-none focus:z-10", className)}

@@ -20,51 +20,38 @@ interface Props
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
   React.ComponentPropsWithoutRef<typeof Tabs> & Props
->(
-  (
-    {
-      className,
-      defaultValue,
-      versionTypeToVersions,
-      onRefreshRequest,
-      defaultDisplayName,
-      onDisplayNameChange,
-      ...props
-    },
-    ref,
-  ) => {
-    return (
-      <Tabs
-        className={cn("flex flex-col", className)}
-        ref={ref}
-        defaultValue={
-          versionTypes.find((versionType) =>
-            versionTypeToVersions[versionType].find((version) => version.displayName === defaultDisplayName),
-          ) ?? versionTypes[0]
-        }
-        {...props}
-      >
-        <TopBar onRefreshRequest={onRefreshRequest} />
-        {versionTypes.map((versionType) => (
-          <TabsContent
-            className="flex-1 data-[state=inactive]:hidden"
-            tabIndex={-1}
-            key={versionType}
-            value={versionType}
-            forceMount={true}
-            asChild={true}
-          >
-            <InnerVersionSelector
-              versions={versionTypeToVersions[versionType]}
-              defaultDisplayName={defaultDisplayName}
-              onDisplayNameChange={onDisplayNameChange}
-            />
-          </TabsContent>
-        ))}
-      </Tabs>
-    );
-  },
-);
+>(({ className, versionTypeToVersions, onRefreshRequest, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
+  return (
+    <Tabs
+      className={cn("flex flex-col", className)}
+      ref={ref}
+      defaultValue={
+        versionTypes.find((versionType) =>
+          versionTypeToVersions[versionType].find((version) => version.displayName === defaultDisplayName),
+        ) ?? versionTypes[0]
+      }
+      {...props}
+    >
+      <TopBar onRefreshRequest={onRefreshRequest} />
+      {versionTypes.map((versionType) => (
+        <TabsContent
+          className="flex-1 data-[state=inactive]:hidden"
+          tabIndex={-1}
+          key={versionType}
+          value={versionType}
+          forceMount={true}
+          asChild={true}
+        >
+          <InnerVersionSelector
+            versions={versionTypeToVersions[versionType]}
+            defaultDisplayName={defaultDisplayName}
+            onDisplayNameChange={onDisplayNameChange}
+          />
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+});
 
 function TopBar({
   variant = "cl",
@@ -151,7 +138,7 @@ const InnerVersionSelector = React.forwardRef<
       defaultDisplayName?: string;
       onDisplayNameChange?: (displayName: string) => void;
     }>
->(({ className, type, versions, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
+>(({ className, versions, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
   const [currentDisplayName, setCurrentDisplayName] = React.useState(
     versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
   );
