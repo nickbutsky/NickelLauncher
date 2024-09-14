@@ -8,7 +8,11 @@ import "@/dev-mocks";
 import "@/globals.css";
 
 function createRoot() {
-  ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  const rootElement = document.getElementById("root");
+  if (rootElement === null) {
+    throw new Error("Root element not found.");
+  }
+  ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <ThemeProvider defaultTheme="dark">
         <App />

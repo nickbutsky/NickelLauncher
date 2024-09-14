@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import string
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
 from backend.core.instance import Instance
 from backend.core.instancegroup import InstanceGroup
-from backend.core.version import Architecture
+from backend.core.version import Architecture  # noqa: TCH001
 
 from .state import State
 
@@ -160,7 +160,7 @@ class _InstanceModel(BaseModel):
 
 class _VersionModel(BaseModel):
     name: str
-    architecture_choice: str
+    architecture_choice: Architecture
 
 
 def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | None:
@@ -168,7 +168,6 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
         not (directory / "com.mojang").is_dir()
     ):
         return None
-
     try:
         with (directory / "config.json").open() as f:
             data = f.read()
@@ -181,13 +180,7 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
         )
     except (OSError, ValidationError, StopIteration):
         return None
-
-    return Instance(
-        instance_model.name,
-        version,
-        cast(Architecture, instance_model.version.architecture_choice),
-        directory,
-    )
+    return Instance(instance_model.name, version, instance_model.version.architecture_choice, directory)
 
 
 def _get_last_instance(instance_dirname: str | None, instance_groups: list[InstanceGroup]) -> Instance | None:

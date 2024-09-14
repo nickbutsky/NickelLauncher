@@ -4,7 +4,7 @@ import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from backend import packagemanager, shell
 from backend.cancellationtoken import CancellationTokenSource, Cancelled
@@ -95,7 +95,7 @@ def _install(
     if reporthook:
         reporthook(Report(Report.Type.PROGRESS, "Unlinking old version..."))
     for package_dict in packagemanager.find_packages(version.pfn, cancellation_token):
-        packagemanager.remove_package(cast(str, package_dict["PackageFullName"]), cancellation_token)
+        packagemanager.remove_package(package_dict["PackageFullName"], cancellation_token)
 
     logging.info("Installing Minecraft %s...", version.name)
     if reporthook:
