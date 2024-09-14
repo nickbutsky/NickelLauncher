@@ -29,8 +29,8 @@ export const AppContext = React.createContext<
 });
 
 export function App() {
-  const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = React.useState<string | null>(null);
   const [ready, setReady] = React.useState(false);
+  const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = React.useState<string | null>(null);
 
   const errorMsg = React.useRef("");
 
