@@ -1,6 +1,5 @@
 import { CaretDownIcon } from "@radix-ui/react-icons";
 import * as React from "react";
-import type { DeepReadonly } from "ts-essentials";
 
 import { InstanceButton } from "@/components/instance-button";
 import { EditableLabel } from "@/components/nickel/editable-label";
@@ -19,7 +18,7 @@ import { useTrigger } from "@/utils";
 
 export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
-  React.ComponentPropsWithoutRef<typeof Collapsible> & DeepReadonly<{ state: InstanceGroup }>
+  React.ComponentPropsWithoutRef<typeof Collapsible> & { readonly state: InstanceGroup }
 >(({ state, ...props }, ref) => {
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 

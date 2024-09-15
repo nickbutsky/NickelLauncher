@@ -1,5 +1,3 @@
-import type { DeepReadonly } from "ts-essentials";
-
 import type { InstanceGroup, VersionTypeToVersions } from "@/core-types";
 
 if (import.meta.env.DEV) {
@@ -389,7 +387,7 @@ if (import.meta.env.DEV) {
     ],
   } as const satisfies VersionTypeToVersions;
 
-  const instanceGroups: DeepReadonly<InstanceGroup[]> = [
+  const instanceGroups: readonly InstanceGroup[] = [
     {
       name: "",
       hidden: false,

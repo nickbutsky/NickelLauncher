@@ -1,6 +1,5 @@
 import { UpdateIcon } from "@radix-ui/react-icons";
 import * as React from "react";
-import type { DeepReadonly } from "ts-essentials";
 
 import { Button } from "@/components/shadcn/button";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
@@ -9,13 +8,12 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
 import { type Version, type VersionTypeToVersions, versionTypes } from "@/core-types";
 import { cn } from "@/utils";
 
-interface Props
-  extends DeepReadonly<{
-    versionTypeToVersions: VersionTypeToVersions;
-    onRefreshRequest: () => Promise<void>;
-    defaultDisplayName?: string;
-    onDisplayNameChange?: (displayName: string) => void;
-  }> {}
+interface Props {
+  readonly versionTypeToVersions: VersionTypeToVersions;
+  readonly onRefreshRequest: () => Promise<void>;
+  readonly defaultDisplayName?: string;
+  readonly onDisplayNameChange?: (displayName: string) => void;
+}
 
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
@@ -56,7 +54,7 @@ export const VersionSelector = React.forwardRef<
 function TopBar({
   variant = "cl",
   onRefreshRequest,
-}: DeepReadonly<{ variant?: "lr" | "rl" | "cr" | "cl" }> & Pick<Props, "onRefreshRequest">) {
+}: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Pick<Props, "onRefreshRequest">) {
   const [refreshing, setRefreshing] = React.useState(false);
 
   const versionTypeSelector = (
@@ -132,12 +130,11 @@ function TopBar({
 
 const InnerVersionSelector = React.forwardRef<
   React.ElementRef<typeof ScrollArea>,
-  React.ComponentPropsWithoutRef<typeof ScrollArea> &
-    DeepReadonly<{
-      versions: Version[];
-      defaultDisplayName?: string;
-      onDisplayNameChange?: (displayName: string) => void;
-    }>
+  React.ComponentPropsWithoutRef<typeof ScrollArea> & {
+    readonly versions: readonly Version[];
+    readonly defaultDisplayName?: string;
+    readonly onDisplayNameChange?: (displayName: string) => void;
+  }
 >(({ className, versions, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
   const [currentDisplayName, setCurrentDisplayName] = React.useState(
     versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,

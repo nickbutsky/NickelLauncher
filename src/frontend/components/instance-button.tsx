@@ -1,6 +1,5 @@
 import { ReloadIcon } from "@radix-ui/react-icons";
 import * as React from "react";
-import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
 
 import { AppContext } from "@/app";
@@ -37,7 +36,7 @@ import { cn, useTrigger, useTriggerEffect } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
-  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ state: Instance }>
+  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & { readonly state: Instance }
 >(({ className, state, ...props }, ref) => {
   React.useImperativeHandle(ref, () => buttonRef.current as Exclude<typeof buttonRef.current, null>);
 
@@ -174,7 +173,7 @@ export const InstanceButton = React.forwardRef<
   );
 });
 
-function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
+function ChangeGroupDialogContent({ dirname }: { readonly dirname: string }) {
   const instanceGroups = useStore((state) => state.instanceGroups);
   const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
@@ -214,10 +213,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
 function ChangeVersionDialogContent({
   dirname,
   currentVersionDisplayName,
-}: DeepReadonly<{
-  dirname: string;
-  currentVersionDisplayName: string;
-}>) {
+}: { readonly dirname: string; readonly currentVersionDisplayName: string }) {
   const versionTypeToVersions = useStore((state) => state.versionTypeToVersions);
   const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
   const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
@@ -254,7 +250,7 @@ function ChangeVersionDialogContent({
   );
 }
 
-function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
+function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
   const [copying, setCopying] = React.useState<"w" | "nw" | undefined>(undefined);
 
   const dialogContentRef = React.useRef<React.ElementRef<typeof DialogContent>>(null);
@@ -299,7 +295,7 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
   );
 }
 
-function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: string; trigger: boolean }>) {
+function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; readonly trigger: boolean }) {
   const [report, setReport] = React.useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
   const [cancelling, setCancelling] = React.useState(false);
 

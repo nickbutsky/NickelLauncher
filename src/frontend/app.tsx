@@ -1,6 +1,5 @@
 import { PlusIcon } from "@radix-ui/react-icons";
 import * as React from "react";
-import type { DeepReadonly } from "ts-essentials";
 
 import { exposeStaticFunction } from "@/bridge";
 import { InstanceCreationDialogContent } from "@/components/instance-creation-dialog-content";
@@ -12,15 +11,13 @@ import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { useStore } from "@/store";
 import { useTrigger } from "@/utils";
 
-export const AppContext = React.createContext<
-  DeepReadonly<{
-    scrollToInstance: (dirname: string) => void;
-    instanceDirnameToScrollTo: string | null;
-    scrollTrigger: boolean;
+export const AppContext = React.createContext<{
+  readonly scrollToInstance: (dirname: string) => void;
+  readonly instanceDirnameToScrollTo: string | null;
+  readonly scrollTrigger: boolean;
 
-    showErrorDialog: (msg: string) => void;
-  }>
->({
+  readonly showErrorDialog: (msg: string) => void;
+}>({
   scrollToInstance: () => undefined,
   instanceDirnameToScrollTo: null,
   scrollTrigger: false,

@@ -1,14 +1,15 @@
 import * as React from "react";
 
-import type { DeepReadonly } from "ts-essentials";
-
 import { Input } from "@/components/shadcn/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/shadcn/select";
 import { cn } from "@/utils";
 
 export const InputWithOptions = React.forwardRef<
   React.ElementRef<typeof Input>,
-  Omit<React.ComponentPropsWithoutRef<typeof Input>, "value"> & DeepReadonly<{ options: string[]; value?: string }>
+  Omit<React.ComponentPropsWithoutRef<typeof Input>, "value"> & {
+    readonly options: readonly string[];
+    readonly value?: string;
+  }
 >(({ className, onChange, options, value, ...props }, ref) => {
   React.useImperativeHandle(ref, () => inputRef.current as Exclude<typeof inputRef.current, null>, []);
 
