@@ -87,6 +87,6 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
 export function DialogFormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({ ...props }: Omit<ControllerProps<TFieldValues, TName>, "control">) {
+>(props: Omit<ControllerProps<TFieldValues, TName>, "control">) {
   return undefined && props;
 }
