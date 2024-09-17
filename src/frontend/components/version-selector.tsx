@@ -18,38 +18,51 @@ interface Props {
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
   React.ComponentPropsWithoutRef<typeof Tabs> & Props
->(({ className, versionTypeToVersions, onRefreshRequest, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
-  return (
-    <Tabs
-      className={cn("flex flex-col", className)}
-      ref={ref}
-      defaultValue={
-        versionTypes.find((versionType) =>
-          versionTypeToVersions[versionType].find((version) => version.displayName === defaultDisplayName),
-        ) ?? versionTypes[0]
-      }
-      {...props}
-    >
-      <TopBar onRefreshRequest={onRefreshRequest} />
-      {versionTypes.map((versionType) => (
-        <TabsContent
-          className="flex-1 data-[state=inactive]:hidden"
-          tabIndex={-1}
-          key={versionType}
-          value={versionType}
-          forceMount={true}
-          asChild={true}
-        >
-          <InnerVersionSelector
-            versions={versionTypeToVersions[versionType]}
-            defaultDisplayName={defaultDisplayName}
-            onDisplayNameChange={onDisplayNameChange}
-          />
-        </TabsContent>
-      ))}
-    </Tabs>
-  );
-});
+>(
+  (
+    {
+      className,
+      versionTypeToVersions,
+      onRefreshRequest,
+      defaultDisplayName,
+      onDisplayNameChange,
+      defaultValue: _defaultValue,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <Tabs
+        className={cn("flex flex-col", className)}
+        ref={ref}
+        defaultValue={
+          versionTypes.find((versionType) =>
+            versionTypeToVersions[versionType].find((version) => version.displayName === defaultDisplayName),
+          ) ?? versionTypes[0]
+        }
+        {...props}
+      >
+        <TopBar onRefreshRequest={onRefreshRequest} />
+        {versionTypes.map((versionType) => (
+          <TabsContent
+            className="flex-1 data-[state=inactive]:hidden"
+            tabIndex={-1}
+            key={versionType}
+            value={versionType}
+            forceMount={true}
+            asChild={true}
+          >
+            <InnerVersionSelector
+              versions={versionTypeToVersions[versionType]}
+              defaultDisplayName={defaultDisplayName}
+              onDisplayNameChange={onDisplayNameChange}
+            />
+          </TabsContent>
+        ))}
+      </Tabs>
+    );
+  },
+);
 
 function TopBar({
   variant = "cl",
@@ -135,43 +148,56 @@ const InnerVersionSelector = React.forwardRef<
     readonly defaultDisplayName?: string;
     readonly onDisplayNameChange?: (displayName: string) => void;
   }
->(({ className, versions, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
-  const [currentDisplayName, setCurrentDisplayName] = React.useState(
-    versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
-  );
+>(
+  (
+    {
+      className,
+      versions,
+      defaultDisplayName,
+      onDisplayNameChange,
+      viewportClassName: _viewportClassName,
+      type: _type,
+      ...props
+    },
+    ref,
+  ) => {
+    const [currentDisplayName, setCurrentDisplayName] = React.useState(
+      versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
+    );
 
-  const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);
+    const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);
 
-  React.useEffect(() => {
-    selectedItemRef.current?.scrollIntoView({ block: "center" });
-  }, []);
+    React.useEffect(() => {
+      selectedItemRef.current?.scrollIntoView({ block: "center" });
+    }, []);
 
-  return (
-    <ScrollArea className={cn("pr-3", className)} viewportClassName="border" ref={ref} type="always" {...props}>
-      <ToggleGroup
-        className="flex-col gap-0"
-        type="single"
-        orientation="vertical"
-        value={currentDisplayName}
-        onValueChange={(value) => {
-          if (value) {
-            setCurrentDisplayName(value);
-            onDisplayNameChange?.(value);
-          }
-        }}
-      >
-        {versions.map(({ displayName, availableArchitectures }) => (
-          <ToggleGroupItem
-            className="w-full justify-between rounded-none"
-            ref={displayName === currentDisplayName ? selectedItemRef : undefined}
-            key={displayName}
-            value={displayName}
-          >
-            <div>{displayName}</div>
-            <div>{availableArchitectures.join(" | ")}</div>
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
-    </ScrollArea>
-  );
-});
+    return (
+      <ScrollArea className={cn("pr-3", className)} viewportClassName="border" ref={ref} type="always" {...props}>
+        <ToggleGroup
+          className="flex-col gap-0"
+          type="single"
+          orientation="vertical"
+          value={currentDisplayName}
+          onValueChange={(value) => {
+            if (value) {
+              setCurrentDisplayName(value);
+              onDisplayNameChange?.(value);
+            }
+          }}
+        >
+          {versions.map(({ displayName, availableArchitectures }) => (
+            <ToggleGroupItem
+              className="w-full justify-between rounded-none"
+              ref={displayName === currentDisplayName ? selectedItemRef : undefined}
+              key={displayName}
+              value={displayName}
+            >
+              <div>{displayName}</div>
+              <div>{availableArchitectures.join(" | ")}</div>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </ScrollArea>
+    );
+  },
+);

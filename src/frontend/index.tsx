@@ -9,7 +9,7 @@ import "@/globals.css";
 
 function createRoot() {
   const rootElement = document.getElementById("root");
-  if (rootElement === null) {
+  if (!rootElement) {
     throw new Error("Root element not found.");
   }
   ReactDOM.createRoot(rootElement).render(

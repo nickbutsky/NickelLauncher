@@ -10,7 +10,7 @@ export const InputWithOptions = React.forwardRef<
     readonly options: readonly string[];
     readonly value?: string;
   }
->(({ className, onChange, options, value, ...props }, ref) => {
+>(({ className, onChange, options, value, defaultValue: _defaultValue, ...props }, ref) => {
   React.useImperativeHandle(ref, () => inputRef.current as Exclude<typeof inputRef.current, null>, []);
 
   const [currentValue, setCurrentValue] = React.useState(value);

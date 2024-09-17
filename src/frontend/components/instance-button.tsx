@@ -37,7 +37,7 @@ import { cn, useTrigger, useTriggerEffect } from "@/utils";
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
   Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & { readonly state: Instance }
->(({ className, state, ...props }, ref) => {
+>(({ className, state, variant: _variant, onDoubleClick: _onDoubleClick, onKeyUp: _onKeyUp, ...props }, ref) => {
   React.useImperativeHandle(ref, () => buttonRef.current as Exclude<typeof buttonRef.current, null>);
 
   const [dialogOpen, setDialogOpen] = React.useState(false);

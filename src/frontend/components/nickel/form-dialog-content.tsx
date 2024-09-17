@@ -27,16 +27,15 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   onSubmitAfterClose,
   ...props
 }: Omit<React.ComponentProps<typeof DialogContent>, "children" | "onSubmit"> & {
+  readonly children:
+    | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>
+    | readonly React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
   readonly title: string;
   readonly submitText: string;
   readonly schema: T;
+  readonly defaultValues: DefaultValues<z.infer<T>>;
   readonly onSubmitBeforeClose?: SubmitHandler<z.infer<T>>;
   readonly onSubmitAfterClose?: SubmitHandler<z.infer<T>>;
-} & {
-  readonly children:
-    | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>
-    | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
-  readonly defaultValues: DefaultValues<z.infer<T>>;
 }) {
   React.useImperativeHandle(
     ref as Exclude<typeof ref, string>,

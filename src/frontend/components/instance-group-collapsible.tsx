@@ -19,7 +19,7 @@ import { useTrigger } from "@/utils";
 export const InstanceGroupCollapsible = React.forwardRef<
   React.ElementRef<typeof Collapsible>,
   React.ComponentPropsWithoutRef<typeof Collapsible> & { readonly state: InstanceGroup }
->(({ state, ...props }, ref) => {
+>(({ state, open: _open, onOpenChange: _onOpenChange, ...props }, ref) => {
   const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
 
   const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
