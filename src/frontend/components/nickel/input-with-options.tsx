@@ -1,15 +1,16 @@
 import * as React from "react";
 
-import type { DeepReadonly } from "ts-essentials";
-
 import { Input } from "@/components/shadcn/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/shadcn/select";
 import { cn } from "@/utils";
 
 export const InputWithOptions = React.forwardRef<
   React.ElementRef<typeof Input>,
-  Omit<React.ComponentPropsWithoutRef<typeof Input>, "value"> & DeepReadonly<{ options: string[]; value?: string }>
->(({ className, onChange, options, value, ...props }, ref) => {
+  Omit<React.ComponentPropsWithoutRef<typeof Input>, "value"> & {
+    readonly options: readonly string[];
+    readonly value?: string;
+  }
+>(({ className, onChange, options, value, defaultValue: _defaultValue, ...props }, ref) => {
   React.useImperativeHandle(ref, () => inputRef.current as Exclude<typeof inputRef.current, null>, []);
 
   const [currentValue, setCurrentValue] = React.useState(value);
@@ -17,7 +18,7 @@ export const InputWithOptions = React.forwardRef<
   const inputRef = React.useRef<React.ElementRef<typeof Input>>(null);
   const selectTriggerRef = React.useRef<React.ElementRef<typeof SelectTrigger>>(null);
 
-  return options.length ? (
+  return options.length > 0 ? (
     <div className="flex">
       <Input
         className={cn("rounded-r-none focus:z-10", className)}

@@ -1,5 +1,4 @@
 import * as React from "react";
-import type { DeepReadonly } from "ts-essentials";
 
 import {
   AlertDialog,
@@ -12,7 +11,7 @@ import {
 } from "@/components/shadcn/alert-dialog";
 import { useTriggerEffect } from "@/utils";
 
-export function ErrorDialog({ msg, trigger }: DeepReadonly<{ msg: string; trigger: boolean }>) {
+export function ErrorDialog({ msg, trigger }: { readonly msg: string; readonly trigger: boolean }) {
   const [open, setOpen] = React.useState(false);
 
   useTriggerEffect(() => setOpen(true), trigger);

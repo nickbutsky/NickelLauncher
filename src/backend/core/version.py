@@ -9,8 +9,8 @@ from ordered_set import OrderedSet
 from backend import packagemanager
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
     from pathlib import Path
-    from typing import Mapping, Sequence
 
 
 class VersionType(StrEnum):
@@ -29,8 +29,8 @@ class Architecture(StrEnum):
 class Version:
     name: str
     type: VersionType
-    guids: Mapping[Architecture, Sequence[str]]
-    packages: Mapping[Architecture, Path]
+    architecture_to_guids: Mapping[Architecture, Sequence[str]]
+    architecture_to_package: Mapping[Architecture, Path]
 
     @property
     def display_name(self) -> str:
@@ -39,14 +39,14 @@ class Version:
 
         major_version, minor_version, patch, *_ = self.name.split(".")
         return (
-            f"{major_version}.{minor_version}.{patch[:-2] or '0'}"
-            if major_version != "0"
-            else f"{major_version}.{minor_version[:2]}.{minor_version[2:].lstrip('0') or '0'}"
+            f"{major_version}.{minor_version[:2]}.{minor_version[2:].lstrip("0") or "0"}"
+            if major_version == "0"
+            else f"{major_version}.{minor_version}.{patch[:-2] or "0"}"
         )
 
     @property
     def available_architectures(self) -> OrderedSet[Architecture]:
-        return OrderedSet(self.guids.keys())
+        return OrderedSet(self.architecture_to_guids.keys())
 
     @property
     def pfn(self) -> str:
@@ -66,7 +66,7 @@ class Version:
 
     def is_downloaded(self, architecture: Architecture) -> bool:
         try:
-            return self.packages[architecture].is_file()
+            return self.architecture_to_package[architecture].is_file()
         except KeyError:
             raise UnavailableArchitectureError from None
 

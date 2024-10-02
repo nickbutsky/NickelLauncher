@@ -9,7 +9,6 @@ import {
   type SubmitHandler,
   useForm,
 } from "react-hook-form";
-import type { DeepReadonly } from "ts-essentials";
 import type { ZodObject, ZodType, z } from "zod";
 
 import { Button } from "@/components/shadcn/button";
@@ -27,20 +26,17 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   onSubmitBeforeClose,
   onSubmitAfterClose,
   ...props
-}: Omit<React.ComponentProps<typeof DialogContent>, "children" | "onSubmit"> &
-  DeepReadonly<{
-    title: string;
-    submitText: string;
-    schema: T;
-    onSubmitBeforeClose?: SubmitHandler<z.infer<T>>;
-    onSubmitAfterClose?: SubmitHandler<z.infer<T>>;
-  }> &
-  Readonly<{
-    children:
-      | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>
-      | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
-    defaultValues: DefaultValues<z.infer<T>>;
-  }>) {
+}: Omit<React.ComponentProps<typeof DialogContent>, "children" | "onSubmit"> & {
+  readonly children:
+    | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>
+    | readonly React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
+  readonly title: string;
+  readonly submitText: string;
+  readonly schema: T;
+  readonly defaultValues: DefaultValues<z.infer<T>>;
+  readonly onSubmitBeforeClose?: SubmitHandler<z.infer<T>>;
+  readonly onSubmitAfterClose?: SubmitHandler<z.infer<T>>;
+}) {
   React.useImperativeHandle(
     ref as Exclude<typeof ref, string>,
     () => dialogContentRef.current as Exclude<typeof dialogContentRef.current, null>,
@@ -90,6 +86,6 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
 export function DialogFormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({ ...props }: Omit<ControllerProps<TFieldValues, TName>, "control">) {
+>(props: Omit<ControllerProps<TFieldValues, TName>, "control">) {
   return undefined && props;
 }

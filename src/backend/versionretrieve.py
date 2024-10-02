@@ -4,7 +4,7 @@ import requests
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
 from .core.version import Architecture, Version, VersionType
-from .env import ROOT
+from .path import ROOT_DIRECTORY
 
 SUPPORTED_ARCHITECTURES = frozenset({Architecture.X64, Architecture.X86})
 
@@ -15,7 +15,7 @@ def get_versions_locally() -> tuple[Version, ...]:
         return _versions
 
     try:
-        with (ROOT / "versions" / "versions.json").open() as f:
+        with (ROOT_DIRECTORY / "versions" / "versions.json").open() as f:
             data = f.read()
     except OSError:
         data = ""
@@ -27,7 +27,7 @@ def get_versions_locally() -> tuple[Version, ...]:
 def get_versions_remotely() -> tuple[Version, ...]:
     global _versions  # noqa: PLW0603
     res = requests.get("https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/versions.json", timeout=10)
-    with (ROOT / "versions" / "versions.json").open("w") as f:
+    with (ROOT_DIRECTORY / "versions" / "versions.json").open("w") as f:
         f.write(res.text)
     _versions = _get_versions_from_json(res.text)
     return _versions
@@ -64,7 +64,7 @@ def _get_versions_from_json(data: str) -> tuple[Version, ...]:
                 if (architecture in SUPPORTED_ARCHITECTURES) and guids
             },
             {
-                architecture: ROOT / "versions" / f"{version_model.name}_{architecture}.Appx"
+                architecture: ROOT_DIRECTORY / "versions" / f"{version_model.name}_{architecture}.Appx"
                 for architecture, guids in version_model.guids.model_dump().items()
                 if (architecture in SUPPORTED_ARCHITECTURES) and guids
             },

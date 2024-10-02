@@ -11,8 +11,8 @@ import pathvalidate
 from .cancellationtoken import Cancelled
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from pathlib import Path
-    from typing import Sequence
 
     from cancellationtoken import CancellationToken
 
@@ -54,8 +54,8 @@ def run_command(
     log_stdout: bool = True,
 ) -> str:
     logging.debug('Executing command: "%s"...', command)
-    with subprocess.Popen(
-        command,  # noqa: S603
+    with subprocess.Popen(  # noqa: S603
+        command,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         creationflags=subprocess.CREATE_NO_WINDOW,

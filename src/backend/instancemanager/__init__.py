@@ -6,15 +6,15 @@ from typing import TYPE_CHECKING
 
 from backend import game, versionretrieve
 from backend.core.instancegroup import InstanceGroup
-from backend.env import ROOT
+from backend.path import ROOT_DIRECTORY
 
 from . import instancecreate as _instancecreate
 from . import stateload as _stateload
 from .watchdog import Watchdog as _Watchdog
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
     from pathlib import Path
-    from typing import Callable, Sequence
 
     from backend.core.instance import Instance
     from backend.core.version import Version
@@ -78,7 +78,7 @@ def initialise_watchdog(on_sudden_change: Callable[[], object]) -> None:
 
     def callback() -> None:
         global _state  # noqa: PLW0603
-        _state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
+        _state = _stateload.load_state(ROOT_DIRECTORY / "instances", versionretrieve.get_versions_locally())
         launched_instance = game.get_launched_instance()
         if launched_instance and launched_instance.directory.name not in chain.from_iterable(
             (instance.directory.name for instance in group.instances) for group in _state.instance_groups
@@ -86,7 +86,7 @@ def initialise_watchdog(on_sudden_change: Callable[[], object]) -> None:
             game.cancel_launch()
         on_sudden_change()
 
-    _watchdog = _Watchdog(ROOT / "instances", callback)
+    _watchdog = _Watchdog(ROOT_DIRECTORY / "instances", callback)
     _watchdog.run()
 
 
@@ -96,5 +96,5 @@ class _WatchdogDummy:
         return contextlib.nullcontext()
 
 
-_state = _stateload.load_state(ROOT / "instances", versionretrieve.get_versions_locally())
+_state = _stateload.load_state(ROOT_DIRECTORY / "instances", versionretrieve.get_versions_locally())
 _watchdog = _WatchdogDummy()

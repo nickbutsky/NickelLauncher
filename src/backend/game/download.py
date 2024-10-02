@@ -9,7 +9,7 @@ from backend.net import request, soap
 from backend.report import Report
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from collections.abc import Callable
 
     from backend.cancellationtoken import CancellationToken
     from backend.core.version import Architecture, Version
@@ -28,7 +28,7 @@ def download_version(
     logging.debug(msg)
     if reporthook:
         reporthook(Report(Report.Type.PROGRESS, msg))
-    link = _get_link(secrets.choice(version.guids[architecture]))
+    link = _get_link(secrets.choice(version.architecture_to_guids[architecture]))
     if not link:
         error_msg = "Couldn't retrieve a download link."
         logging.error(error_msg)
@@ -37,8 +37,8 @@ def download_version(
     if cancellation_token:
         cancellation_token.check()
 
-    logging.debug('Downloading package to "%s"...', version.packages[architecture])
-    request.download_file(link, version.packages[architecture], cancellation_token, reporthook)
+    logging.debug('Downloading package to "%s"...', version.architecture_to_package[architecture])
+    request.download_file(link, version.architecture_to_package[architecture], cancellation_token, reporthook)
 
 
 class LinkRetrievalError(Exception):
@@ -56,7 +56,7 @@ def _extract_link(response_envelope: Element) -> str:
     file_locations = response_envelope.find(
         "./{*}Body/{*}GetExtendedUpdateInfo2Response/{*}GetExtendedUpdateInfo2Result/{*}FileLocations",
     )
-    if not file_locations:
+    if file_locations is None:
         return ""
     for file_location in file_locations:
         url = file_location.findtext("./{*}Url")

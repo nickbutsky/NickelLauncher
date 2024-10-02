@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import os
-import typing
 from itertools import chain
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from . import game, instancemanager, versionretrieve
 from .core.version import VersionType
@@ -38,16 +37,14 @@ class API:
         ]
 
     def getLastInstanceDirname(self) -> str | None:  # noqa: N802
-        instance = instancemanager.get_last_instance()
-        return instance.directory.name if instance else None
+        return instance.directory.name if (instance := instancemanager.get_last_instance()) else None
 
-    def getVersionsByType(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
+    def getVersionTypeToVersions(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
+        versions = versionretrieve.get_versions_remotely() if remotely else versionretrieve.get_versions_locally()
         return {
             version_type: [
                 {"displayName": version.display_name, "availableArchitectures": list(version.available_architectures)}
-                for version in (
-                    versionretrieve.get_versions_locally() if not remotely else versionretrieve.get_versions_remotely()
-                )
+                for version in versions
                 if version.type == version_type
             ]
             for version_type in VersionType
@@ -136,7 +133,7 @@ class API:
         )
 
 
-@typing.runtime_checkable
+@runtime_checkable
 class FrontendAPI(Protocol):
     @property
     def static(self) -> FrontendAPIStatic: ...
@@ -145,7 +142,7 @@ class FrontendAPI(Protocol):
 
 
 class FrontendAPIStatic(Protocol):
-    def reload_main_area(self) -> None: ...
+    def on_sudden_change(self) -> None: ...
 
 
 class FrontendAPITemporary(Protocol):

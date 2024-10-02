@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-import typing
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -14,7 +13,7 @@ from backend.report import Report
 from .download import download_version
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from collections.abc import Callable
 
     from backend.cancellationtoken import CancellationToken
     from backend.core.instance import Instance
@@ -96,12 +95,12 @@ def _install(
     if reporthook:
         reporthook(Report(Report.Type.PROGRESS, "Unlinking old version..."))
     for package_dict in packagemanager.find_packages(version.pfn, cancellation_token):
-        packagemanager.remove_package(typing.cast(str, package_dict["PackageFullName"]), cancellation_token)
+        packagemanager.remove_package(package_dict["PackageFullName"], cancellation_token)
 
     logging.info("Installing Minecraft %s...", version.name)
     if reporthook:
         reporthook(Report(Report.Type.PROGRESS, "Installing Minecraft..."))
-    packagemanager.add_package(version.packages[architecture], cancellation_token)
+    packagemanager.add_package(version.architecture_to_package[architecture], cancellation_token)
 
 
 def _relink_game_files(instance: Instance, cancellation_token: CancellationToken | None = None) -> None:

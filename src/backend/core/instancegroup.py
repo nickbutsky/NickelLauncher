@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from ordered_set import OrderedSet
 
 if TYPE_CHECKING:
-    from typing import Callable, Sequence
+    from collections.abc import Callable, Sequence
 
     from backend.core.instance import Instance
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class InstanceGroup:
     def __init__(self, name: str, instances: Sequence[Instance], hidden: bool = False) -> None:
         self._name = name.strip()
-        self._hidden = hidden if not self.unnamed else False
+        self._hidden = False if self.unnamed else hidden
         self._instances = list(instances)
 
         self._subscribers: OrderedSet[Callable[[], object]] = OrderedSet({})
@@ -27,13 +27,13 @@ class InstanceGroup:
         return self._name
 
     @name.setter
-    def name(self, name: str) -> None:
+    def name(self, value: str) -> None:
         if self.unnamed:
             raise InvalidUnnamedInstanceGroupManipulationError
-        stripped_name = name.strip()
-        if stripped_name == self.name:
+        name = value.strip()
+        if name == self.name:
             return
-        self._name = stripped_name
+        self._name = name
         self._notify_subscribers()
 
     @property

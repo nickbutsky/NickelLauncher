@@ -6,7 +6,7 @@ from enum import Enum, auto
 
 @dataclass(frozen=True, slots=True)
 class Report:
-    """A basic class to report the progress of some task.
+    """A basic class to report the progress of a task.
 
     This is probably an antipattern, but it works for me.
     """

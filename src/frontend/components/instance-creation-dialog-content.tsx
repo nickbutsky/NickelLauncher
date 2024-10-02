@@ -1,15 +1,20 @@
 import * as React from "react";
 import { z } from "zod";
 
-import { AppContext } from "@/App";
-import { VersionSelector } from "@/components/VersionSelector";
-import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDialogContent";
-import { InputWithOptions } from "@/components/nickel/InputWithOptions";
+import { AppContext } from "@/app";
+import { DialogFormField, FormDialogContent } from "@/components/nickel/form-dialog-content";
+import { InputWithOptions } from "@/components/nickel/input-with-options";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input";
+import { VersionSelector } from "@/components/version-selector";
+import { useStore } from "@/store";
 
 export function InstanceCreationDialogContent() {
   const appContext = React.useContext(AppContext);
+  const versionTypeToVersions = useStore((state) => state.versionTypeToVersions);
+  const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
+  const instanceGroups = useStore((state) => state.instanceGroups);
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   return (
     <FormDialogContent
@@ -23,11 +28,11 @@ export function InstanceCreationDialogContent() {
       defaultValues={{
         instanceName: "",
         groupName: "",
-        versionDisplayName: appContext.versionsByType.release[0]?.displayName ?? "",
+        versionDisplayName: versionTypeToVersions.release[0]?.displayName ?? "",
       }}
       onSubmitBeforeClose={(data) =>
         pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then((dirname) => {
-          appContext.refreshMainArea();
+          reloadInstanceGroups();
           appContext.scrollToInstance(dirname);
         })
       }
@@ -52,7 +57,7 @@ export function InstanceCreationDialogContent() {
             <FormControl>
               <InputWithOptions
                 maxLength={50}
-                options={appContext.instanceGroups.map((group) => group.name).filter((name) => name !== "")}
+                options={instanceGroups.map((group) => group.name).filter((name) => name !== "")}
                 {...field}
               />
             </FormControl>
@@ -66,8 +71,8 @@ export function InstanceCreationDialogContent() {
             <FormControl>
               <VersionSelector
                 className="h-60"
-                versionsByType={appContext.versionsByType}
-                onRefreshRequest={() => appContext.reloadVersionsByType(true)}
+                versionTypeToVersions={versionTypeToVersions}
+                onRefreshRequest={async () => reloadVersionTypeToVersions(true)}
                 defaultDisplayName={field.value}
                 onDisplayNameChange={field.onChange}
               />

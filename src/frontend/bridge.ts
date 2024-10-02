@@ -1,6 +1,6 @@
-import type { DeepReadonly, MarkWritable } from "ts-essentials";
+import type { MarkWritable } from "ts-essentials";
 
-import type { InstanceGroup, VersionsByType } from "@/core-types";
+import type { InstanceGroup, VersionTypeToVersions } from "@/core-types";
 
 export function exposeStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
   if (exposedStaticFunctionNames.has(name)) {
@@ -23,38 +23,38 @@ export function exposeTemporaryFunction<N extends keyof API["temporary"]>(
 }
 
 declare global {
-  const pywebview: DeepReadonly<{
-    api: {
-      getInstanceGroups: () => Promise<DeepReadonly<InstanceGroup[]>>;
-      getLastInstanceDirname: () => Promise<string | null>;
-      getVersionsByType: (remotely?: boolean) => Promise<DeepReadonly<VersionsByType>>;
-      renameInstanceGroup: (oldName: string, newName: string) => Promise<void>;
-      toggleInstanceGroupHidden: (name: string) => Promise<void>;
-      deleteInstanceGroup: (name: string) => Promise<void>;
-      moveInstances: (position: number, groupName: string, dirnames: DeepReadonly<string[]>) => Promise<void>;
-      renameInstance: (dirname: string, newName: string) => Promise<void>;
-      changeVersion: (dirname: string, versionDisplayName: string) => Promise<void>;
-      changeArchitectureChoice: (dirname: string, architectureChoice: string) => Promise<void>;
-      copyInstance: (dirname: string, copyWorlds: boolean) => Promise<void>;
-      createInstance: (name: string, groupName: string, versionDisplayName: string) => Promise<string>;
-      openGameDirectory: (dirname: string) => Promise<void>;
-      openInstanceDirectory: (dirname: string) => Promise<void>;
-      launchInstance: (dirname: string) => Promise<void>;
-      cancelInstanceLaunch: () => Promise<void>;
+  const pywebview: {
+    readonly api: {
+      readonly getInstanceGroups: () => Promise<readonly InstanceGroup[]>;
+      readonly getLastInstanceDirname: () => Promise<string | null>;
+      readonly getVersionTypeToVersions: (remotely?: boolean) => Promise<VersionTypeToVersions>;
+      readonly renameInstanceGroup: (oldName: string, newName: string) => Promise<void>;
+      readonly toggleInstanceGroupHidden: (name: string) => Promise<void>;
+      readonly deleteInstanceGroup: (name: string) => Promise<void>;
+      readonly moveInstances: (position: number, groupName: string, dirnames: readonly string[]) => Promise<void>;
+      readonly renameInstance: (dirname: string, newName: string) => Promise<void>;
+      readonly changeVersion: (dirname: string, versionDisplayName: string) => Promise<void>;
+      readonly changeArchitectureChoice: (dirname: string, architectureChoice: string) => Promise<void>;
+      readonly copyInstance: (dirname: string, copyWorlds: boolean) => Promise<void>;
+      readonly createInstance: (name: string, groupName: string, versionDisplayName: string) => Promise<string>;
+      readonly openGameDirectory: (dirname: string) => Promise<void>;
+      readonly openInstanceDirectory: (dirname: string) => Promise<void>;
+      readonly launchInstance: (dirname: string) => Promise<void>;
+      readonly cancelInstanceLaunch: () => Promise<void>;
     };
-  }>;
+  };
 }
 
 // biome-ignore lint/style/useNamingConvention: False positive
 export interface API {
-  readonly static: DeepReadonly<{ reloadMainArea: () => void }>;
+  readonly static: { readonly onSuddenChange: () => void };
   readonly temporary: {
-    propelLaunchReport: (
-      report: DeepReadonly<{
-        type: 0 | 1;
-        details: { processed: number; totalsize: number; unit: string } | null;
-        text: string;
-      }> | null,
+    readonly propelLaunchReport: (
+      report: {
+        readonly type: 0 | 1;
+        readonly details: { readonly processed: number; readonly totalsize: number; readonly unit: string } | null;
+        readonly text: string;
+      } | null,
     ) => void;
   };
 }
@@ -74,6 +74,6 @@ function notExposedTemporaryFunction() {
 const exposedStaticFunctionNames: Set<keyof API["static"]> = new Set();
 
 (window as unknown as { webview: API }).webview = {
-  static: { reloadMainArea: notExposedStaticFunction },
+  static: { onSuddenChange: notExposedStaticFunction },
   temporary: { propelLaunchReport: notExposedTemporaryFunction },
 };

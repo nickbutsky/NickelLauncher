@@ -1,20 +1,20 @@
 from __future__ import annotations
 
 import string
-import typing
 from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
 from backend.core.instance import Instance
 from backend.core.instancegroup import InstanceGroup
-from backend.core.version import Architecture
+from backend.core.version import Architecture  # noqa: TCH001
 
 from .state import State
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from pathlib import Path
-    from typing import Iterable, Self
+    from typing import Self
 
     from backend.core.version import Version
 
@@ -49,14 +49,13 @@ class _GroupsModel(BaseModel):
 
     @field_validator("last_instance")
     @classmethod
-    def _validate_last_instance_dirname(cls, last_instance_dirname: str | None) -> str | None:
-        if (last_instance_dirname is not None) and (
-            any(whitespace_character in last_instance_dirname for whitespace_character in string.whitespace)
-            or not last_instance_dirname
+    def _validate_last_instance_dirname(cls, value: str | None) -> str | None:
+        if (value is not None) and (
+            any(whitespace_character in value for whitespace_character in string.whitespace) or not value
         ):
             error_msg = "Whitespace and empty strings are not allowed."
             raise ValueError(error_msg)
-        return last_instance_dirname
+        return value
 
     @model_validator(mode="after")
     def _finish_validation(self) -> Self:
@@ -86,23 +85,23 @@ class _GroupModel(BaseModel):
 
     @field_validator("name")
     @classmethod
-    def _validate_name(cls, name: str) -> str:
-        if name.strip() != name:
+    def _validate_name(cls, value: str) -> str:
+        if value.strip() != value:
             error_msg = "Leading and trailing whitespace is not allowed."
             raise ValueError(error_msg)
-        return name
+        return value
 
     @field_validator("instances")
     @classmethod
-    def _validate_instance_dirnames(cls, instance_dirnames: list[str]) -> list[str]:
-        for instance_dirname in instance_dirnames:
+    def _validate_instance_dirnames(cls, value: list[str]) -> list[str]:
+        for instance_dirname in value:
             if (
                 any(whitespace_character in instance_dirname for whitespace_character in string.whitespace)
                 or not instance_dirname
             ):
                 error_msg = "Whitespace and empty strings are not allowed."
                 raise ValueError(error_msg)
-        return instance_dirnames
+        return value
 
 
 def _load_instance_groups(
@@ -112,9 +111,7 @@ def _load_instance_groups(
     versions: Iterable[Version],
 ) -> list[InstanceGroup]:
     instances = [
-        instance
-        for instance in (_load_instance(item, versions) for item in directory.iterdir() if item.is_dir())
-        if instance
+        instance for item in directory.iterdir() if item.is_dir() if (instance := _load_instance(item, versions))
     ]
     if not instances:
         return []
@@ -123,11 +120,13 @@ def _load_instance_groups(
     for group_model in group_models:
         instances_of_group = [
             instance
-            for instance in (
-                next((instance for instance in instances if instance.directory.name == instance_dirname), None)
-                for instance_dirname in group_model.instances
+            for instance_dirname in group_model.instances
+            if (
+                instance := next(
+                    (instance for instance in instances if instance.directory.name == instance_dirname),
+                    None,
+                )
             )
-            if instance
         ]
         if not instances_of_group:
             continue
@@ -137,10 +136,10 @@ def _load_instance_groups(
             InstanceGroup(
                 group_model.name,
                 instances_of_group,
-                group_model.hidden
-                if last_instance_dirname not in [instance.directory.name for instance in instances_of_group]
-                and group_model.name != ""
-                else False,
+                False
+                if last_instance_dirname in [instance.directory.name for instance in instances_of_group]
+                or group_model.name == ""
+                else group_model.hidden,
             ),
         )
     if not instances:
@@ -161,7 +160,7 @@ class _InstanceModel(BaseModel):
 
 class _VersionModel(BaseModel):
     name: str
-    architecture_choice: str
+    architecture_choice: Architecture
 
 
 def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | None:
@@ -169,7 +168,6 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
         not (directory / "com.mojang").is_dir()
     ):
         return None
-
     try:
         with (directory / "config.json").open() as f:
             data = f.read()
@@ -182,13 +180,7 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
         )
     except (OSError, ValidationError, StopIteration):
         return None
-
-    return Instance(
-        instance_model.name,
-        version,
-        typing.cast(Architecture, instance_model.version.architecture_choice),
-        directory,
-    )
+    return Instance(instance_model.name, version, instance_model.version.architecture_choice, directory)
 
 
 def _get_last_instance(instance_dirname: str | None, instance_groups: list[InstanceGroup]) -> Instance | None:

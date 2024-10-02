@@ -1,13 +1,11 @@
-import type { DeepReadonly } from "ts-essentials";
-
-import type { InstanceGroup, VersionsByType } from "@/core-types";
+import type { InstanceGroup, VersionTypeToVersions } from "@/core-types";
 
 if (import.meta.env.DEV) {
   (window as unknown as { pywebview: typeof pywebview }).pywebview = {
     api: {
       getInstanceGroups: () => Promise.resolve(instanceGroups),
       getLastInstanceDirname: () => Promise.resolve(null),
-      getVersionsByType: () => Promise.resolve(versionsByType),
+      getVersionTypeToVersions: () => Promise.resolve(versionTypeToVersions),
       renameInstanceGroup: () => Promise.resolve(),
       toggleInstanceGroupHidden: () => Promise.resolve(),
       deleteInstanceGroup: () => Promise.resolve(),
@@ -24,7 +22,7 @@ if (import.meta.env.DEV) {
     },
   };
 
-  const versionsByType = {
+  const versionTypeToVersions = {
     release: [
       { displayName: "1.20.81", availableArchitectures: ["x64", "x86"] },
       { displayName: "1.20.80", availableArchitectures: ["x64", "x86"] },
@@ -387,9 +385,9 @@ if (import.meta.env.DEV) {
       { displayName: "1.18.2028.0", availableArchitectures: ["x64", "x86"] },
       { displayName: "1.18.2026.0", availableArchitectures: ["x64", "x86"] },
     ],
-  } as const satisfies VersionsByType;
+  } as const satisfies VersionTypeToVersions;
 
-  const instanceGroups: DeepReadonly<InstanceGroup[]> = [
+  const instanceGroups: readonly InstanceGroup[] = [
     {
       name: "",
       hidden: false,
@@ -397,31 +395,31 @@ if (import.meta.env.DEV) {
         {
           name: "main",
           dirname: "main",
-          version: versionsByType.release[41],
+          version: versionTypeToVersions.release[41],
           architectureChoice: "x86",
         },
         {
           name: "latest release",
           dirname: "latest_release",
-          version: versionsByType.release[0],
+          version: versionTypeToVersions.release[0],
           architectureChoice: "x64",
         },
         {
           name: "latest preview",
           dirname: "latest_preview",
-          version: versionsByType.preview[0],
+          version: versionTypeToVersions.preview[0],
           architectureChoice: "x64",
         },
         {
           name: "client testing",
           dirname: "client_testing",
-          version: versionsByType.release[41],
+          version: versionTypeToVersions.release[41],
           architectureChoice: "x86",
         },
         {
           name: "pack testing",
           dirname: "pack_testing",
-          version: versionsByType.preview[41],
+          version: versionTypeToVersions.preview[41],
           architectureChoice: "x86",
         },
       ],
@@ -433,25 +431,25 @@ if (import.meta.env.DEV) {
         {
           name: "guest",
           dirname: "guest",
-          version: versionsByType.preview[34],
+          version: versionTypeToVersions.preview[34],
           architectureChoice: "x64",
         },
         {
           name: "survival",
           dirname: "survival",
-          version: versionsByType.release[1],
+          version: versionTypeToVersions.release[1],
           architectureChoice: "x86",
         },
         {
           name: "creative",
           dirname: "creative",
-          version: versionsByType.beta[78],
+          version: versionTypeToVersions.beta[78],
           architectureChoice: "x64",
         },
         {
           name: "maps",
           dirname: "maps",
-          version: versionsByType.preview[1],
+          version: versionTypeToVersions.preview[1],
           architectureChoice: "x86",
         },
       ],
@@ -463,31 +461,31 @@ if (import.meta.env.DEV) {
         {
           name: "main modpack",
           dirname: "main_modpack",
-          version: versionsByType.preview[12],
+          version: versionTypeToVersions.preview[12],
           architectureChoice: "x86",
         },
         {
           name: "development",
           dirname: "development",
-          version: versionsByType.release[4],
+          version: versionTypeToVersions.release[4],
           architectureChoice: "x64",
         },
         {
           name: "mod testing",
           dirname: "mod_testing",
-          version: versionsByType.preview[5],
+          version: versionTypeToVersions.preview[5],
           architectureChoice: "x86",
         },
         {
           name: "testing",
           dirname: "testing",
-          version: versionsByType.beta[2],
+          version: versionTypeToVersions.beta[2],
           architectureChoice: "x64",
         },
         {
           name: "server testing",
           dirname: "server_testing",
-          version: versionsByType.preview[4],
+          version: versionTypeToVersions.preview[4],
           architectureChoice: "x86",
         },
       ],

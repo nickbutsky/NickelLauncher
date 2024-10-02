@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import ctypes
 import json
-import typing
 import winreg
 from ctypes import wintypes
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import webview  # pyright: ignore [reportMissingTypeStubs]
 from pydantic import BaseModel, ValidationError
@@ -14,7 +13,7 @@ from tendo.singleton import SingleInstance
 from webview.platforms.winforms import (  # pyright: ignore [reportMissingTypeStubs]
     BrowserView,
     Icon,  # pyright: ignore [reportAttributeAccessIssue, reportUnknownVariableType]
-    WinForms,
+    WinForms,  # pyright: ignore [reportPrivateImportUsage]
 )
 
 import backend
@@ -45,8 +44,8 @@ class FrontendAPI:
 class FrontendAPIStatic:
     window: webview.Window
 
-    def reload_main_area(self) -> None:
-        self.window.evaluate_js("webview.static.reloadMainArea()")
+    def on_sudden_change(self) -> None:
+        self.window.evaluate_js("webview.static.onSuddenChange()")
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,10 +66,10 @@ class GeometryModel(BaseModel):
 
 def get_geometry_model() -> GeometryModel:
     try:
-        with winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r, winreg.OpenKey(
-            r,
-            r"Software\Nickel59\NickelLauncher",
-        ) as k:
+        with (
+            winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r,
+            winreg.OpenKey(r, r"Software\Nickel59\NickelLauncher") as k,
+        ):
             value, type_id = winreg.QueryValueEx(k, "geometry")
     except FileNotFoundError:
         return GeometryModel()
@@ -80,7 +79,7 @@ def get_geometry_model() -> GeometryModel:
         array = json.loads(value)
     except json.JSONDecodeError:
         return GeometryModel()
-    if not isinstance(array, list) or len(typing.cast(list[object], array)) != 5:
+    if not isinstance(array, list) or len(cast(list[object], array)) != 5:
         return GeometryModel()
     try:
         return GeometryModel.model_validate(
@@ -94,13 +93,13 @@ def get_geometry_model() -> GeometryModel:
 def save_geometry(window: webview.Window) -> None:
     form = BrowserView.instances[window.uid]  # pyright: ignore [reportUnknownMemberType, reportUnknownVariableType]
 
-    divisor = {96: 1, 120: 1.25, 144: 1.5, 192: 2}[ctypes.windll.user32.GetDpiForWindow(form.Handle.ToInt32())]  # pyright: ignore [reportUnknownMemberType]
+    dpi_for_window_to_divisor: dict[int, float] = {96: 1, 120: 1.25, 144: 1.5, 192: 2}
+    divisor = dpi_for_window_to_divisor[ctypes.windll.user32.GetDpiForWindow(form.Handle.ToInt32())]  # pyright: ignore [reportUnknownMemberType]
 
-    with winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r, winreg.CreateKeyEx(
-        r,
-        r"Software\Nickel59\NickelLauncher",
-        access=winreg.KEY_SET_VALUE,
-    ) as k:
+    with (
+        winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r,
+        winreg.CreateKeyEx(r, r"Software\Nickel59\NickelLauncher", access=winreg.KEY_SET_VALUE) as k,
+    ):
         winreg.SetValueEx(
             k,
             "geometry",
@@ -108,16 +107,16 @@ def save_geometry(window: webview.Window) -> None:
             winreg.REG_SZ,
             json.dumps(
                 [
-                    round(typing.cast(int, form.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
-                    round(typing.cast(int, form.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(cast(int, form.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(cast(int, form.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
                     form.Location.X,  # pyright: ignore [reportUnknownMemberType]
                     form.Location.Y,  # pyright: ignore [reportUnknownMemberType]
                     False,
                 ]
                 if form.WindowState == WinForms.FormWindowState.Normal  # pyright: ignore [reportUnknownMemberType]
                 else [
-                    round(typing.cast(int, form.RestoreBounds.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
-                    round(typing.cast(int, form.RestoreBounds.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(cast(int, form.RestoreBounds.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(cast(int, form.RestoreBounds.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
                     form.RestoreBounds.Location.X,  # pyright: ignore [reportUnknownMemberType]
                     form.RestoreBounds.Location.Y,  # pyright: ignore [reportUnknownMemberType]
                     form.WindowState == WinForms.FormWindowState.Maximized,  # pyright: ignore [reportUnknownMemberType]

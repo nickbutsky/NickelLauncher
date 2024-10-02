@@ -1,15 +1,13 @@
 import { ReloadIcon } from "@radix-ui/react-icons";
 import * as React from "react";
-import type { DeepReadonly } from "ts-essentials";
 import { z } from "zod";
 
-import { AppContext } from "@/App";
+import { AppContext } from "@/app";
 import defaultLogo from "@/assets/default.png";
 import { type API, exposeTemporaryFunction } from "@/bridge";
-import { VersionSelector } from "@/components/VersionSelector";
-import { EditableLabel } from "@/components/nickel/EditableLabel";
-import { DialogFormField, FormDialogContent } from "@/components/nickel/FormDialogContent";
-import { InputWithOptions } from "@/components/nickel/InputWithOptions";
+import { EditableLabel } from "@/components/nickel/editable-label";
+import { DialogFormField, FormDialogContent } from "@/components/nickel/form-dialog-content";
+import { InputWithOptions } from "@/components/nickel/input-with-options";
 import { Button } from "@/components/shadcn/button";
 import {
   ContextMenu,
@@ -31,13 +29,15 @@ import {
 } from "@/components/shadcn/dialog";
 import { FormControl, FormItem } from "@/components/shadcn/form";
 import { Progress } from "@/components/shadcn/progress";
+import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
+import { useStore } from "@/store";
 import { cn, useTrigger, useTriggerEffect } from "@/utils";
 
 export const InstanceButton = React.forwardRef<
   React.ElementRef<typeof Button>,
-  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & DeepReadonly<{ state: Instance }>
->(({ className, variant, state, ...props }, ref) => {
+  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & { readonly state: Instance }
+>(({ className, state, variant: _variant, onDoubleClick: _onDoubleClick, onKeyUp: _onKeyUp, ...props }, ref) => {
   React.useImperativeHandle(ref, () => buttonRef.current as Exclude<typeof buttonRef.current, null>);
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -50,6 +50,8 @@ export const InstanceButton = React.forwardRef<
 
   const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
   const [launchTrigger, fireLaunchTrigger] = useTrigger();
+
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   useTriggerEffect(
     () => {
@@ -117,7 +119,7 @@ export const InstanceButton = React.forwardRef<
           <ContextMenuRadioGroup
             value={state.architectureChoice}
             onValueChange={(value) =>
-              pywebview.api.changeArchitectureChoice(state.dirname, value).then(appContext.refreshMainArea)
+              pywebview.api.changeArchitectureChoice(state.dirname, value).then(reloadInstanceGroups)
             }
           >
             {state.version.availableArchitectures.map((architecture) => (
@@ -171,8 +173,9 @@ export const InstanceButton = React.forwardRef<
   );
 });
 
-function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
-  const appContext = React.useContext(AppContext);
+function ChangeGroupDialogContent({ dirname }: { readonly dirname: string }) {
+  const instanceGroups = useStore((state) => state.instanceGroups);
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   return (
     <FormDialogContent
@@ -181,13 +184,12 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
       schema={z.object({ groupName: z.string() })}
       defaultValues={{
         groupName:
-          appContext.instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))
-            ?.name ?? "",
+          instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
       }}
       onSubmitBeforeClose={(data) =>
         pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
       }
-      onSubmitAfterClose={appContext.refreshMainArea}
+      onSubmitAfterClose={reloadInstanceGroups}
     >
       <DialogFormField
         name="groupName"
@@ -197,7 +199,7 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
               <InputWithOptions
                 placeholder="Group name"
                 maxLength={50}
-                options={appContext.instanceGroups.map((group) => group.name).filter((name) => name !== "")}
+                options={instanceGroups.map((group) => group.name).filter((name) => name !== "")}
                 {...field}
               />
             </FormControl>
@@ -211,11 +213,10 @@ function ChangeGroupDialogContent({ dirname }: DeepReadonly<{ dirname: string }>
 function ChangeVersionDialogContent({
   dirname,
   currentVersionDisplayName,
-}: DeepReadonly<{
-  dirname: string;
-  currentVersionDisplayName: string;
-}>) {
-  const appContext = React.useContext(AppContext);
+}: { readonly dirname: string; readonly currentVersionDisplayName: string }) {
+  const versionTypeToVersions = useStore((state) => state.versionTypeToVersions);
+  const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   return (
     <FormDialogContent
@@ -226,7 +227,7 @@ function ChangeVersionDialogContent({
         versionDisplayName: currentVersionDisplayName,
       }}
       onSubmitBeforeClose={(data) =>
-        pywebview.api.changeVersion(dirname, data.versionDisplayName).then(appContext.refreshMainArea)
+        pywebview.api.changeVersion(dirname, data.versionDisplayName).then(reloadInstanceGroups)
       }
     >
       <DialogFormField
@@ -236,8 +237,8 @@ function ChangeVersionDialogContent({
             <FormControl>
               <VersionSelector
                 className="h-72"
-                versionsByType={appContext.versionsByType}
-                onRefreshRequest={() => appContext.reloadVersionsByType(true)}
+                versionTypeToVersions={versionTypeToVersions}
+                onRefreshRequest={async () => reloadVersionTypeToVersions(true)}
                 defaultDisplayName={field.value}
                 onDisplayNameChange={field.onChange}
               />
@@ -249,13 +250,13 @@ function ChangeVersionDialogContent({
   );
 }
 
-function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }>) {
+function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
   const [copying, setCopying] = React.useState<"w" | "nw" | undefined>(undefined);
 
   const dialogContentRef = React.useRef<React.ElementRef<typeof DialogContent>>(null);
   const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
 
-  const appContext = React.useContext(AppContext);
+  const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
   const copyInstance = React.useCallback(
@@ -265,7 +266,7 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
         dialogContentRef.current?.addEventListener(
           "animationend",
           () => {
-            appContext.refreshMainArea();
+            reloadInstanceGroups();
             setCopying(undefined);
           },
           { once: true },
@@ -294,7 +295,7 @@ function CopyInstanceDialogContent({ dirname }: DeepReadonly<{ dirname: string }
   );
 }
 
-function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: string; trigger: boolean }>) {
+function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; readonly trigger: boolean }) {
   const [report, setReport] = React.useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
   const [cancelling, setCancelling] = React.useState(false);
 
@@ -340,7 +341,7 @@ function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: strin
           <Progress value={report.details.processed} max={report.details.totalsize} />
         ) : (
           <div className="h-2 w-full overflow-hidden rounded-full bg-primary/20">
-            <div className="progress left-right h-full w-full bg-primary" />
+            <div className="progress h-full w-full bg-primary" />
           </div>
         )}
         <DialogClose ref={hiddenCloseButtonRef} hidden={true} />
@@ -359,21 +360,19 @@ function LaunchDialogContent({ dirname, trigger }: DeepReadonly<{ dirname: strin
         {`
           .progress {
             animation: progress 1s infinite linear;
+            transform-origin: 0% 50%;
           }
 
-          .left-right {
-              transform-origin: 0% 50%;
-          }
-              @keyframes progress {
-              0% {
-                  transform:  translateX(0) scaleX(0);
-              }
-              40% {
-                  transform:  translateX(0) scaleX(0.4);
-              }
-              100% {
-                  transform:  translateX(100%) scaleX(0.5);
-              }
+          @keyframes progress {
+            0% {
+              transform: translateX(0) scaleX(0);
+            }
+            40% {
+              transform: translateX(0) scaleX(0.4);
+            }
+            100% {
+              transform: translateX(100%) scaleX(0.5);
+            }
           }
         `}
       </style>

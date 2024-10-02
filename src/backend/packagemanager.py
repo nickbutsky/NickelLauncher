@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict, cast
 
 from . import shell
 
@@ -11,27 +11,32 @@ if TYPE_CHECKING:
     from .cancellationtoken import CancellationToken
 
 
+class PackageDict(TypedDict):
+    PackageFullName: str
+
+
 def find_packages(
     package_family_name: str,
     cancellation_token: CancellationToken | None = None,
-) -> list[dict[object, object]]:
-    output = shell.run_command(
+) -> list[PackageDict]:
+    return (
         (
-            "powershell",
-            f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json',
-        ),
-        cancellation_token,
-        False,
+            [cast(PackageDict, deserialized_output)]
+            if isinstance((deserialized_output := json.loads(output)), dict)
+            else deserialized_output
+        )
+        if (
+            output := shell.run_command(
+                (
+                    "powershell",
+                    f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json',  # noqa: E501
+                ),
+                cancellation_token,
+                False,
+            )
+        )
+        else []
     )
-
-    if not output:
-        return []
-
-    deserialized_output = json.loads(output)
-
-    if isinstance(deserialized_output, dict):
-        return [deserialized_output]
-    return deserialized_output
 
 
 def remove_package(package_full_name: str, cancellation_token: CancellationToken | None = None) -> None:

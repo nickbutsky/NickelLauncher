@@ -1,20 +1,18 @@
 import * as Popover from "@radix-ui/react-popover";
 import * as React from "react";
-import type { DeepReadonly } from "ts-essentials";
 
 import { cn, useTriggerEffect } from "@/utils";
 
 export const EditableLabel = React.forwardRef<
   HTMLDivElement,
-  Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> &
-    DeepReadonly<{
-      editModeTrigger: boolean;
-      defaultValue: string;
-      maxLength?: number;
-      applyOnAboutToSave?: (value: string) => string;
-      isAllowedToSave?: (value: string) => boolean;
-      onSave?: (value: string) => void;
-    }>
+  Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
+    readonly editModeTrigger: boolean;
+    readonly defaultValue: string;
+    readonly maxLength?: number;
+    readonly applyOnAboutToSave?: (value: string) => string;
+    readonly isAllowedToSave?: (value: string) => boolean;
+    readonly onSave?: (value: string) => void;
+  }
 >(
   (
     { className, editModeTrigger, defaultValue, maxLength, applyOnAboutToSave, isAllowedToSave, onSave, ...props },
@@ -116,8 +114,8 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
         onChange={(event) => {
           const trimmedValue = event.currentTarget.value.trimStart();
           const selectionRange = [
-            event.currentTarget.value !== trimmedValue ? 0 : event.currentTarget.selectionStart,
-            event.currentTarget.value !== trimmedValue ? 0 : event.currentTarget.selectionEnd,
+            event.currentTarget.value === trimmedValue ? event.currentTarget.selectionStart : 0,
+            event.currentTarget.value === trimmedValue ? event.currentTarget.selectionEnd : 0,
             event.currentTarget.selectionDirection === null ? undefined : event.currentTarget.selectionDirection,
           ] as const;
           event.currentTarget.value = trimmedValue;

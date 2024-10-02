@@ -1,28 +1,34 @@
 import { UpdateIcon } from "@radix-ui/react-icons";
 import * as React from "react";
-import type { DeepReadonly } from "ts-essentials";
 
 import { Button } from "@/components/shadcn/button";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
-import { type Version, type VersionsByType, versionTypes } from "@/core-types";
+import { type Version, type VersionTypeToVersions, versionTypes } from "@/core-types";
 import { cn } from "@/utils";
 
-interface Props
-  extends DeepReadonly<{
-    versionsByType: VersionsByType;
-    onRefreshRequest: () => Promise<void>;
-    defaultDisplayName?: string;
-    onDisplayNameChange?: (displayName: string) => void;
-  }> {}
+interface Props {
+  readonly versionTypeToVersions: VersionTypeToVersions;
+  readonly onRefreshRequest: () => Promise<void>;
+  readonly defaultDisplayName?: string;
+  readonly onDisplayNameChange?: (displayName: string) => void;
+}
 
 export const VersionSelector = React.forwardRef<
   React.ElementRef<typeof Tabs>,
   React.ComponentPropsWithoutRef<typeof Tabs> & Props
 >(
   (
-    { className, defaultValue, versionsByType, onRefreshRequest, defaultDisplayName, onDisplayNameChange, ...props },
+    {
+      className,
+      versionTypeToVersions,
+      onRefreshRequest,
+      defaultDisplayName,
+      onDisplayNameChange,
+      defaultValue: _defaultValue,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -31,7 +37,7 @@ export const VersionSelector = React.forwardRef<
         ref={ref}
         defaultValue={
           versionTypes.find((versionType) =>
-            versionsByType[versionType].find((version) => version.displayName === defaultDisplayName),
+            versionTypeToVersions[versionType].find((version) => version.displayName === defaultDisplayName),
           ) ?? versionTypes[0]
         }
         {...props}
@@ -47,7 +53,7 @@ export const VersionSelector = React.forwardRef<
             asChild={true}
           >
             <InnerVersionSelector
-              versions={versionsByType[versionType]}
+              versions={versionTypeToVersions[versionType]}
               defaultDisplayName={defaultDisplayName}
               onDisplayNameChange={onDisplayNameChange}
             />
@@ -61,7 +67,7 @@ export const VersionSelector = React.forwardRef<
 function TopBar({
   variant = "cl",
   onRefreshRequest,
-}: DeepReadonly<{ variant?: "lr" | "rl" | "cr" | "cl" }> & Pick<Props, "onRefreshRequest">) {
+}: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Pick<Props, "onRefreshRequest">) {
   const [refreshing, setRefreshing] = React.useState(false);
 
   const versionTypeSelector = (
@@ -137,49 +143,61 @@ function TopBar({
 
 const InnerVersionSelector = React.forwardRef<
   React.ElementRef<typeof ScrollArea>,
-  React.ComponentPropsWithoutRef<typeof ScrollArea> &
-    DeepReadonly<{
-      versions: Version[];
-      defaultDisplayName?: string;
-      onDisplayNameChange?: (displayName: string) => void;
-    }>
->(({ className, type, versions, defaultDisplayName, onDisplayNameChange, ...props }, ref) => {
-  const [currentDisplayName, setCurrentDisplayName] = React.useState(
-    versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
-  );
+  React.ComponentPropsWithoutRef<typeof ScrollArea> & {
+    readonly versions: readonly Version[];
+    readonly defaultDisplayName?: string;
+    readonly onDisplayNameChange?: (displayName: string) => void;
+  }
+>(
+  (
+    {
+      className,
+      versions,
+      defaultDisplayName,
+      onDisplayNameChange,
+      viewportClassName: _viewportClassName,
+      type: _type,
+      ...props
+    },
+    ref,
+  ) => {
+    const [currentDisplayName, setCurrentDisplayName] = React.useState(
+      versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
+    );
 
-  const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);
+    const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);
 
-  React.useEffect(() => {
-    selectedItemRef.current?.scrollIntoView({ block: "center" });
-  }, []);
+    React.useEffect(() => {
+      selectedItemRef.current?.scrollIntoView({ block: "center" });
+    }, []);
 
-  return (
-    <ScrollArea className={cn("pr-3", className)} viewportClassName="border" ref={ref} type="always" {...props}>
-      <ToggleGroup
-        className="flex-col gap-0"
-        type="single"
-        orientation="vertical"
-        value={currentDisplayName}
-        onValueChange={(value) => {
-          if (value) {
-            setCurrentDisplayName(value);
-            onDisplayNameChange?.(value);
-          }
-        }}
-      >
-        {versions.map(({ displayName, availableArchitectures }) => (
-          <ToggleGroupItem
-            className="w-full justify-between rounded-none"
-            ref={displayName === currentDisplayName ? selectedItemRef : undefined}
-            key={displayName}
-            value={displayName}
-          >
-            <div>{displayName}</div>
-            <div>{availableArchitectures.join(" | ")}</div>
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
-    </ScrollArea>
-  );
-});
+    return (
+      <ScrollArea className={cn("pr-3", className)} viewportClassName="border" ref={ref} type="always" {...props}>
+        <ToggleGroup
+          className="flex-col gap-0"
+          type="single"
+          orientation="vertical"
+          value={currentDisplayName}
+          onValueChange={(value) => {
+            if (value) {
+              setCurrentDisplayName(value);
+              onDisplayNameChange?.(value);
+            }
+          }}
+        >
+          {versions.map(({ displayName, availableArchitectures }) => (
+            <ToggleGroupItem
+              className="w-full justify-between rounded-none"
+              ref={displayName === currentDisplayName ? selectedItemRef : undefined}
+              key={displayName}
+              value={displayName}
+            >
+              <div>{displayName}</div>
+              <div>{availableArchitectures.join(" | ")}</div>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </ScrollArea>
+    );
+  },
+);
