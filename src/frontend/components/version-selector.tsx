@@ -1,5 +1,5 @@
 import { UpdateIcon } from "@radix-ui/react-icons";
-import * as React from "react";
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/shadcn/button";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
@@ -15,10 +15,7 @@ interface Props {
   readonly onDisplayNameChange?: (displayName: string) => void;
 }
 
-export const VersionSelector = React.forwardRef<
-  React.ElementRef<typeof Tabs>,
-  React.ComponentPropsWithoutRef<typeof Tabs> & Props
->(
+export const VersionSelector = forwardRef<ElementRef<typeof Tabs>, ComponentPropsWithoutRef<typeof Tabs> & Props>(
   (
     {
       className,
@@ -68,7 +65,7 @@ function TopBar({
   variant = "cl",
   onRefreshRequest,
 }: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Pick<Props, "onRefreshRequest">) {
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const versionTypeSelector = (
     <TabsList className="grid grid-cols-3 bg-transparent">
@@ -141,9 +138,9 @@ function TopBar({
   );
 }
 
-const InnerVersionSelector = React.forwardRef<
-  React.ElementRef<typeof ScrollArea>,
-  React.ComponentPropsWithoutRef<typeof ScrollArea> & {
+const InnerVersionSelector = forwardRef<
+  ElementRef<typeof ScrollArea>,
+  ComponentPropsWithoutRef<typeof ScrollArea> & {
     readonly versions: readonly Version[];
     readonly defaultDisplayName?: string;
     readonly onDisplayNameChange?: (displayName: string) => void;
@@ -161,13 +158,13 @@ const InnerVersionSelector = React.forwardRef<
     },
     ref,
   ) => {
-    const [currentDisplayName, setCurrentDisplayName] = React.useState(
+    const [currentDisplayName, setCurrentDisplayName] = useState(
       versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
     );
 
-    const selectedItemRef = React.useRef<React.ElementRef<typeof ToggleGroupItem>>(null);
+    const selectedItemRef = useRef<ElementRef<typeof ToggleGroupItem>>(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
       selectedItemRef.current?.scrollIntoView({ block: "center" });
     }, []);
 

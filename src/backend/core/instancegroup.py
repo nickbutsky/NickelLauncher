@@ -7,7 +7,7 @@ from ordered_set import OrderedSet
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
-    from backend.core.instance import Instance
+    from . import Instance
 
 
 class InstanceGroup:

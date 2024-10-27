@@ -3,42 +3,41 @@ from __future__ import annotations
 import requests
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
-from .core.version import Architecture, Version, VersionType
+from .core import Architecture, Version
 from .path import ROOT_DIRECTORY
 
 SUPPORTED_ARCHITECTURES = frozenset({Architecture.X64, Architecture.X86})
 
 
 def get_versions_locally() -> tuple[Version, ...]:
-    global _versions  # noqa: PLW0603
-    if _versions:
-        return _versions
+    if _VersionsProvider.value:
+        return _VersionsProvider.value
 
     try:
         with (ROOT_DIRECTORY / "versions" / "versions.json").open() as f:
             data = f.read()
     except OSError:
-        data = ""
+        return ()
 
-    _versions = _get_versions_from_json(data)
-    return _versions
+    _VersionsProvider.value = _get_versions_from_json(data)
+    return _VersionsProvider.value
 
 
 def get_versions_remotely() -> tuple[Version, ...]:
-    global _versions  # noqa: PLW0603
     res = requests.get("https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/versions.json", timeout=10)
     with (ROOT_DIRECTORY / "versions" / "versions.json").open("w") as f:
         f.write(res.text)
-    _versions = _get_versions_from_json(res.text)
-    return _versions
+    _VersionsProvider.value = _get_versions_from_json(res.text)
+    return _VersionsProvider.value
 
 
-_versions: tuple[Version, ...] = ()
+class _VersionsProvider:
+    value: tuple[Version, ...] = ()
 
 
 class _VersionModel(BaseModel):
     name: str
-    type: VersionType
+    type: Version.Type
     guids: _GuidsModel
 
 

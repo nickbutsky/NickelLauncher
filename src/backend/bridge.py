@@ -5,12 +5,10 @@ from itertools import chain
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from . import game, instancemanager, versionretrieve
-from .core.version import VersionType
+from .core import Version
 
 if TYPE_CHECKING:
-    from .core.instance import Instance
-    from .core.instancegroup import InstanceGroup
-    from .core.version import Architecture
+    from .core import Architecture, Instance, InstanceGroup
     from .report import Report
 
 
@@ -39,7 +37,7 @@ class API:
     def getLastInstanceDirname(self) -> str | None:  # noqa: N802
         return instance.directory.name if (instance := instancemanager.get_last_instance()) else None
 
-    def getVersionTypeToVersions(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
+    def getVersionTypeToVersions(self, remotely: bool = False) -> dict[Version.Type, list[dict[str, str | list[str]]]]:  # noqa: N802
         versions = versionretrieve.get_versions_remotely() if remotely else versionretrieve.get_versions_locally()
         return {
             version_type: [
@@ -47,7 +45,7 @@ class API:
                 for version in versions
                 if version.type == version_type
             ]
-            for version_type in VersionType
+            for version_type in Version.Type
         }
 
     def renameInstanceGroup(self, old_name: str, new_name: str) -> None:  # noqa: N802
@@ -150,16 +148,15 @@ class FrontendAPITemporary(Protocol):
 
 
 def get_frontend_api() -> FrontendAPI:
-    if not _frontend_api:
+    if not _FrontendAPIProvider.value:
         raise FrontendAPINotSetError
-    return _frontend_api
+    return _FrontendAPIProvider.value
 
 
 def set_frontend_api(frontend_api: FrontendAPI) -> None:
-    global _frontend_api  # noqa: PLW0603
-    if _frontend_api:
+    if _FrontendAPIProvider.value:
         raise FrontendAPIAlreadySetError
-    _frontend_api = frontend_api
+    _FrontendAPIProvider.value = frontend_api
 
 
 class FrontendAPINotSetError(ValueError):
@@ -170,4 +167,5 @@ class FrontendAPIAlreadySetError(ValueError):
     pass
 
 
-_frontend_api: FrontendAPI | None = None
+class _FrontendAPIProvider:
+    value: FrontendAPI | None = None

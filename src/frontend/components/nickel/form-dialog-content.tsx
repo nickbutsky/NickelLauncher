@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as React from "react";
+import { Children, type ComponentProps, type ElementRef, type ReactElement, useImperativeHandle, useRef } from "react";
 import {
   type ControllerProps,
   type DefaultValues,
@@ -26,10 +26,10 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   onSubmitBeforeClose,
   onSubmitAfterClose,
   ...props
-}: Omit<React.ComponentProps<typeof DialogContent>, "children" | "onSubmit"> & {
+}: Omit<ComponentProps<typeof DialogContent>, "children" | "onSubmit"> & {
   readonly children:
-    | React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>
-    | readonly React.ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
+    | ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>
+    | readonly ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
   readonly title: string;
   readonly submitText: string;
   readonly schema: T;
@@ -37,15 +37,15 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   readonly onSubmitBeforeClose?: SubmitHandler<z.infer<T>>;
   readonly onSubmitAfterClose?: SubmitHandler<z.infer<T>>;
 }) {
-  React.useImperativeHandle(
+  useImperativeHandle(
     ref as Exclude<typeof ref, string>,
     () => dialogContentRef.current as Exclude<typeof dialogContentRef.current, null>,
   );
 
   const form = useForm({ resolver: zodResolver(schema), reValidateMode: "onSubmit", defaultValues });
 
-  const dialogContentRef = React.useRef<React.ElementRef<typeof DialogContent>>(null);
-  const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
+  const dialogContentRef = useRef<ElementRef<typeof DialogContent>>(null);
+  const hiddenCloseButtonRef = useRef<ElementRef<typeof DialogClose>>(null);
 
   return (
     <DialogContent
@@ -70,7 +70,7 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
             });
           })}
         >
-          {React.Children.map(children, (child) => (
+          {Children.map(children, (child) => (
             <FormField control={form.control} name={child.props.name} render={child.props.render} />
           ))}
           <DialogFooter>
@@ -87,5 +87,5 @@ export function DialogFormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: Omit<ControllerProps<TFieldValues, TName>, "control">) {
-  return undefined && props;
+  return !props;
 }

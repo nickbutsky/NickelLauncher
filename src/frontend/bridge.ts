@@ -52,8 +52,8 @@ export interface API {
     readonly propelLaunchReport: (
       report: {
         readonly type: 0 | 1;
-        readonly details: { readonly processed: number; readonly totalsize: number; readonly unit: string } | null;
         readonly text: string;
+        readonly progress: { readonly processed: number; readonly totalsize: number; readonly unit: string } | null;
       } | null,
     ) => void;
   };

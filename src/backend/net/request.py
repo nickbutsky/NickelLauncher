@@ -54,7 +54,7 @@ def _get_urlretrieve_reporthook(
             Report(
                 Report.Type.PROGRESS,
                 "Downloading...",
-                Report.ProgressDetails(
+                Report.Progress(
                     min(round(float(block_num * block_size) / pow(1024, 2), 1), rounded_total_size),
                     rounded_total_size,
                     "MB",

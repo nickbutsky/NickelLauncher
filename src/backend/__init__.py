@@ -9,7 +9,7 @@ from . import bridge, instancemanager
 from .path import ROOT_DIRECTORY
 
 
-def main(frontend_api: bridge.FrontendAPI) -> None:
+def run(frontend_api: bridge.FrontendAPI) -> None:
     _create_dirs()
     _setup_rotating_logger(ROOT_DIRECTORY / "logs", "nl")
     bridge.set_frontend_api(frontend_api)

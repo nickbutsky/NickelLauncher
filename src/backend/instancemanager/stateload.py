@@ -5,9 +5,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
-from backend.core.instance import Instance
-from backend.core.instancegroup import InstanceGroup
-from backend.core.version import Architecture  # noqa: TCH001
+from backend.core import Architecture, Instance, InstanceGroup
 
 from .state import State
 
@@ -16,7 +14,7 @@ if TYPE_CHECKING:
     from pathlib import Path
     from typing import Self
 
-    from backend.core.version import Version
+    from backend.core import Version
 
 
 def load_state(directory: Path, versions: Iterable[Version]) -> State:

@@ -1,5 +1,5 @@
 import { CaretDownIcon } from "@radix-ui/react-icons";
-import * as React from "react";
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, useRef } from "react";
 
 import { InstanceButton } from "@/components/instance-button";
 import { EditableLabel } from "@/components/nickel/editable-label";
@@ -16,11 +16,11 @@ import type { InstanceGroup } from "@/core-types";
 import { useStore } from "@/store";
 import { useTrigger } from "@/utils";
 
-export const InstanceGroupCollapsible = React.forwardRef<
-  React.ElementRef<typeof Collapsible>,
-  React.ComponentPropsWithoutRef<typeof Collapsible> & { readonly state: InstanceGroup }
+export const InstanceGroupCollapsible = forwardRef<
+  ElementRef<typeof Collapsible>,
+  ComponentPropsWithoutRef<typeof Collapsible> & { readonly state: InstanceGroup }
 >(({ state, open: _open, onOpenChange: _onOpenChange, ...props }, ref) => {
-  const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
+  const contextMenuContentRef = useRef<ElementRef<typeof ContextMenuContent>>(null);
 
   const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 

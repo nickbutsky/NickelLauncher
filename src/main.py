@@ -155,7 +155,7 @@ def main() -> None:
 
     window.events.shown += on_shown
     window.events.closing += lambda: save_geometry(window)
-    backend.main(FrontendAPI(window))
+    backend.run(FrontendAPI(window))
     webview.start(debug="__compiled__" not in globals())
 
 

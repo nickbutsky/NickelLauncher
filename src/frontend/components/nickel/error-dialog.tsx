@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 
 import {
   AlertDialog,
@@ -12,7 +12,7 @@ import {
 import { useTriggerEffect } from "@/utils";
 
 export function ErrorDialog({ msg, trigger }: { readonly msg: string; readonly trigger: boolean }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   useTriggerEffect(() => setOpen(true), trigger);
 

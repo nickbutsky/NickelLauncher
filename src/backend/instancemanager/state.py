@@ -3,12 +3,12 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from backend.core.instancegroup import InstanceGroup, InvalidUnnamedInstanceGroupManipulationError
+from backend.core import InstanceGroup, InvalidUnnamedInstanceGroupManipulationError
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from backend.core.instance import Instance
+    from backend.core import Instance
 
 
 class State:

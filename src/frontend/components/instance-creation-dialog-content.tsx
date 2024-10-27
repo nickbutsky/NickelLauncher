@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useContext } from "react";
 import { z } from "zod";
 
 import { AppContext } from "@/app";
@@ -10,7 +10,7 @@ import { VersionSelector } from "@/components/version-selector";
 import { useStore } from "@/store";
 
 export function InstanceCreationDialogContent() {
-  const appContext = React.useContext(AppContext);
+  const appContext = useContext(AppContext);
   const versionTypeToVersions = useStore((state) => state.versionTypeToVersions);
   const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
   const instanceGroups = useStore((state) => state.instanceGroups);

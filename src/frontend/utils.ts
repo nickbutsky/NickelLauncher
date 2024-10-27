@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
-import * as React from "react";
+import { type EffectCallback, useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: readonly ClassValue[]) {
@@ -7,15 +7,15 @@ export function cn(...inputs: readonly ClassValue[]) {
 }
 
 export function useTrigger() {
-  const [trigger, setTrigger] = React.useState(false);
-  const fire = React.useCallback(() => setTrigger((prev) => !prev), []);
+  const [trigger, setTrigger] = useState(false);
+  const fire = useCallback(() => setTrigger((prev) => !prev), []);
   return [trigger, fire] as const;
 }
 
-export function useTriggerEffect(effect: React.EffectCallback, trigger: boolean, allowFirstRender = false) {
+export function useTriggerEffect(effect: EffectCallback, trigger: boolean, allowFirstRender = false) {
   const firstRender = useIsFirstRender();
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-  React.useEffect(() => {
+  useEffect(() => {
     if (!firstRender || allowFirstRender) {
       effect();
     }
@@ -23,8 +23,8 @@ export function useTriggerEffect(effect: React.EffectCallback, trigger: boolean,
 }
 
 export function useIsFirstRender() {
-  const firstRender = React.useRef(true);
-  React.useEffect(() => {
+  const firstRender = useRef(true);
+  useEffect(() => {
     firstRender.current = false;
   }, []);
   return firstRender.current;

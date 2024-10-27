@@ -1,5 +1,5 @@
 import { PlusIcon } from "@radix-ui/react-icons";
-import * as React from "react";
+import { type ContextType, createContext, useCallback, useEffect, useRef, useState } from "react";
 
 import { exposeStaticFunction } from "@/bridge";
 import { InstanceCreationDialogContent } from "@/components/instance-creation-dialog-content";
@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { useStore } from "@/store";
 import { useTrigger } from "@/utils";
 
-export const AppContext = React.createContext<{
+export const AppContext = createContext<{
   readonly scrollToInstance: (dirname: string) => void;
   readonly instanceDirnameToScrollTo: string | null;
   readonly scrollTrigger: boolean;
@@ -26,10 +26,10 @@ export const AppContext = React.createContext<{
 });
 
 export function App() {
-  const [ready, setReady] = React.useState(false);
-  const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = React.useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+  const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = useState<string | null>(null);
 
-  const errorMsg = React.useRef("");
+  const errorMsg = useRef("");
 
   const [scrollTrigger, fireScrollTrigger] = useTrigger();
   const [errorDialogTrigger, fireErrorDialogTrigger] = useTrigger();
@@ -39,7 +39,7 @@ export function App() {
   const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-  React.useEffect(() => {
+  useEffect(() => {
     if (import.meta.env.PROD) {
       exposeStaticFunction("onSuddenChange", reloadInstanceGroups);
     }
@@ -52,7 +52,7 @@ export function App() {
   }, []);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-  const scrollToInstance = React.useCallback<React.ContextType<typeof AppContext>["scrollToInstance"]>((dirname) => {
+  const scrollToInstance = useCallback<ContextType<typeof AppContext>["scrollToInstance"]>((dirname) => {
     setInstanceDirnameToScrollTo(dirname);
     fireScrollTrigger();
   }, []);

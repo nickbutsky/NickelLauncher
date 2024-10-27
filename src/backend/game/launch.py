@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -16,12 +15,11 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from backend.cancellationtoken import CancellationToken
-    from backend.core.instance import Instance
-    from backend.core.version import Architecture, Version
+    from backend.core import Architecture, Instance, Version
 
 
 def get_launched_instance() -> Instance | None:
-    return _launching_state.launched_instance
+    return _LaunchingStateProvider.launched_instance
 
 
 def launch(instance: Instance, reporthook: Callable[[Report], object] | None = None) -> None:
@@ -30,8 +28,8 @@ def launch(instance: Instance, reporthook: Callable[[Report], object] | None = N
         raise ValueError(error_msg)
 
     cancellation_token_source = CancellationTokenSource()
-    _launching_state.cancellation_token_source = cancellation_token_source
-    _launching_state.launched_instance = instance
+    _LaunchingStateProvider.cancellation_token_source = cancellation_token_source
+    _LaunchingStateProvider.launched_instance = instance
 
     try:
         logging.info('Launching instance "%s" at "%s"...', instance.name, instance.directory)
@@ -60,26 +58,22 @@ def launch(instance: Instance, reporthook: Callable[[Report], object] | None = N
     except Cancelled:
         pass
     finally:
-        _launching_state.cancellation_token_source = None
-        _launching_state.launched_instance = None
+        _LaunchingStateProvider.cancellation_token_source = None
+        _LaunchingStateProvider.launched_instance = None
 
 
 def cancel_launch() -> None:
-    if not _launching_state.cancellation_token_source:
+    if not _LaunchingStateProvider.cancellation_token_source:
         error_msg = "Nothing is being launched."
         raise ValueError(error_msg)
-    _launching_state.cancellation_token_source.cancel()
-    _launching_state.cancellation_token_source = None
-    _launching_state.launched_instance = None
+    _LaunchingStateProvider.cancellation_token_source.cancel()
+    _LaunchingStateProvider.cancellation_token_source = None
+    _LaunchingStateProvider.launched_instance = None
 
 
-@dataclass(slots=True)
-class _LaunchingState:
-    cancellation_token_source: CancellationTokenSource | None
-    launched_instance: Instance | None
-
-
-_launching_state: _LaunchingState = _LaunchingState(None, None)
+class _LaunchingStateProvider:
+    cancellation_token_source: CancellationTokenSource | None = None
+    launched_instance: Instance | None = None
 
 
 def _grant_access(directory: Path, user_sid: str) -> None:

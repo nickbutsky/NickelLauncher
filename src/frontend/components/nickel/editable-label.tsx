@@ -1,11 +1,22 @@
+// biome-ignore lint/style/noNamespaceImport: radix-ui convention
 import * as Popover from "@radix-ui/react-popover";
-import * as React from "react";
+import {
+  type ChangeEvent,
+  type FocusEvent,
+  type HTMLAttributes,
+  type InputHTMLAttributes,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 import { cn, useTriggerEffect } from "@/utils";
 
-export const EditableLabel = React.forwardRef<
+export const EditableLabel = forwardRef<
   HTMLDivElement,
-  Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
+  Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
     readonly editModeTrigger: boolean;
     readonly defaultValue: string;
     readonly maxLength?: number;
@@ -18,14 +29,14 @@ export const EditableLabel = React.forwardRef<
     { className, editModeTrigger, defaultValue, maxLength, applyOnAboutToSave, isAllowedToSave, onSave, ...props },
     ref,
   ) => {
-    React.useImperativeHandle(ref, () => labelRef.current as Exclude<typeof labelRef.current, null>, []);
+    useImperativeHandle(ref, () => labelRef.current as Exclude<typeof labelRef.current, null>, []);
 
-    const [value, setValue] = React.useState(maxLength === undefined ? defaultValue : defaultValue.slice(0, maxLength));
-    const [editMode, setEditMode] = React.useState(false);
-    const [height, setHeight] = React.useState(0);
+    const [value, setValue] = useState(maxLength === undefined ? defaultValue : defaultValue.slice(0, maxLength));
+    const [editMode, setEditMode] = useState(false);
+    const [height, setHeight] = useState(0);
 
-    const labelRef = React.useRef<HTMLDivElement>(null);
-    const inputRef = React.useRef<HTMLInputElement>(null);
+    const labelRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useTriggerEffect(() => {
       if (editMode) {
@@ -37,7 +48,7 @@ export const EditableLabel = React.forwardRef<
       setEditMode(true);
     }, editModeTrigger);
 
-    React.useEffect(() => {
+    useEffect(() => {
       if (editMode) {
         inputRef.current?.focus();
         inputRef.current?.select();
@@ -101,7 +112,7 @@ export const EditableLabel = React.forwardRef<
   },
 );
 
-const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+const DynamicInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   ({ className, onFocus, onChange, ...props }, ref) => {
     return (
       <input
@@ -129,7 +140,7 @@ const DynamicInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
   },
 );
 
-function adjustInputWidth(event: React.FocusEvent<HTMLInputElement, Element> | React.ChangeEvent<HTMLInputElement>) {
+function adjustInputWidth(event: FocusEvent<HTMLInputElement, Element> | ChangeEvent<HTMLInputElement>) {
   event.target.style.width = "16px";
   event.target.style.width = `${event.target.scrollWidth}px`;
 }

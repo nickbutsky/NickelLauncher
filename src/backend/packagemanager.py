@@ -15,10 +15,7 @@ class PackageDict(TypedDict):
     PackageFullName: str
 
 
-def find_packages(
-    package_family_name: str,
-    cancellation_token: CancellationToken | None = None,
-) -> list[PackageDict]:
+def find_packages(package_family_name: str, cancellation_token: CancellationToken | None = None) -> list[PackageDict]:
     return (
         (
             [cast(PackageDict, deserialized_output)]

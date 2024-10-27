@@ -4,13 +4,12 @@ import shutil
 from typing import TYPE_CHECKING
 
 from backend import shell
-from backend.core.instance import Instance
-from backend.core.instancegroup import InstanceGroup
+from backend.core import Instance, InstanceGroup
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from backend.core.version import Version
+    from backend.core import Version
 
     from .state import State
 

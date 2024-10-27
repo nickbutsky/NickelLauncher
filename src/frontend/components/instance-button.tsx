@@ -1,5 +1,14 @@
 import { ReloadIcon } from "@radix-ui/react-icons";
-import * as React from "react";
+import {
+  type ComponentPropsWithoutRef,
+  type ElementRef,
+  forwardRef,
+  useCallback,
+  useContext,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { z } from "zod";
 
 import { AppContext } from "@/app";
@@ -34,19 +43,19 @@ import type { Instance } from "@/core-types";
 import { useStore } from "@/store";
 import { cn, useTrigger, useTriggerEffect } from "@/utils";
 
-export const InstanceButton = React.forwardRef<
-  React.ElementRef<typeof Button>,
-  Omit<React.ComponentPropsWithoutRef<typeof Button>, "name"> & { readonly state: Instance }
+export const InstanceButton = forwardRef<
+  ElementRef<typeof Button>,
+  Omit<ComponentPropsWithoutRef<typeof Button>, "name"> & { readonly state: Instance }
 >(({ className, state, variant: _variant, onDoubleClick: _onDoubleClick, onKeyUp: _onKeyUp, ...props }, ref) => {
-  React.useImperativeHandle(ref, () => buttonRef.current as Exclude<typeof buttonRef.current, null>);
+  useImperativeHandle(ref, () => buttonRef.current as Exclude<typeof buttonRef.current, null>);
 
-  const [dialogOpen, setDialogOpen] = React.useState(false);
-  const [dialogContentId, setDialogContentId] = React.useState<"cg" | "cv" | "ci" | "li">("ci");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogContentId, setDialogContentId] = useState<"cg" | "cv" | "ci" | "li">("ci");
 
-  const buttonRef = React.useRef<React.ElementRef<typeof Button>>(null);
-  const contextMenuContentRef = React.useRef<React.ElementRef<typeof ContextMenuContent>>(null);
+  const buttonRef = useRef<ElementRef<typeof Button>>(null);
+  const contextMenuContentRef = useRef<ElementRef<typeof ContextMenuContent>>(null);
 
-  const appContext = React.useContext(AppContext);
+  const appContext = useContext(AppContext);
 
   const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
   const [launchTrigger, fireLaunchTrigger] = useTrigger();
@@ -70,13 +79,13 @@ export const InstanceButton = React.forwardRef<
     true,
   );
 
-  const openDialog = React.useCallback((dialogContentId: "cg" | "cv" | "ci" | "li") => {
+  const openDialog = useCallback((dialogContentId: "cg" | "cv" | "ci" | "li") => {
     setDialogContentId(dialogContentId);
     setDialogOpen(true);
   }, []);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-  const launchInstance = React.useCallback(() => {
+  const launchInstance = useCallback(() => {
     openDialog("li");
     fireLaunchTrigger();
   }, []);
@@ -251,15 +260,15 @@ function ChangeVersionDialogContent({
 }
 
 function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
-  const [copying, setCopying] = React.useState<"w" | "nw" | undefined>(undefined);
+  const [copying, setCopying] = useState<"w" | "nw" | undefined>(undefined);
 
-  const dialogContentRef = React.useRef<React.ElementRef<typeof DialogContent>>(null);
-  const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
+  const dialogContentRef = useRef<ElementRef<typeof DialogContent>>(null);
+  const hiddenCloseButtonRef = useRef<ElementRef<typeof DialogClose>>(null);
 
   const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-  const copyInstance = React.useCallback(
+  const copyInstance = useCallback(
     (copyWorlds: boolean) => {
       setCopying(copyWorlds ? "w" : "nw");
       pywebview.api.copyInstance(dirname, copyWorlds).then(() => {
@@ -296,12 +305,12 @@ function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
 }
 
 function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; readonly trigger: boolean }) {
-  const [report, setReport] = React.useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
-  const [cancelling, setCancelling] = React.useState(false);
+  const [report, setReport] = useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
+  const [cancelling, setCancelling] = useState(false);
 
-  const hiddenCloseButtonRef = React.useRef<React.ElementRef<typeof DialogClose>>(null);
+  const hiddenCloseButtonRef = useRef<ElementRef<typeof DialogClose>>(null);
 
-  const appContext = React.useContext(AppContext);
+  const appContext = useContext(AppContext);
 
   useTriggerEffect(
     () => {
@@ -331,14 +340,14 @@ function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; r
         <div className="flex">
           <div>{report?.text}</div>
           <div className="flex-1" />
-          {report?.details && (
-            <div>{`${report.details.processed.toFixed(1)}/${report.details.totalsize.toFixed(1)} ${
-              report.details.unit
+          {report?.progress && (
+            <div>{`${report.progress.processed.toFixed(1)}/${report.progress.totalsize.toFixed(1)} ${
+              report.progress.unit
             }`}</div>
           )}
         </div>
-        {report?.details ? (
-          <Progress value={report.details.processed} max={report.details.totalsize} />
+        {report?.progress ? (
+          <Progress value={report.progress.processed} max={report.progress.totalsize} />
         ) : (
           <div className="h-2 w-full overflow-hidden rounded-full bg-primary/20">
             <div className="progress h-full w-full bg-primary" />
