@@ -132,7 +132,7 @@ def main() -> None:
 
     window = webview.create_window(
         "NickelLauncher",
-        "bundled-frontend/index.html",
+        "bundled-frontend/index.html" if "__compiled__" in globals() else "../bundled-frontend/index.html",
         js_api=backend.bridge.API(),
         width=geometry_model.width,
         height=geometry_model.height,

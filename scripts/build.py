@@ -3,6 +3,7 @@ from __future__ import annotations
 import shutil
 import subprocess
 import tempfile
+import time
 from argparse import ArgumentParser
 from pathlib import Path
 from urllib import request
@@ -57,7 +58,7 @@ def compile_app(name: str, company_name: str, version: str) -> None:
             f'--file-version="{version}"',
             '--windows-icon-from-ico="icon.ico"',
             '--include-data-files="icon.ico"="icon.ico"',
-            '--include-data-dir="src/bundled-frontend"="bundled-frontend"',
+            '--include-data-dir="bundled-frontend"="bundled-frontend"',
             '--output-dir="dist"',
             "--windows-console-mode=disable",
             "--windows-uac-admin",
@@ -68,8 +69,17 @@ def compile_app(name: str, company_name: str, version: str) -> None:
         ),
         check=True,
     )
+    shutil.rmtree("bundled-frontend")
     app_dist_directory = Path("dist") / "main.dist"
-    new_app_dist_directory = app_dist_directory.replace(app_dist_directory.with_name(name))
+    new_app_dist_directory: Path | None = None
+    for _ in range(3):
+        try:
+            new_app_dist_directory = app_dist_directory.replace(app_dist_directory.with_name(name))
+            break
+        except PermissionError:
+            time.sleep(1)
+    if new_app_dist_directory is None:
+        raise CompileError
     print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.")  # noqa: T201
 
 
@@ -111,6 +121,10 @@ def build_installer(iscc_executable: Path, name: str, publisher: str, version: s
         ),
         check=True,
     )
+
+
+class CompileError(Exception):
+    pass
 
 
 if __name__ == "__main__":

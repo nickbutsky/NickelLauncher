@@ -1,10 +1,10 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
     "ignore": [
       "node_modules/",
       "src/frontend/components/shadcn/",
-      "src/bundled-frontend/",
+      "bundled-frontend/",
       "tailwind.config.js"
     ]
   },
