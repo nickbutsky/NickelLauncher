@@ -77,16 +77,17 @@ def get_geometry_model() -> GeometryModel:
         return GeometryModel()
     try:
         array = json.loads(value)
-    except json.JSONDecodeError:
-        return GeometryModel()
-    if not isinstance(array, list) or len(cast(list[object], array)) != 5:
-        return GeometryModel()
-    try:
         return GeometryModel.model_validate(
-            {"width": array[0], "height": array[1], "x": array[2], "y": array[3], "maximised": array[4]},
+            {
+                "width": array[0],
+                "height": array[1],
+                "x": array[2],
+                "y": array[3],
+                "maximised": array[4],
+            },
             strict=True,
         )
-    except ValidationError:
+    except (json.JSONDecodeError, TypeError, IndexError, ValidationError):
         return GeometryModel()
 
 
@@ -126,7 +127,7 @@ def save_geometry(window: webview.Window) -> None:
 
 
 def main() -> None:
-    me = SingleInstance()  # noqa: F841  # pyright: ignore [reportUnusedVariable]
+    _me = SingleInstance()
 
     geometry_model = get_geometry_model()
 

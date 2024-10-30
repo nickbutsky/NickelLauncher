@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import string
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
-from backend.core import Architecture, Instance, InstanceGroup
+from backend.core import Architecture, Instance
 
-from .state import State
+from .instancegroup import InstanceGroup
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -17,17 +18,22 @@ if TYPE_CHECKING:
     from backend.core import Version
 
 
-def load_state(directory: Path, versions: Iterable[Version]) -> State:
+@dataclass(frozen=True, slots=True)
+class LoadResult:
+    instance_groups: list[InstanceGroup]
+    last_instance: Instance | None
+
+
+def load(directory: Path, versions: Iterable[Version]) -> LoadResult:
     try:
         with (directory / "groups.json").open() as f:
-            data = f.read()
-        groups_model = _GroupsModel.model_validate_json(data, strict=True)
+            groups_model = _GroupsModel.model_validate_json(f.read(), strict=True)
     except (OSError, ValidationError):
-        return State(_load_instance_groups([], None, directory, versions), None, directory)
+        return LoadResult(_load_instance_groups([], None, directory, versions), None)
 
     groups = _load_instance_groups(groups_model.groups, groups_model.last_instance, directory, versions)
     last_instance = _get_last_instance(groups_model.last_instance, groups)
-    return State(groups, last_instance, directory)
+    return LoadResult(groups, last_instance)
 
 
 class _GroupsModel(BaseModel):
@@ -168,8 +174,7 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
         return None
     try:
         with (directory / "config.json").open() as f:
-            data = f.read()
-        instance_model = _InstanceModel.model_validate_json(data, strict=True)
+            instance_model = _InstanceModel.model_validate_json(f.read(), strict=True)
         version = next(
             v
             for v in versions

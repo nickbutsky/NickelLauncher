@@ -28,9 +28,7 @@ declare global {
       readonly getInstanceGroups: () => Promise<readonly InstanceGroup[]>;
       readonly getLastInstanceDirname: () => Promise<string | null>;
       readonly getVersionTypeToVersions: (remotely?: boolean) => Promise<VersionTypeToVersions>;
-      readonly renameInstanceGroup: (oldName: string, newName: string) => Promise<void>;
       readonly toggleInstanceGroupHidden: (name: string) => Promise<void>;
-      readonly deleteInstanceGroup: (name: string) => Promise<void>;
       readonly moveInstances: (position: number, groupName: string, dirnames: readonly string[]) => Promise<void>;
       readonly renameInstance: (dirname: string, newName: string) => Promise<void>;
       readonly changeVersion: (dirname: string, versionDisplayName: string) => Promise<void>;

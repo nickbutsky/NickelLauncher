@@ -19,13 +19,16 @@ export const useStore = create<State>((set) => ({
     set({ versionTypeToVersions: await pywebview.api.getVersionTypeToVersions(remotely) }),
 }));
 
-window.addEventListener(
-  "pywebviewready",
-  async () =>
-    useStore.setState({
-      ready: true,
-      instanceGroups: await pywebview.api.getInstanceGroups(),
-      versionTypeToVersions: await pywebview.api.getVersionTypeToVersions(),
-    }),
-  { once: true },
-);
+async function prepareStore() {
+  useStore.setState({
+    ready: true,
+    instanceGroups: await pywebview.api.getInstanceGroups(),
+    versionTypeToVersions: await pywebview.api.getVersionTypeToVersions(),
+  });
+}
+
+if (import.meta.env.DEV) {
+  prepareStore();
+} else {
+  window.addEventListener("pywebviewready", prepareStore, { once: true });
+}

@@ -63,9 +63,10 @@ class Version:
 
     def is_downloaded(self, architecture: Architecture) -> bool:
         try:
-            return self.architecture_to_package[architecture].is_file()
+            package = self.architecture_to_package[architecture]
         except KeyError:
             raise UnavailableArchitectureError from None
+        return package.is_file()
 
     def is_installed(self, architecture: Architecture) -> bool:
         if architecture not in self.available_architectures:

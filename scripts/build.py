@@ -71,14 +71,16 @@ def compile_app(name: str, company_name: str, version: str) -> None:
     )
     shutil.rmtree("bundled-frontend")
     app_dist_directory = Path("dist") / "main.dist"
-    new_app_dist_directory: Path | None = None
+    new_app_dist_directory = app_dist_directory.with_name(name)
+    renamed = False
     for _ in range(3):
         try:
-            new_app_dist_directory = app_dist_directory.replace(app_dist_directory.with_name(name))
+            app_dist_directory.replace(new_app_dist_directory)
+            renamed = True
             break
         except PermissionError:
             time.sleep(1)
-    if new_app_dist_directory is None:
+    if not renamed:
         raise CompileError
     print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.")  # noqa: T201
 
@@ -103,12 +105,14 @@ def build_installer(iscc_executable: Path, name: str, publisher: str, version: s
                 archive,
             )
         except:
-            shutil.rmtree(archive.parent, True)
+            print("Couldn't download required files to build an installer.")  # noqa: T201
             raise
-        with ZipFile(archive) as z:
-            z.extractall(archive.parent)
-        (archive.parent / "UninsIS.dll").replace(uninsis_dll)
-        shutil.rmtree(archive.parent, True)
+        else:
+            with ZipFile(archive) as z:
+                z.extractall(archive.parent)
+            (archive.parent / "UninsIS.dll").replace(uninsis_dll)
+        finally:
+            shutil.rmtree(archive.parent, True)
 
     subprocess.run(  # noqa: S603
         (

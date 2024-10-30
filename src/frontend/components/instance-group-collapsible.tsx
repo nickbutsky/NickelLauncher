@@ -48,7 +48,13 @@ export const InstanceGroupCollapsible = forwardRef<
                   if (event.key === "F2") {
                     fireEditableLabelTrigger();
                   } else if (event.key === "Delete") {
-                    pywebview.api.deleteInstanceGroup(state.name).then(reloadInstanceGroups);
+                    pywebview.api
+                      .moveInstances(
+                        Number.MAX_SAFE_INTEGER,
+                        "",
+                        state.instances.map((instance) => instance.dirname),
+                      )
+                      .then(reloadInstanceGroups);
                   }
                 }}
                 editModeTrigger={editableLabelTrigger}
@@ -56,7 +62,15 @@ export const InstanceGroupCollapsible = forwardRef<
                 maxLength={50}
                 applyOnAboutToSave={(value) => value.trim()}
                 isAllowedToSave={(value) => value.length > 0}
-                onSave={(value) => pywebview.api.renameInstanceGroup(state.name, value).then(reloadInstanceGroups)}
+                onSave={(value) =>
+                  pywebview.api
+                    .moveInstances(
+                      Number.MAX_SAFE_INTEGER,
+                      value,
+                      state.instances.map((instance) => instance.dirname),
+                    )
+                    .then(reloadInstanceGroups)
+                }
               />
             </ContextMenuTrigger>
             <ContextMenuContent ref={contextMenuContentRef}>
@@ -73,7 +87,15 @@ export const InstanceGroupCollapsible = forwardRef<
                 <ContextMenuShortcut>F2</ContextMenuShortcut>
               </ContextMenuItem>
               <ContextMenuItem
-                onSelect={() => pywebview.api.deleteInstanceGroup(state.name).then(reloadInstanceGroups)}
+                onSelect={() =>
+                  pywebview.api
+                    .moveInstances(
+                      Number.MAX_SAFE_INTEGER,
+                      "",
+                      state.instances.map((instance) => instance.dirname),
+                    )
+                    .then(reloadInstanceGroups)
+                }
               >
                 Delete
                 <ContextMenuShortcut>Del</ContextMenuShortcut>

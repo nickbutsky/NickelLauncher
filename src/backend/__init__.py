@@ -5,21 +5,24 @@ import os
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-from . import bridge, instancemanager
+from .bridge import Bridge, FrontendAPI
+from .instancemanager import InstanceManager
 from .path import ROOT_DIRECTORY
+from .versionretriever import VersionRetriever
 
 
-def run(frontend_api: bridge.FrontendAPI) -> None:
-    _create_dirs()
-    _setup_rotating_logger(ROOT_DIRECTORY / "logs", "nl")
-    bridge.set_frontend_api(frontend_api)
-    instancemanager.initialise_watchdog(frontend_api.static.on_sudden_change)
+def run(frontend_api: FrontendAPI) -> None:
+    logs_directory = ROOT_DIRECTORY / "logs"
+    _create_dirs(logs_directory)
+    _setup_rotating_logger(logs_directory, "nl")
+    Bridge.frontend_api = frontend_api
+    InstanceManager.initialise_watchdog(frontend_api.static.on_sudden_change)
 
 
-def _create_dirs() -> None:
-    (ROOT_DIRECTORY / "versions").mkdir(parents=True, exist_ok=True)
-    (ROOT_DIRECTORY / "instances").mkdir(parents=True, exist_ok=True)
-    (ROOT_DIRECTORY / "logs").mkdir(parents=True, exist_ok=True)
+def _create_dirs(logs_directory: Path) -> None:
+    VersionRetriever.DIRECTORY.mkdir(parents=True, exist_ok=True)
+    InstanceManager.DIRECTORY.mkdir(parents=True, exist_ok=True)
+    logs_directory.mkdir(parents=True, exist_ok=True)
 
 
 def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
