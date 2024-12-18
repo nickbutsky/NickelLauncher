@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import string
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel, ValidationError, field_validator, model_validator
 
@@ -47,7 +47,7 @@ class _GroupsModel(BaseModel):
     - there must be no instances with the same dirname
     """
 
-    format_version: int
+    format_version: Literal[1]
     groups: list[_GroupModel]
     last_instance: str | None
 
@@ -157,7 +157,7 @@ def _load_instance_groups(
 
 
 class _InstanceModel(BaseModel):
-    format_version: int
+    format_version: Literal[1]
     name: str
     version: _VersionModel
 
