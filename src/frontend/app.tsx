@@ -60,7 +60,7 @@ export function App() {
   return (
     storeReady &&
     ready && (
-      <AppContext.Provider
+      <AppContext
         value={{
           scrollToInstance,
           instanceDirnameToScrollTo,
@@ -86,7 +86,7 @@ export function App() {
           <InstanceCreationDialogContent />
         </Dialog>
         <ErrorDialog msg={errorMsg.current} trigger={errorDialogTrigger} />
-      </AppContext.Provider>
+      </AppContext>
     )
   );
 }

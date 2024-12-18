@@ -1,5 +1,5 @@
 import { CaretDownIcon } from "@radix-ui/react-icons";
-import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, useRef } from "react";
+import { type ComponentProps, type ComponentRef, useRef } from "react";
 
 import { InstanceButton } from "@/components/instance-button";
 import { EditableLabel } from "@/components/nickel/editable-label";
@@ -16,11 +16,13 @@ import type { InstanceGroup } from "@/core-types";
 import { useStore } from "@/store";
 import { useTrigger } from "@/utils";
 
-export const InstanceGroupCollapsible = forwardRef<
-  ElementRef<typeof Collapsible>,
-  ComponentPropsWithoutRef<typeof Collapsible> & { readonly state: InstanceGroup }
->(({ state, open: _open, onOpenChange: _onOpenChange, ...props }, ref) => {
-  const contextMenuContentRef = useRef<ElementRef<typeof ContextMenuContent>>(null);
+export function InstanceGroupCollapsible({
+  state,
+  open: _open,
+  onOpenChange: _onOpenChange,
+  ...props
+}: ComponentProps<typeof Collapsible> & { readonly state: InstanceGroup }) {
+  const contextMenuContentRef = useRef<ComponentRef<typeof ContextMenuContent>>(null);
 
   const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
@@ -28,7 +30,6 @@ export const InstanceGroupCollapsible = forwardRef<
 
   return (
     <Collapsible
-      ref={ref}
       open={!state.hidden}
       onOpenChange={() => pywebview.api.toggleInstanceGroupHidden(state.name).then(reloadInstanceGroups)}
       {...props}
@@ -111,4 +112,4 @@ export const InstanceGroupCollapsible = forwardRef<
       </CollapsibleContent>
     </Collapsible>
   );
-});
+}
