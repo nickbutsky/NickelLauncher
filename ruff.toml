@@ -1,2 +1,5 @@
 src = ["src"]
 target-version = "py312"
+
+[lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
