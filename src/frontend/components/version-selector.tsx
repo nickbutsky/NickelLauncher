@@ -1,5 +1,5 @@
 import { UpdateIcon } from "@radix-ui/react-icons";
-import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, useEffect, useRef, useState } from "react";
+import { type ComponentProps, type ComponentRef, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/shadcn/button";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
@@ -8,63 +8,58 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
 import { type Version, type VersionTypeToVersions, versionTypes } from "@/core-types";
 import { cn } from "@/utils";
 
-interface Props {
+export function VersionSelector({
+  className,
+  versionTypeToVersions,
+  onRefreshRequest,
+  defaultDisplayName,
+  onDisplayNameChange,
+  defaultValue: _defaultValue,
+  ...props
+}: ComponentProps<typeof Tabs> & {
   readonly versionTypeToVersions: VersionTypeToVersions;
   readonly onRefreshRequest: () => Promise<void>;
   readonly defaultDisplayName?: string;
   readonly onDisplayNameChange?: (displayName: string) => void;
+}) {
+  return (
+    <Tabs
+      className={cn("flex flex-col", className)}
+      defaultValue={
+        versionTypes.find((versionType) =>
+          versionTypeToVersions[versionType].find((version) => version.displayName === defaultDisplayName),
+        ) ?? versionTypes[0]
+      }
+      {...props}
+    >
+      <TopBar onRefreshRequest={onRefreshRequest} />
+      {versionTypes.map((versionType) => (
+        <TabsContent
+          className="flex-1 data-[state=inactive]:hidden"
+          tabIndex={-1}
+          key={versionType}
+          value={versionType}
+          forceMount={true}
+          asChild={true}
+        >
+          <InnerVersionSelector
+            versions={versionTypeToVersions[versionType]}
+            defaultDisplayName={defaultDisplayName}
+            onDisplayNameChange={onDisplayNameChange}
+          />
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
 }
-
-export const VersionSelector = forwardRef<ElementRef<typeof Tabs>, ComponentPropsWithoutRef<typeof Tabs> & Props>(
-  (
-    {
-      className,
-      versionTypeToVersions,
-      onRefreshRequest,
-      defaultDisplayName,
-      onDisplayNameChange,
-      defaultValue: _defaultValue,
-      ...props
-    },
-    ref,
-  ) => {
-    return (
-      <Tabs
-        className={cn("flex flex-col", className)}
-        ref={ref}
-        defaultValue={
-          versionTypes.find((versionType) =>
-            versionTypeToVersions[versionType].find((version) => version.displayName === defaultDisplayName),
-          ) ?? versionTypes[0]
-        }
-        {...props}
-      >
-        <TopBar onRefreshRequest={onRefreshRequest} />
-        {versionTypes.map((versionType) => (
-          <TabsContent
-            className="flex-1 data-[state=inactive]:hidden"
-            tabIndex={-1}
-            key={versionType}
-            value={versionType}
-            forceMount={true}
-            asChild={true}
-          >
-            <InnerVersionSelector
-              versions={versionTypeToVersions[versionType]}
-              defaultDisplayName={defaultDisplayName}
-              onDisplayNameChange={onDisplayNameChange}
-            />
-          </TabsContent>
-        ))}
-      </Tabs>
-    );
-  },
-);
 
 function TopBar({
   variant = "cl",
   onRefreshRequest,
-}: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Pick<Props, "onRefreshRequest">) {
+}: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Pick<
+  ComponentProps<typeof VersionSelector>,
+  "onRefreshRequest"
+>) {
   const [refreshing, setRefreshing] = useState(false);
 
   const versionTypeSelector = (
@@ -138,63 +133,55 @@ function TopBar({
   );
 }
 
-const InnerVersionSelector = forwardRef<
-  ElementRef<typeof ScrollArea>,
-  ComponentPropsWithoutRef<typeof ScrollArea> & {
-    readonly versions: readonly Version[];
-    readonly defaultDisplayName?: string;
-    readonly onDisplayNameChange?: (displayName: string) => void;
-  }
->(
-  (
-    {
-      className,
-      versions,
-      defaultDisplayName,
-      onDisplayNameChange,
-      viewportClassName: _viewportClassName,
-      type: _type,
-      ...props
-    },
-    ref,
-  ) => {
-    const [currentDisplayName, setCurrentDisplayName] = useState(
-      versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
-    );
+function InnerVersionSelector({
+  className,
+  versions,
+  defaultDisplayName,
+  onDisplayNameChange,
+  viewportClassName: _viewportClassName,
+  type: _type,
+  ...props
+}: ComponentProps<typeof ScrollArea> & {
+  readonly versions: readonly Version[];
+  readonly defaultDisplayName?: string;
+  readonly onDisplayNameChange?: (displayName: string) => void;
+}) {
+  const [currentDisplayName, setCurrentDisplayName] = useState(
+    versions.find((version) => version.displayName === defaultDisplayName)?.displayName ?? versions[0]?.displayName,
+  );
 
-    const selectedItemRef = useRef<ElementRef<typeof ToggleGroupItem>>(null);
+  const selectedItemRef = useRef<ComponentRef<typeof ToggleGroupItem>>(null);
 
-    useEffect(() => {
-      selectedItemRef.current?.scrollIntoView({ block: "center" });
-    }, []);
+  useEffect(() => {
+    selectedItemRef.current?.scrollIntoView({ block: "center" });
+  }, []);
 
-    return (
-      <ScrollArea className={cn("pr-3", className)} viewportClassName="border" ref={ref} type="always" {...props}>
-        <ToggleGroup
-          className="flex-col gap-0"
-          type="single"
-          orientation="vertical"
-          value={currentDisplayName}
-          onValueChange={(value) => {
-            if (value) {
-              setCurrentDisplayName(value);
-              onDisplayNameChange?.(value);
-            }
-          }}
-        >
-          {versions.map(({ displayName, availableArchitectures }) => (
-            <ToggleGroupItem
-              className="w-full justify-between rounded-none"
-              ref={displayName === currentDisplayName ? selectedItemRef : undefined}
-              key={displayName}
-              value={displayName}
-            >
-              <div>{displayName}</div>
-              <div>{availableArchitectures.join(" | ")}</div>
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-      </ScrollArea>
-    );
-  },
-);
+  return (
+    <ScrollArea className={cn("pr-3", className)} viewportClassName="border" type="always" {...props}>
+      <ToggleGroup
+        className="flex-col gap-0"
+        type="single"
+        orientation="vertical"
+        value={currentDisplayName}
+        onValueChange={(value) => {
+          if (value) {
+            setCurrentDisplayName(value);
+            onDisplayNameChange?.(value);
+          }
+        }}
+      >
+        {versions.map(({ displayName, availableArchitectures }) => (
+          <ToggleGroupItem
+            className="w-full justify-between rounded-none"
+            ref={displayName === currentDisplayName ? selectedItemRef : undefined}
+            key={displayName}
+            value={displayName}
+          >
+            <div>{displayName}</div>
+            <div>{availableArchitectures.join(" | ")}</div>
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </ScrollArea>
+  );
+}

@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import "@/dev-mocks";
+
 import { App } from "@/app";
 import "@/bridge";
 import { ThemeProvider } from "@/components/shadcn/theme-provider";

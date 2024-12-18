@@ -1,29 +1,27 @@
-import {
-  type ComponentPropsWithoutRef,
-  type ElementRef,
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { type ComponentProps, type ComponentRef, useImperativeHandle, useRef, useState } from "react";
 
 import { Input } from "@/components/shadcn/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/shadcn/select";
 import { cn } from "@/utils";
 
-export const InputWithOptions = forwardRef<
-  ElementRef<typeof Input>,
-  Omit<ComponentPropsWithoutRef<typeof Input>, "value"> & {
-    readonly options: readonly string[];
-    readonly value?: string;
-  }
->(({ className, onChange, options, value, defaultValue: _defaultValue, ...props }, ref) => {
+export function InputWithOptions({
+  className,
+  ref,
+  onChange,
+  options,
+  value,
+  defaultValue: _defaultValue,
+  ...props
+}: Omit<ComponentProps<typeof Input>, "value"> & {
+  readonly options: readonly string[];
+  readonly value?: string;
+}) {
   useImperativeHandle(ref, () => inputRef.current as Exclude<typeof inputRef.current, null>, []);
 
   const [currentValue, setCurrentValue] = useState(value);
 
-  const inputRef = useRef<ElementRef<typeof Input>>(null);
-  const selectTriggerRef = useRef<ElementRef<typeof SelectTrigger>>(null);
+  const inputRef = useRef<ComponentRef<typeof Input>>(null);
+  const selectTriggerRef = useRef<ComponentRef<typeof SelectTrigger>>(null);
 
   return options.length > 0 ? (
     <div className="flex">
@@ -82,4 +80,4 @@ export const InputWithOptions = forwardRef<
       {...props}
     />
   );
-});
+}

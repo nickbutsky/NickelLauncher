@@ -1,14 +1,5 @@
 import { ReloadIcon } from "@radix-ui/react-icons";
-import {
-  type ComponentPropsWithoutRef,
-  type ElementRef,
-  forwardRef,
-  useCallback,
-  useContext,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { type ComponentProps, type ComponentRef, use, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { z } from "zod";
 
 import { AppContext } from "@/app";
@@ -43,19 +34,24 @@ import type { Instance } from "@/core-types";
 import { useStore } from "@/store";
 import { cn, useTrigger, useTriggerEffect } from "@/utils";
 
-export const InstanceButton = forwardRef<
-  ElementRef<typeof Button>,
-  Omit<ComponentPropsWithoutRef<typeof Button>, "name"> & { readonly state: Instance }
->(({ className, state, variant: _variant, onDoubleClick: _onDoubleClick, onKeyUp: _onKeyUp, ...props }, ref) => {
+export function InstanceButton({
+  className,
+  ref,
+  state,
+  variant: _variant,
+  onDoubleClick: _onDoubleClick,
+  onKeyUp: _onKeyUp,
+  ...props
+}: Omit<ComponentProps<typeof Button>, "name"> & { readonly state: Instance }) {
   useImperativeHandle(ref, () => buttonRef.current as Exclude<typeof buttonRef.current, null>);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogContentId, setDialogContentId] = useState<"cg" | "cv" | "ci" | "li">("ci");
 
-  const buttonRef = useRef<ElementRef<typeof Button>>(null);
-  const contextMenuContentRef = useRef<ElementRef<typeof ContextMenuContent>>(null);
+  const buttonRef = useRef<ComponentRef<typeof Button>>(null);
+  const contextMenuContentRef = useRef<ComponentRef<typeof ContextMenuContent>>(null);
 
-  const appContext = useContext(AppContext);
+  const appContext = use(AppContext);
 
   const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
   const [launchTrigger, fireLaunchTrigger] = useTrigger();
@@ -180,7 +176,7 @@ export const InstanceButton = forwardRef<
       </Dialog>
     </>
   );
-});
+}
 
 function ChangeGroupDialogContent({ dirname }: { readonly dirname: string }) {
   const instanceGroups = useStore((state) => state.instanceGroups);
@@ -262,8 +258,8 @@ function ChangeVersionDialogContent({
 function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
   const [copying, setCopying] = useState<"w" | "nw" | undefined>(undefined);
 
-  const dialogContentRef = useRef<ElementRef<typeof DialogContent>>(null);
-  const hiddenCloseButtonRef = useRef<ElementRef<typeof DialogClose>>(null);
+  const dialogContentRef = useRef<ComponentRef<typeof DialogContent>>(null);
+  const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
 
   const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
@@ -308,9 +304,9 @@ function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; r
   const [report, setReport] = useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
   const [cancelling, setCancelling] = useState(false);
 
-  const hiddenCloseButtonRef = useRef<ElementRef<typeof DialogClose>>(null);
+  const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
 
-  const appContext = useContext(AppContext);
+  const appContext = use(AppContext);
 
   useTriggerEffect(
     () => {

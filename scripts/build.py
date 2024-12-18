@@ -82,7 +82,7 @@ def compile_app(name: str, company_name: str, version: str) -> None:
             time.sleep(1)
     if not renamed:
         raise CompileError
-    print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.")  # noqa: T201
+    print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.")
 
 
 def get_iscc_executable() -> Path | None:
@@ -104,8 +104,7 @@ def build_installer(iscc_executable: Path, name: str, publisher: str, version: s
                 "https://github.com/Bill-Stewart/UninsIS/releases/download/v1.0.1/UninsIS-1.0.1.zip",
                 archive,
             )
-        except:
-            print("Couldn't download required files to build an installer.")  # noqa: T201
+        except:  # noqa: TRY203
             raise
         else:
             with ZipFile(archive) as z:

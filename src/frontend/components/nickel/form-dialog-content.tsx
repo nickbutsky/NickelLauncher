@@ -1,5 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Children, type ComponentProps, type ElementRef, type ReactElement, useImperativeHandle, useRef } from "react";
+import {
+  Children,
+  type ComponentProps,
+  type ComponentRef,
+  type ReactElement,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import {
   type ControllerProps,
   type DefaultValues,
@@ -37,15 +44,12 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
   readonly onSubmitBeforeClose?: SubmitHandler<z.infer<T>>;
   readonly onSubmitAfterClose?: SubmitHandler<z.infer<T>>;
 }) {
-  useImperativeHandle(
-    ref as Exclude<typeof ref, string>,
-    () => dialogContentRef.current as Exclude<typeof dialogContentRef.current, null>,
-  );
+  useImperativeHandle(ref, () => dialogContentRef.current as Exclude<typeof dialogContentRef.current, null>);
 
   const form = useForm({ resolver: zodResolver(schema), reValidateMode: "onSubmit", defaultValues });
 
-  const dialogContentRef = useRef<ElementRef<typeof DialogContent>>(null);
-  const hiddenCloseButtonRef = useRef<ElementRef<typeof DialogClose>>(null);
+  const dialogContentRef = useRef<ComponentRef<typeof DialogContent>>(null);
+  const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
 
   return (
     <DialogContent
