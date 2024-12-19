@@ -1,6 +1,6 @@
 import { type ComponentProps, type ComponentRef, useImperativeHandle, useRef, useState } from "react";
 
-import { Input } from "@/components/shadcn/input";
+import { Input } from "@/components/shadcn-modified/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/shadcn/select";
 import { cn } from "@/utils";
 

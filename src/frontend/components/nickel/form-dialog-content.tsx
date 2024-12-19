@@ -18,8 +18,14 @@ import {
 } from "react-hook-form";
 import type { ZodObject, ZodType, z } from "zod";
 
+import {
+	DialogClose,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/shadcn-modified/dialog";
 import { Button } from "@/components/shadcn/button";
-import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
 import { Form, FormField } from "@/components/shadcn/form";
 
 export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>({

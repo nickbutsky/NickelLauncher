@@ -8,6 +8,15 @@ import { type API, exposeTemporaryFunction } from "@/bridge";
 import { EditableLabel } from "@/components/nickel/editable-label";
 import { DialogFormField, FormDialogContent } from "@/components/nickel/form-dialog-content";
 import { InputWithOptions } from "@/components/nickel/input-with-options";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/shadcn-modified/dialog";
+import { Progress } from "@/components/shadcn-modified/progress";
 import { Button } from "@/components/shadcn/button";
 import {
 	ContextMenu,
@@ -19,16 +28,7 @@ import {
 	ContextMenuShortcut,
 	ContextMenuTrigger,
 } from "@/components/shadcn/context-menu";
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/shadcn/dialog";
 import { FormControl, FormItem } from "@/components/shadcn/form";
-import { Progress } from "@/components/shadcn/progress";
 import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
 import { useStore } from "@/store";

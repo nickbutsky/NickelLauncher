@@ -1,7 +1,7 @@
 {
 	"$schema": "node_modules/@biomejs/biome/configuration_schema.json",
 	"files": {
-		"ignore": ["src/frontend/components/shadcn/"]
+		"ignore": ["src/frontend/components/shadcn/", "src/frontend/components/shadcn-modified/"]
 	},
 	"formatter": {
 		"lineWidth": 120

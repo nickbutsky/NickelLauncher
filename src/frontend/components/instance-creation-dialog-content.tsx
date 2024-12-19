@@ -4,8 +4,8 @@ import { z } from "zod";
 import { AppContext } from "@/app-context";
 import { DialogFormField, FormDialogContent } from "@/components/nickel/form-dialog-content";
 import { InputWithOptions } from "@/components/nickel/input-with-options";
+import { Input } from "@/components/shadcn-modified/input";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/shadcn/form";
-import { Input } from "@/components/shadcn/input";
 import { VersionSelector } from "@/components/version-selector";
 import { useStore } from "@/store";
 
