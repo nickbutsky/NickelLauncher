@@ -9,21 +9,21 @@ import { ThemeProvider } from "@/components/shadcn/theme-provider";
 import "@/globals.css";
 
 function main() {
-  const rootElement = document.getElementById("root");
-  if (!rootElement) {
-    throw new Error("Root element not found.");
-  }
-  createRoot(rootElement).render(
-    <StrictMode>
-      <ThemeProvider defaultTheme="dark">
-        <App />
-      </ThemeProvider>
-    </StrictMode>,
-  );
+	const rootElement = document.getElementById("root");
+	if (!rootElement) {
+		throw new Error("Root element not found.");
+	}
+	createRoot(rootElement).render(
+		<StrictMode>
+			<ThemeProvider defaultTheme="dark">
+				<App />
+			</ThemeProvider>
+		</StrictMode>,
+	);
 }
 
 if (import.meta.env.DEV) {
-  main();
+	main();
 } else {
-  window.addEventListener("pywebviewready", main, { once: true });
+	window.addEventListener("pywebviewready", main, { once: true });
 }
