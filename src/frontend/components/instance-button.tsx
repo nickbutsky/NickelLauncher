@@ -1,7 +1,3 @@
-import { ReloadIcon } from "@radix-ui/react-icons";
-import { type ComponentProps, type ComponentRef, use, useCallback, useImperativeHandle, useRef, useState } from "react";
-import { z } from "zod";
-
 import { AppContext } from "@/app-context";
 import defaultLogo from "@/assets/default.png";
 import { type API, exposeTemporaryFunction } from "@/bridge";
@@ -33,6 +29,9 @@ import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
 import { useStore } from "@/store";
 import { cn, useTrigger, useTriggerEffect } from "@/utils";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { type ComponentProps, type ComponentRef, use, useCallback, useImperativeHandle, useRef, useState } from "react";
+import { z } from "zod";
 
 export function InstanceButton({
 	className,

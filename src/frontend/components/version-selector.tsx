@@ -1,12 +1,11 @@
-import { UpdateIcon } from "@radix-ui/react-icons";
-import { type ComponentProps, type ComponentRef, useEffect, useRef, useState } from "react";
-
 import { ScrollArea } from "@/components/shadcn-modified/scroll-area";
 import { Button } from "@/components/shadcn/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
 import { type Version, type VersionTypeToVersions, versionTypes } from "@/core-types";
 import { cn } from "@/utils";
+import { UpdateIcon } from "@radix-ui/react-icons";
+import { type ComponentProps, type ComponentRef, useEffect, useRef, useState } from "react";
 
 export function VersionSelector({
 	className,

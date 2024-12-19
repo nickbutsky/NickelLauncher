@@ -1,6 +1,5 @@
-import { create } from "zustand";
-
 import type { VersionTypeToVersions } from "@/core-types";
+import { create } from "zustand";
 
 interface State {
 	readonly ready: boolean;

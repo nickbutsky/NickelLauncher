@@ -1,6 +1,5 @@
-import type { MarkWritable } from "ts-essentials";
-
 import type { InstanceGroup, VersionTypeToVersions } from "@/core-types";
+import type { MarkWritable } from "ts-essentials";
 
 export function exposeStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
 	if (exposedStaticFunctionNames.has(name)) {

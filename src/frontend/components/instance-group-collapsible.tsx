@@ -1,6 +1,3 @@
-import { CaretDownIcon } from "@radix-ui/react-icons";
-import { type ComponentProps, type ComponentRef, useRef } from "react";
-
 import { InstanceButton } from "@/components/instance-button";
 import { EditableLabel } from "@/components/nickel/editable-label";
 import { Button } from "@/components/shadcn/button";
@@ -15,6 +12,8 @@ import {
 import type { InstanceGroup } from "@/core-types";
 import { useStore } from "@/store";
 import { useTrigger } from "@/utils";
+import { CaretDownIcon } from "@radix-ui/react-icons";
+import { type ComponentProps, type ComponentRef, useRef } from "react";
 
 export function InstanceGroupCollapsible({
 	state,

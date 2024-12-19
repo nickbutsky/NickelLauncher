@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -10,6 +8,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/shadcn/alert-dialog";
 import { useTriggerEffect } from "@/utils";
+import { useState } from "react";
 
 export function ErrorDialog({ msg, trigger }: { readonly msg: string; readonly trigger: boolean }) {
 	const [open, setOpen] = useState(false);

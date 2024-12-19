@@ -1,16 +1,15 @@
-import { PlusIcon } from "@radix-ui/react-icons";
-import { type ContextType, useCallback, useEffect, useRef, useState } from "react";
-
 import { AppContext } from "@/app-context";
 import { exposeStaticFunction } from "@/bridge";
 import { InstanceCreationDialogContent } from "@/components/instance-creation-dialog-content";
 import { InstanceGroupCollapsible } from "@/components/instance-group-collapsible";
 import { ErrorDialog } from "@/components/nickel/error-dialog";
+import { Dialog, DialogTrigger } from "@/components/shadcn-modified/dialog";
+import { ScrollArea } from "@/components/shadcn-modified/scroll-area";
 import { Button } from "@/components/shadcn/button";
-import { Dialog, DialogTrigger } from "@/components/shadcn/dialog";
-import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { useStore } from "@/store";
 import { useTrigger } from "@/utils";
+import { PlusIcon } from "@radix-ui/react-icons";
+import { type ContextType, useCallback, useEffect, useRef, useState } from "react";
 
 export function App() {
 	const [ready, setReady] = useState(false);

@@ -1,6 +1,3 @@
-import { use } from "react";
-import { z } from "zod";
-
 import { AppContext } from "@/app-context";
 import { DialogFormField, FormDialogContent } from "@/components/nickel/form-dialog-content";
 import { InputWithOptions } from "@/components/nickel/input-with-options";
@@ -8,6 +5,8 @@ import { Input } from "@/components/shadcn-modified/input";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/shadcn/form";
 import { VersionSelector } from "@/components/version-selector";
 import { useStore } from "@/store";
+import { use } from "react";
+import { z } from "zod";
 
 export function InstanceCreationDialogContent() {
 	const appContext = use(AppContext);

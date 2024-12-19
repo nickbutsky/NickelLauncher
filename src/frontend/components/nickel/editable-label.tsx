@@ -1,3 +1,4 @@
+import { cn, useTriggerEffect } from "@/utils";
 // biome-ignore lint/style/noNamespaceImport: radix-ui convention
 import * as Popover from "@radix-ui/react-popover";
 import {
@@ -9,8 +10,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-
-import { cn, useTriggerEffect } from "@/utils";
 
 export function EditableLabel({
 	className,
