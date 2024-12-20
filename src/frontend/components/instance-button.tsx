@@ -2,7 +2,7 @@ import { AppContext } from "@/app-context";
 import defaultLogo from "@/assets/default.png";
 import { type API, exposeTemporaryFunction } from "@/bridge";
 import { EditableLabel } from "@/components/nickel/editable-label";
-import { DialogFormField, FormDialogContent } from "@/components/nickel/form-dialog-content";
+import { FormDialogContent } from "@/components/nickel/form-dialog-content";
 import { InputWithOptions } from "@/components/nickel/input-with-options";
 import {
 	Dialog,
@@ -24,11 +24,11 @@ import {
 	ContextMenuShortcut,
 	ContextMenuTrigger,
 } from "@/components/shadcn/context-menu";
-import { FormControl, FormItem } from "@/components/shadcn/form";
+import { FormControl, FormField, FormItem } from "@/components/shadcn/form";
 import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
 import { useStore } from "@/store";
-import { cn, useTrigger, useTriggerEffect } from "@/utils";
+import { cn, useTrigger, useTriggerEffect, useZodForm } from "@/utils";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { type ComponentProps, type ComponentRef, use, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { z } from "zod";
@@ -183,21 +183,23 @@ function ChangeGroupDialogContent({ dirname }: { readonly dirname: string }) {
 	const instanceGroups = useStore((state) => state.instanceGroups);
 	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
+	const zodForm = useZodForm(z.object({ groupName: z.string() }), {
+		groupName:
+			instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
+	});
+
 	return (
 		<FormDialogContent
 			title="Change group"
 			submitText="Change"
-			schema={z.object({ groupName: z.string() })}
-			defaultValues={{
-				groupName:
-					instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
-			}}
+			form={zodForm}
 			onSubmitBeforeClose={(data) =>
 				pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
 			}
 			onSubmitAfterClose={reloadInstanceGroups}
 		>
-			<DialogFormField
+			<FormField
+				control={zodForm.control}
 				name="groupName"
 				render={({ field }) => (
 					<FormItem>
@@ -224,19 +226,21 @@ function ChangeVersionDialogContent({
 	const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
 	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
+	const zodForm = useZodForm(z.object({ versionDisplayName: z.string() }), {
+		versionDisplayName: currentVersionDisplayName,
+	});
+
 	return (
 		<FormDialogContent
 			title="Change Version"
 			submitText="Change"
-			schema={z.object({ versionDisplayName: z.string() })}
-			defaultValues={{
-				versionDisplayName: currentVersionDisplayName,
-			}}
+			form={zodForm}
 			onSubmitBeforeClose={(data) =>
 				pywebview.api.changeVersion(dirname, data.versionDisplayName).then(reloadInstanceGroups)
 			}
 		>
-			<DialogFormField
+			<FormField
+				control={zodForm.control}
 				name="versionDisplayName"
 				render={({ field }) => (
 					<FormItem>

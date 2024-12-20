@@ -6,52 +6,28 @@ import {
 	DialogTitle,
 } from "@/components/shadcn-modified/dialog";
 import { Button } from "@/components/shadcn/button";
-import { Form, FormField } from "@/components/shadcn/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-	Children,
-	type ComponentProps,
-	type ComponentRef,
-	type ReactElement,
-	useImperativeHandle,
-	useRef,
-} from "react";
-import {
-	type ControllerProps,
-	type DefaultValues,
-	type FieldPath,
-	type FieldValues,
-	type Path,
-	type SubmitHandler,
-	useForm,
-} from "react-hook-form";
-import type { ZodObject, ZodType, z } from "zod";
+import { Form } from "@/components/shadcn/form";
+import { type ComponentProps, type ComponentRef, useImperativeHandle, useRef } from "react";
+import type { DefaultValues, FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 
-export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>({
+export function FormDialogContent<T extends FieldValues = FieldValues>({
 	ref,
 	children,
 	onCloseAutoFocus,
 	title,
 	submitText,
-	schema,
-	defaultValues,
+	form,
 	onSubmitBeforeClose,
 	onSubmitAfterClose,
 	...props
-}: Omit<ComponentProps<typeof DialogContent>, "children" | "onSubmit"> & {
-	readonly children:
-		| ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>
-		| readonly ReactElement<ControllerProps<z.infer<T>, Path<z.infer<T>>>>[];
+}: Omit<ComponentProps<typeof DialogContent>, "onSubmit"> & {
 	readonly title: string;
 	readonly submitText: string;
-	readonly schema: T;
-	readonly defaultValues: DefaultValues<z.infer<T>>;
-	readonly onSubmitBeforeClose?: SubmitHandler<z.infer<T>>;
-	readonly onSubmitAfterClose?: SubmitHandler<z.infer<T>>;
+	readonly form: UseFormReturn<T>;
+	readonly onSubmitBeforeClose?: SubmitHandler<T>;
+	readonly onSubmitAfterClose?: SubmitHandler<T>;
 }) {
 	useImperativeHandle(ref, () => dialogContentRef.current as Exclude<typeof dialogContentRef.current, null>);
-
-	const form = useForm({ resolver: zodResolver(schema), reValidateMode: "onSubmit", defaultValues });
 
 	const dialogContentRef = useRef<ComponentRef<typeof DialogContent>>(null);
 	const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
@@ -60,7 +36,7 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
 		<DialogContent
 			ref={dialogContentRef}
 			onCloseAutoFocus={(event) => {
-				form.reset(defaultValues);
+				form.reset(form.control._defaultValues as DefaultValues<T>);
 				onCloseAutoFocus?.(event);
 			}}
 			{...props}
@@ -79,9 +55,7 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
 						});
 					})}
 				>
-					{Children.map(children, (child) => (
-						<FormField control={form.control} name={child.props.name} render={child.props.render} />
-					))}
+					{children}
 					<DialogFooter>
 						<Button type="submit">{submitText}</Button>
 						<DialogClose ref={hiddenCloseButtonRef} hidden={true} />
@@ -90,11 +64,4 @@ export function FormDialogContent<T extends ZodObject<Record<string, ZodType>>>(
 			</Form>
 		</DialogContent>
 	);
-}
-
-export function DialogFormField<
-	TFieldValues extends FieldValues = FieldValues,
-	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: Omit<ControllerProps<TFieldValues, TName>, "control">) {
-	return !props;
 }
