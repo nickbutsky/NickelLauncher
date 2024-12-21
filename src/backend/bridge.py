@@ -54,6 +54,12 @@ class API:
     def toggleInstanceGroupHidden(self, name: str) -> None:  # noqa: N802
         next(group for group in InstanceManager.instance_groups if group.name == name).toggle_hidden()
 
+    def moveInstanceGroup(self, position: int, group_name: str) -> None:  # noqa: N802
+        InstanceManager.move_instance_group(
+            position,
+            next(group for group in InstanceManager.instance_groups if group.name == group_name),
+        )
+
     def moveInstances(self, position: int, group_name: str, dirnames: list[str]) -> None:  # noqa: N802
         InstanceManager.move_instances(position, group_name, [self._get_instance(dirname) for dirname in dirnames])
 

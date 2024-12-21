@@ -55,6 +55,11 @@ class InstanceManager:
         self._last_instance = value
         self._save()
 
+    def move_instance_group(self, position: int, group: InstanceGroup) -> None:
+        self._instance_groups.remove(group)
+        self._instance_groups.insert(position, group)
+        self._save()
+
     def move_instances(self, position: int, group_name: str, instances: Iterable[Instance]) -> None:
         for group in self.instance_groups:
             instances_to_remove = [instance for instance in group.instances if instance in instances]
@@ -81,6 +86,28 @@ class InstanceManager:
 
         self._save()
 
+    def copy_instance(self, instance: Instance, copy_worlds: bool) -> None:
+        with self._watchdog.disable_dir_created_event_tracking():
+            copied_instance = Instance(
+                f"{instance.name}(copy)",
+                instance.version,
+                instance.architecture_choice,
+                shell.create_subdirectory(instance.name, self.DIRECTORY),
+            )
+            copied_instance.populate_directory()
+            shutil.copytree(
+                instance.directory / "com.mojang",
+                copied_instance.directory / "com.mojang",
+                ignore=lambda src, _: ["minecraftWorlds"]
+                if not copy_worlds and (src == str(instance.directory / "com.mojang"))
+                else [],
+                dirs_exist_ok=True,
+            )
+            (copied_instance.directory / "com.mojang" / "minecraftWorlds").mkdir(exist_ok=True)
+            group = next(group for group in self.instance_groups if instance in group.instances)
+            group.add_instances(group.instances.index(instance) + 1, [copied_instance])
+        self._save()
+
     def create_instance(self, name: str, group_name: str, version: Version) -> Path:
         with self._watchdog.disable_dir_created_event_tracking():
             instance_directory = shell.create_subdirectory(name, self.DIRECTORY)
@@ -103,28 +130,6 @@ class InstanceManager:
 
             self._save()
             return instance_directory
-
-    def copy_instance(self, instance: Instance, copy_worlds: bool) -> None:
-        with self._watchdog.disable_dir_created_event_tracking():
-            copied_instance = Instance(
-                f"{instance.name}(copy)",
-                instance.version,
-                instance.architecture_choice,
-                shell.create_subdirectory(instance.name, self.DIRECTORY),
-            )
-            copied_instance.populate_directory()
-            shutil.copytree(
-                instance.directory / "com.mojang",
-                copied_instance.directory / "com.mojang",
-                ignore=lambda src, _: ["minecraftWorlds"]
-                if not copy_worlds and (src == str(instance.directory / "com.mojang"))
-                else [],
-                dirs_exist_ok=True,
-            )
-            (copied_instance.directory / "com.mojang" / "minecraftWorlds").mkdir(exist_ok=True)
-            group = next(group for group in self.instance_groups if instance in group.instances)
-            group.add_instances(group.instances.index(instance) + 1, [copied_instance])
-        self._save()
 
     def initialise_watchdog(self, on_sudden_change: Callable[[], object]) -> None:
         if isinstance(self._watchdog, _Watchdog):

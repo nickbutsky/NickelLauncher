@@ -62,15 +62,24 @@ export function InstanceGroupCollapsible({
 								maxLength={50}
 								applyOnAboutToSave={(value) => value.trim()}
 								isAllowedToSave={(value) => value.length > 0}
-								onSave={(value) =>
-									pywebview.api
-										.moveInstances(
-											Number.MAX_SAFE_INTEGER,
-											value,
-											state.instances.map((instance) => instance.dirname),
-										)
-										.then(reloadInstanceGroups)
-								}
+								onSave={async (value) => {
+									const instanceGroups = await pywebview.api.getInstanceGroups();
+									const instanceGroupNumber = instanceGroups.length;
+									const oldPosition = instanceGroups.findIndex((group) => group.name === state.name);
+									await pywebview.api.moveInstances(
+										Number.MAX_SAFE_INTEGER,
+										value,
+										state.instances.map((instance) => instance.dirname),
+									);
+									const groupsAfterMoving = await pywebview.api.getInstanceGroups();
+									if (groupsAfterMoving.length === instanceGroupNumber) {
+										await pywebview.api.moveInstanceGroup(oldPosition, value);
+										if (state.hidden) {
+											await pywebview.api.toggleInstanceGroupHidden(value);
+										}
+									}
+									reloadInstanceGroups();
+								}}
 							/>
 						</ContextMenuTrigger>
 						<ContextMenuContent ref={contextMenuContentRef}>
