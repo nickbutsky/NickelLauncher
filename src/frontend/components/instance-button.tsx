@@ -115,7 +115,10 @@ export function InstanceButton({
 								isAllowedToSave={(value) => value.length > 0}
 								onSave={(value) => pywebview.api.renameInstance(state.dirname, value)}
 							/>
-							<div>{state.version.displayName}</div>
+							<div>
+								{state.version.displayName}
+								{state.architectureChoice === "x64" ? "" : ` ${state.architectureChoice}`}
+							</div>
 						</div>
 					</Button>
 				</ContextMenuTrigger>
