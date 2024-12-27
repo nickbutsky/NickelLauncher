@@ -7,6 +7,7 @@ if (import.meta.env.DEV) {
 			getLastInstanceDirname: () => Promise.resolve(null),
 			getVersionTypeToVersions: () => Promise.resolve(versionTypeToVersions),
 			toggleInstanceGroupHidden: () => Promise.resolve(),
+			moveInstanceGroup: () => Promise.resolve(),
 			moveInstances: () => Promise.resolve(),
 			renameInstance: () => Promise.resolve(),
 			changeVersion: () => Promise.resolve(),

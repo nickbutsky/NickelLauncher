@@ -11,7 +11,7 @@ import {
 } from "@/components/shadcn/context-menu";
 import type { InstanceGroup } from "@/core-types";
 import { useStore } from "@/store";
-import { useTrigger } from "@/utils";
+import { navigateFlexbox, useTrigger } from "@/utils";
 import { CaretDownIcon } from "@radix-ui/react-icons";
 import { type ComponentProps, type ComponentRef, useRef } from "react";
 
@@ -114,8 +114,21 @@ export function InstanceGroupCollapsible({
 				)}
 			</div>
 			<CollapsibleContent className="my-1 flex flex-wrap gap-3 data-[state=closed]:hidden" forceMount={true}>
-				{state.instances.map((instance) => (
-					<InstanceButton key={instance.name} state={instance} />
+				{state.instances.map((instance, i) => (
+					<InstanceButton
+						key={instance.name}
+						state={instance}
+						tabIndex={i ? -1 : 0}
+						onKeyDown={(event) => {
+							if (
+								((key: string): key is "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight" =>
+									["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(key))(event.key)
+							) {
+								event.preventDefault();
+								navigateFlexbox(event.currentTarget, event.key);
+							}
+						}}
+					/>
 				))}
 			</CollapsibleContent>
 		</Collapsible>

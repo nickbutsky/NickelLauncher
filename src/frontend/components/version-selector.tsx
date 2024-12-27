@@ -67,7 +67,10 @@ function TopBar({
 	const [refreshing, setRefreshing] = useState(false);
 
 	const versionTypeSelector = (
-		<TabsList className="grid grid-cols-3 bg-transparent">
+		<TabsList
+			className="grid bg-transparent"
+			style={{ gridTemplateColumns: `repeat(${versionTypes.length}, minmax(0, 1fr))` }}
+		>
 			{versionTypes.map((versionType) => (
 				<TabsTrigger key={versionType} value={versionType}>
 					{versionType.charAt(0).toUpperCase() + versionType.slice(1)}
