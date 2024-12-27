@@ -1,3 +1,4 @@
+import { AppContext } from "@/app-context";
 import { ScrollArea } from "@/components/shadcn-modified/scroll-area";
 import { Button } from "@/components/shadcn/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
@@ -5,7 +6,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
 import { type Version, type VersionTypeToVersions, versionTypes } from "@/core-types";
 import { cn } from "@/utils";
 import { UpdateIcon } from "@radix-ui/react-icons";
-import { type ComponentProps, type ComponentRef, useEffect, useRef, useState } from "react";
+import { type ComponentProps, type ComponentRef, use, useEffect, useRef, useState } from "react";
 
 export function VersionSelector({
 	className,
@@ -21,6 +22,8 @@ export function VersionSelector({
 	readonly defaultDisplayName?: string;
 	readonly onDisplayNameChange?: (displayName: string) => void;
 }) {
+	const appContext = use(AppContext);
+
 	return (
 		<Tabs
 			className={cn("flex flex-col", className)}
@@ -31,7 +34,9 @@ export function VersionSelector({
 			}
 			{...props}
 		>
-			<TopBar onRefreshRequest={onRefreshRequest} />
+			<TopBar
+				onRefreshRequest={() => onRefreshRequest().catch((reason: Error) => appContext.showErrorDialog(reason.message))}
+			/>
 			{versionTypes.map((versionType) => (
 				<TabsContent
 					className="flex-1 data-[state=inactive]:hidden"
