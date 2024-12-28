@@ -27,7 +27,6 @@ if TYPE_CHECKING:
 
 class FrontendAPI:
     def __init__(self, window: webview.Window) -> None:
-        self._window = window
         self._frontend_api_static = FrontendAPIStatic(window)
         self._frontend_api_temporary = FrontendAPITemporary(window)
 
