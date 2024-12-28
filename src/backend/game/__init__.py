@@ -73,5 +73,3 @@ class Game:
             error_msg = "Nothing is being launched."
             raise ValueError(error_msg)
         self._cancellation_token_source.cancel()
-        self._cancellation_token_source = None
-        self._launched_instance = None
