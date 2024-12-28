@@ -1,10 +1,10 @@
 # dependencies
-ordered-set~=4.1.0
-pathvalidate~=2.5.2
-pydantic~=2.6.4
-pywebview~=5.1
-requests~=2.31.0
-tendo~=0.3.0
-watchdog~=2.3.1
+ordered-set==4.1.0
+pathvalidate==2.5.2
+pydantic==2.6.4
+pywebview==5.3.2
+requests==2.31.0
+tendo==0.3.0
+watchdog==2.3.1
 # dev_dependencies
-Nuitka==2.3.1
+Nuitka==2.5.9
