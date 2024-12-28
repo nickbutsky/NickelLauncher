@@ -43,7 +43,7 @@ Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExeName}"
 Root: HKCU; Subkey: "Software\{#AppPublisher}\{#AppName}"; Flags: dontcreatekey uninsdeletekey
 
 [Run]
-Filename: "{app}\{#AppExeName}"; Flags: postinstall nowait shellexec
+Filename: "{app}\{#AppExeName}"; Description: {cm:LaunchProgram,{#AppName}}; Flags: postinstall shellexec nowait
 
 [Code]
 { ---------------------------------------------------IMPORTS START---------------------------------------------------- }
