@@ -121,7 +121,7 @@ export function InstanceGroupCollapsible({
 						tabIndex={i ? -1 : 0}
 						onKeyDown={(event) => {
 							if (
-								((key: string): key is "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight" =>
+								((key): key is "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight" =>
 									["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(key))(event.key)
 							) {
 								event.preventDefault();

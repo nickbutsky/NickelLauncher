@@ -8,6 +8,7 @@ import {
 	Dialog,
 	DialogClose,
 	DialogContent,
+	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
@@ -294,6 +295,7 @@ function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
 		<DialogContent ref={dialogContentRef} closeable={!copying}>
 			<DialogHeader>
 				<DialogTitle>Do you want to copy your worlds?</DialogTitle>
+				<DialogDescription className="hidden" />
 			</DialogHeader>
 			<DialogClose ref={hiddenCloseButtonRef} hidden={true} />
 			<DialogFooter className="gap-y-1.5">
@@ -341,6 +343,10 @@ function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; r
 	return (
 		<>
 			<DialogContent closeable={false}>
+				<DialogHeader className="hidden">
+					<DialogTitle />
+					<DialogDescription />
+				</DialogHeader>
 				<div className="flex">
 					<div>{report?.text}</div>
 					<div className="flex-1" />

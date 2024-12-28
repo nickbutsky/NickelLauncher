@@ -1,6 +1,7 @@
 import {
 	DialogClose,
 	DialogContent,
+	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
@@ -43,6 +44,7 @@ export function FormDialogContent<T extends FieldValues = FieldValues>({
 		>
 			<DialogHeader>
 				<DialogTitle>{title}</DialogTitle>
+				<DialogDescription className="hidden" />
 			</DialogHeader>
 			<Form {...form}>
 				<form
