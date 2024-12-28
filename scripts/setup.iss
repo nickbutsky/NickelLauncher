@@ -42,6 +42,9 @@ Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExeName}"
 [Registry]
 Root: HKCU; Subkey: "Software\Nickel59\NickelLauncher"; Flags: dontcreatekey uninsdeletekey
 
+[Run]
+Filename: "{app}\NickelLauncher.exe"; Description: Run NickelLauncher; Flags: postinstall nowait
+
 [Code]
 { ---------------------------------------------------IMPORTS START---------------------------------------------------- }
 function DLLIsISPackageInstalled(AppId: string; Is64BitInstallMode, IsAdminInstallMode: DWORD): DWORD;
