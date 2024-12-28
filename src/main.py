@@ -68,7 +68,7 @@ def get_geometry_model() -> GeometryModel:
     try:
         with (
             winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r,
-            winreg.OpenKey(r, r"Software\Nickel59\NickelLauncher") as k,
+            winreg.OpenKey(r, r"Software\Nick Butsky\NickelLauncher") as k,
         ):
             value, type_id = winreg.QueryValueEx(k, "geometry")
     except FileNotFoundError:
@@ -99,7 +99,7 @@ def save_geometry(window: webview.Window) -> None:
 
     with (
         winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r,
-        winreg.CreateKeyEx(r, r"Software\Nickel59\NickelLauncher", access=winreg.KEY_SET_VALUE) as k,
+        winreg.CreateKeyEx(r, r"Software\Nick Butsky\NickelLauncher", access=winreg.KEY_SET_VALUE) as k,
     ):
         winreg.SetValueEx(
             k,

@@ -73,13 +73,15 @@ def compile_app(name: str, company_name: str, version: str) -> None:
     app_dist_directory = Path("dist") / "main.dist"
     new_app_dist_directory = app_dist_directory.with_name(name)
     renamed = False
-    for _ in range(3):
+    for _ in range(100):
         try:
             app_dist_directory.replace(new_app_dist_directory)
+        except PermissionError:
+            print(f"Compilation: Couldn't rename '{app_dist_directory}' to '{new_app_dist_directory}'. Trying again.")
+            time.sleep(1)
+        else:
             renamed = True
             break
-        except PermissionError:
-            time.sleep(1)
     if not renamed:
         raise CompileError
     print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.")
