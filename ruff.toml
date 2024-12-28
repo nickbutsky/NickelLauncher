@@ -1,2 +1,5 @@
 src = ["src"]
 target-version = "py312"
+
+[lint.extend-per-file-ignores]
+"scripts/build.py" = ["T201"]

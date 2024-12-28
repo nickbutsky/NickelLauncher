@@ -27,7 +27,6 @@ if TYPE_CHECKING:
 
 class FrontendAPI:
     def __init__(self, window: webview.Window) -> None:
-        self._window = window
         self._frontend_api_static = FrontendAPIStatic(window)
         self._frontend_api_temporary = FrontendAPITemporary(window)
 
@@ -68,7 +67,7 @@ def get_geometry_model() -> GeometryModel:
     try:
         with (
             winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r,
-            winreg.OpenKey(r, r"Software\Nickel59\NickelLauncher") as k,
+            winreg.OpenKey(r, r"Software\Nick Butsky\NickelLauncher") as k,
         ):
             value, type_id = winreg.QueryValueEx(k, "geometry")
     except FileNotFoundError:
@@ -77,16 +76,17 @@ def get_geometry_model() -> GeometryModel:
         return GeometryModel()
     try:
         array = json.loads(value)
-    except json.JSONDecodeError:
-        return GeometryModel()
-    if not isinstance(array, list) or len(cast(list[object], array)) != 5:
-        return GeometryModel()
-    try:
         return GeometryModel.model_validate(
-            {"width": array[0], "height": array[1], "x": array[2], "y": array[3], "maximised": array[4]},
+            {
+                "width": array[0],
+                "height": array[1],
+                "x": array[2],
+                "y": array[3],
+                "maximised": array[4],
+            },
             strict=True,
         )
-    except ValidationError:
+    except (json.JSONDecodeError, TypeError, IndexError, ValidationError):
         return GeometryModel()
 
 
@@ -98,7 +98,7 @@ def save_geometry(window: webview.Window) -> None:
 
     with (
         winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as r,
-        winreg.CreateKeyEx(r, r"Software\Nickel59\NickelLauncher", access=winreg.KEY_SET_VALUE) as k,
+        winreg.CreateKeyEx(r, r"Software\Nick Butsky\NickelLauncher", access=winreg.KEY_SET_VALUE) as k,
     ):
         winreg.SetValueEx(
             k,
@@ -126,13 +126,13 @@ def save_geometry(window: webview.Window) -> None:
 
 
 def main() -> None:
-    me = SingleInstance()  # noqa: F841  # pyright: ignore [reportUnusedVariable]
+    _me = SingleInstance()
 
     geometry_model = get_geometry_model()
 
     window = webview.create_window(
         "NickelLauncher",
-        "bundled-frontend/index.html",
+        "bundled-frontend/index.html" if "__compiled__" in globals() else "../bundled-frontend/index.html",
         js_api=backend.bridge.API(),
         width=geometry_model.width,
         height=geometry_model.height,
@@ -155,7 +155,7 @@ def main() -> None:
 
     window.events.shown += on_shown
     window.events.closing += lambda: save_geometry(window)
-    backend.main(FrontendAPI(window))
+    backend.run(FrontendAPI(window))
     webview.start(debug="__compiled__" not in globals())
 
 

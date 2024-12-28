@@ -22,17 +22,15 @@ def download_file(
     reporthook: Callable[[Report], object] | None = None,
 ) -> None:
     temp_file = Path(tempfile.mkdtemp()) / str(uuid4())
+    urlretrieve_reporthook = _get_urlretrieve_reporthook(reporthook, cancellation_token)
     try:
-        request.urlretrieve(  # noqa: S310
-            url,
-            temp_file,
-            _get_urlretrieve_reporthook(reporthook, cancellation_token),
-        )
-    except:
-        shutil.rmtree(temp_file.parent, True)
+        request.urlretrieve(url, temp_file, urlretrieve_reporthook)  # noqa: S310
+    except:  # noqa: TRY203
         raise
-    temp_file.replace(destination)
-    shutil.rmtree(temp_file.parent, True)
+    else:
+        temp_file.replace(destination)
+    finally:
+        shutil.rmtree(temp_file.parent, True)
 
 
 def _get_urlretrieve_reporthook(
@@ -54,7 +52,7 @@ def _get_urlretrieve_reporthook(
             Report(
                 Report.Type.PROGRESS,
                 "Downloading...",
-                Report.ProgressDetails(
+                Report.Progress(
                     min(round(float(block_num * block_size) / pow(1024, 2), 1), rounded_total_size),
                     rounded_total_size,
                     "MB",

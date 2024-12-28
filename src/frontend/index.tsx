@@ -1,28 +1,28 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom/client";
+import "@/dev-mocks";
 
 import { App } from "@/app";
 import "@/bridge";
 import { ThemeProvider } from "@/components/shadcn/theme-provider";
-import "@/dev-mocks";
 import "@/globals.css";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 
-function createRoot() {
-  const rootElement = document.getElementById("root");
-  if (!rootElement) {
-    throw new Error("Root element not found.");
-  }
-  ReactDOM.createRoot(rootElement).render(
-    <React.StrictMode>
-      <ThemeProvider defaultTheme="dark">
-        <App />
-      </ThemeProvider>
-    </React.StrictMode>,
-  );
+function main() {
+	const rootElement = document.getElementById("root");
+	if (!rootElement) {
+		throw new Error("Root element not found.");
+	}
+	createRoot(rootElement).render(
+		<StrictMode>
+			<ThemeProvider defaultTheme="dark">
+				<App />
+			</ThemeProvider>
+		</StrictMode>,
+	);
 }
 
 if (import.meta.env.DEV) {
-  createRoot();
+	main();
 } else {
-  window.addEventListener("pywebviewready", createRoot, { once: true });
+	window.addEventListener("pywebviewready", main, { once: true });
 }

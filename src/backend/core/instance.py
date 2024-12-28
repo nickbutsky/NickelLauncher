@@ -3,12 +3,12 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from backend.core.version import UnavailableArchitectureError
+from . import UnavailableArchitectureError
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from backend.core.version import Architecture, Version
+    from . import Architecture, Version
 
 
 class Instance:
@@ -73,11 +73,12 @@ class Instance:
 
     def _save(self) -> None:
         with (self.directory / "config.json").open("w") as f:
-            json.dump(self._to_dict(), f, indent=2)
-
-    def _to_dict(self) -> dict[str, object]:
-        return {
-            "format_version": 1,
-            "name": self.name,
-            "version": {"name": self.version.name, "architecture_choice": self.architecture_choice},
-        }
+            json.dump(
+                {
+                    "format_version": 1,
+                    "name": self.name,
+                    "version": {"name": self.version.name, "architecture_choice": self.architecture_choice},
+                },
+                f,
+                indent=2,
+            )

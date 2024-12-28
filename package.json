@@ -1,54 +1,54 @@
 {
-  "name": "nickel-launcher",
-  "private": true,
-  "displayName": "NickelLauncher",
-  "author": {
-    "name": "Nick Butsky"
-  },
-  "version": "0.4.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite build && py src/main.py",
-    "build": "tsc && py scripts/build.py"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^3",
-    "@radix-ui/react-alert-dialog": "^1",
-    "@radix-ui/react-collapsible": "^1",
-    "@radix-ui/react-context-menu": "^2",
-    "@radix-ui/react-dialog": "^1",
-    "@radix-ui/react-icons": "^1",
-    "@radix-ui/react-label": "^2",
-    "@radix-ui/react-popover": "^1",
-    "@radix-ui/react-progress": "^1",
-    "@radix-ui/react-scroll-area": "^1",
-    "@radix-ui/react-select": "^2",
-    "@radix-ui/react-slot": "^1",
-    "@radix-ui/react-tabs": "^1",
-    "@radix-ui/react-toggle": "^1",
-    "@radix-ui/react-toggle-group": "^1",
-    "class-variance-authority": "^0.7",
-    "clsx": "^2",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-hook-form": "^7",
-    "tailwind-merge": "^2",
-    "tailwindcss-animate": "^1",
-    "zod": "^3",
-    "zustand": "^4"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.8.3",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "@vitejs/plugin-react": "^4",
-    "autoprefixer": "^10",
-    "postcss": "^8",
-    "tailwindcss": "^3",
-    "ts-essentials": "^9",
-    "typescript": "^5",
-    "vite": "^5",
-    "vite-tsconfig-paths": "^5"
-  }
+	"name": "nickel-launcher",
+	"private": true,
+	"displayName": "NickelLauncher",
+	"author": {
+		"name": "Nick Butsky"
+	},
+	"version": "0.5.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite build && py src/main.py && rmdir /s /q bundled-frontend",
+		"build": "tsc && py scripts/build.py"
+	},
+	"dependencies": {
+		"@hookform/resolvers": "^3",
+		"@radix-ui/react-alert-dialog": "^1",
+		"@radix-ui/react-collapsible": "^1",
+		"@radix-ui/react-context-menu": "^2",
+		"@radix-ui/react-dialog": "^1",
+		"@radix-ui/react-icons": "^1",
+		"@radix-ui/react-label": "^2",
+		"@radix-ui/react-popover": "^1",
+		"@radix-ui/react-progress": "^1",
+		"@radix-ui/react-scroll-area": "^1",
+		"@radix-ui/react-select": "^2",
+		"@radix-ui/react-slot": "^1",
+		"@radix-ui/react-tabs": "^1",
+		"@radix-ui/react-toggle": "^1",
+		"@radix-ui/react-toggle-group": "^1",
+		"class-variance-authority": "^0.7",
+		"clsx": "^2",
+		"react": "^19",
+		"react-dom": "^19",
+		"react-hook-form": "^7",
+		"tailwind-merge": "^2",
+		"tailwindcss-animate": "^1",
+		"zod": "^3",
+		"zustand": "^5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/node": "^20",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"@vitejs/plugin-react": "^4",
+		"autoprefixer": "^10",
+		"postcss": "^8",
+		"tailwindcss": "^3",
+		"ts-essentials": "^9",
+		"typescript": "^5",
+		"vite": "^6",
+		"vite-tsconfig-paths": "^5"
+	}
 }

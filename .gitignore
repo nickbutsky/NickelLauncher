@@ -1,5 +1,5 @@
 /.vscode/
-/src/bundled-frontend/
+/bundled-frontend/
 UninsIS.dll
 
 # Byte-compiled / optimized / DLL files

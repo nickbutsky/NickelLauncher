@@ -20,7 +20,7 @@ class Watchdog:
         self._event_handler = _EventHandler(callback)
 
     @contextlib.contextmanager
-    def disable_dir_created_event_tracking(self) -> Generator[None, None, None]:
+    def disable_dir_created_event_tracking(self) -> Generator[None]:
         self._event_handler.ignore_dir_created_event = True
         try:
             yield

@@ -3,6 +3,7 @@ from __future__ import annotations
 import shutil
 import subprocess
 import tempfile
+import time
 from argparse import ArgumentParser
 from pathlib import Path
 from urllib import request
@@ -57,7 +58,7 @@ def compile_app(name: str, company_name: str, version: str) -> None:
             f'--file-version="{version}"',
             '--windows-icon-from-ico="icon.ico"',
             '--include-data-files="icon.ico"="icon.ico"',
-            '--include-data-dir="src/bundled-frontend"="bundled-frontend"',
+            '--include-data-dir="bundled-frontend"="bundled-frontend"',
             '--output-dir="dist"',
             "--windows-console-mode=disable",
             "--windows-uac-admin",
@@ -68,9 +69,22 @@ def compile_app(name: str, company_name: str, version: str) -> None:
         ),
         check=True,
     )
+    shutil.rmtree("bundled-frontend")
     app_dist_directory = Path("dist") / "main.dist"
-    new_app_dist_directory = app_dist_directory.replace(app_dist_directory.with_name(name))
-    print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.")  # noqa: T201
+    new_app_dist_directory = app_dist_directory.with_name(name)
+    renamed = False
+    for _ in range(100):
+        try:
+            app_dist_directory.replace(new_app_dist_directory)
+        except PermissionError:
+            print(f"Compilation: Couldn't rename '{app_dist_directory}' to '{new_app_dist_directory}'. Trying again.")
+            time.sleep(1)
+        else:
+            renamed = True
+            break
+    if not renamed:
+        raise CompileError
+    print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.")
 
 
 def get_iscc_executable() -> Path | None:
@@ -92,13 +106,14 @@ def build_installer(iscc_executable: Path, name: str, publisher: str, version: s
                 "https://github.com/Bill-Stewart/UninsIS/releases/download/v1.0.1/UninsIS-1.0.1.zip",
                 archive,
             )
-        except:
-            shutil.rmtree(archive.parent, True)
+        except:  # noqa: TRY203
             raise
-        with ZipFile(archive) as z:
-            z.extractall(archive.parent)
-        (archive.parent / "UninsIS.dll").replace(uninsis_dll)
-        shutil.rmtree(archive.parent, True)
+        else:
+            with ZipFile(archive) as z:
+                z.extractall(archive.parent)
+            (archive.parent / "UninsIS.dll").replace(uninsis_dll)
+        finally:
+            shutil.rmtree(archive.parent, True)
 
     subprocess.run(  # noqa: S603
         (
@@ -111,6 +126,10 @@ def build_installer(iscc_executable: Path, name: str, publisher: str, version: s
         ),
         check=True,
     )
+
+
+class CompileError(Exception):
+    pass
 
 
 if __name__ == "__main__":

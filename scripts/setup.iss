@@ -40,7 +40,10 @@ Source: "..\UninsIS.dll"; Flags: dontcopy
 Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExeName}"
 
 [Registry]
-Root: HKCU; Subkey: "Software\Nickel59\NickelLauncher"; Flags: dontcreatekey uninsdeletekey
+Root: HKCU; Subkey: "Software\{#AppPublisher}\{#AppName}"; Flags: dontcreatekey uninsdeletekey
+
+[Run]
+Filename: "{app}\{#AppExeName}"; Description: {cm:LaunchProgram,{#AppName}}; Flags: postinstall shellexec nowait
 
 [Code]
 { ---------------------------------------------------IMPORTS START---------------------------------------------------- }

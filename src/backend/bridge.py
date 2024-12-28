@@ -4,13 +4,14 @@ import os
 from itertools import chain
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from . import game, instancemanager, versionretrieve
-from .core.version import VersionType
+from . import utility
+from .core import Version
+from .game import Game
+from .instancemanager import InstanceManager
+from .versionretriever import VersionRetriever
 
 if TYPE_CHECKING:
-    from .core.instance import Instance
-    from .core.instancegroup import InstanceGroup
-    from .core.version import Architecture
+    from .core import Architecture, Instance
     from .report import Report
 
 
@@ -33,44 +34,34 @@ class API:
                     for instance in group.instances
                 ],
             }
-            for group in instancemanager.get_instance_groups()
+            for group in InstanceManager.instance_groups
         ]
 
     def getLastInstanceDirname(self) -> str | None:  # noqa: N802
-        return instance.directory.name if (instance := instancemanager.get_last_instance()) else None
+        return instance.directory.name if (instance := InstanceManager.last_instance) else None
 
-    def getVersionTypeToVersions(self, remotely: bool = False) -> dict[VersionType, list[dict[str, str | list[str]]]]:  # noqa: N802
-        versions = versionretrieve.get_versions_remotely() if remotely else versionretrieve.get_versions_locally()
+    def getVersionTypeToVersions(self, remotely: bool = False) -> dict[Version.Type, list[dict[str, str | list[str]]]]:  # noqa: N802
+        versions = VersionRetriever.get_versions_remotely() if remotely else VersionRetriever.get_versions_locally()
         return {
             version_type: [
                 {"displayName": version.display_name, "availableArchitectures": list(version.available_architectures)}
                 for version in versions
                 if version.type == version_type
             ]
-            for version_type in VersionType
+            for version_type in Version.Type
         }
 
-    def renameInstanceGroup(self, old_name: str, new_name: str) -> None:  # noqa: N802
-        if old_name == "":
-            return
-
-        group = self._get_instance_group(old_name)
-
-        try:
-            group_with_new_name = self._get_instance_group(new_name)
-        except StopIteration:
-            group.name = new_name
-            return
-        instancemanager.move_instances(len(group_with_new_name.instances), new_name, group.instances)
-
     def toggleInstanceGroupHidden(self, name: str) -> None:  # noqa: N802
-        self._get_instance_group(name).toggle_hidden()
+        next(group for group in InstanceManager.instance_groups if group.name == name).toggle_hidden()
 
-    def deleteInstanceGroup(self, name: str) -> None:  # noqa: N802
-        instancemanager.delete_instance_group(self._get_instance_group(name))
+    def moveInstanceGroup(self, position: int, group_name: str) -> None:  # noqa: N802
+        InstanceManager.move_instance_group(
+            position,
+            next(group for group in InstanceManager.instance_groups if group.name == group_name),
+        )
 
     def moveInstances(self, position: int, group_name: str, dirnames: list[str]) -> None:  # noqa: N802
-        instancemanager.move_instances(position, group_name, [self._get_instance(dirname) for dirname in dirnames])
+        InstanceManager.move_instances(position, group_name, [self._get_instance(dirname) for dirname in dirnames])
 
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
@@ -84,7 +75,7 @@ class API:
             return
         instance.version = next(
             version
-            for version in versionretrieve.get_versions_locally()
+            for version in VersionRetriever.get_versions_locally()
             if version.display_name == version_display_name
         )
 
@@ -95,15 +86,15 @@ class API:
         instance.architecture_choice = architecture_choice
 
     def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802
-        instancemanager.copy_instance(self._get_instance(dirname), copy_worlds)
+        InstanceManager.copy_instance(self._get_instance(dirname), copy_worlds)
 
     def createInstance(self, name: str, group_name: str, version_display_name: str) -> str:  # noqa: N802
-        return instancemanager.create_instance(
+        return InstanceManager.create_instance(
             name,
             group_name,
             next(
                 version
-                for version in versionretrieve.get_versions_locally()
+                for version in VersionRetriever.get_versions_locally()
                 if version.display_name == version_display_name
             ),
         ).name
@@ -116,21 +107,41 @@ class API:
 
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
-        instancemanager.set_last_instance(instance)
-        game.launch(instance, lambda report: get_frontend_api().temporary.propel_launch_report(report))
+        InstanceManager.last_instance = instance
+        Game.run(instance, lambda report: Bridge.frontend_api.temporary.propel_launch_report(report))
 
     def cancelInstanceLaunch(self) -> None:  # noqa: N802
-        game.cancel_launch()
+        Game.cancel_launch()
 
-    def _get_instance_group(self, name: str) -> InstanceGroup:
-        return next(group for group in instancemanager.get_instance_groups() if group.name == name)
-
-    def _get_instance(self, dirname: str) -> Instance:
+    @staticmethod
+    def _get_instance(dirname: str) -> Instance:
         return next(
             instance
-            for instance in chain.from_iterable(group.instances for group in instancemanager.get_instance_groups())
+            for instance in chain.from_iterable(group.instances for group in InstanceManager.instance_groups)
             if instance.directory.name == dirname
         )
+
+
+@utility.typed_namespace
+class Bridge:
+    _api = API()
+    _frontend_api: FrontendAPI | None = None
+
+    @property
+    def api(self) -> API:
+        return self._api
+
+    @property
+    def frontend_api(self) -> FrontendAPI:
+        if not self._frontend_api:
+            raise FrontendAPINotSetError
+        return self._frontend_api
+
+    @frontend_api.setter
+    def frontend_api(self, value: FrontendAPI) -> None:
+        if self._frontend_api:
+            raise FrontendAPIAlreadySetError
+        self._frontend_api = value
 
 
 @runtime_checkable
@@ -149,25 +160,9 @@ class FrontendAPITemporary(Protocol):
     def propel_launch_report(self, report: Report) -> None: ...
 
 
-def get_frontend_api() -> FrontendAPI:
-    if not _frontend_api:
-        raise FrontendAPINotSetError
-    return _frontend_api
-
-
-def set_frontend_api(frontend_api: FrontendAPI) -> None:
-    global _frontend_api  # noqa: PLW0603
-    if _frontend_api:
-        raise FrontendAPIAlreadySetError
-    _frontend_api = frontend_api
-
-
 class FrontendAPINotSetError(ValueError):
     pass
 
 
 class FrontendAPIAlreadySetError(ValueError):
     pass
-
-
-_frontend_api: FrontendAPI | None = None

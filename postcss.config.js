@@ -1,7 +1,7 @@
-// biome-ignore lint/style/noDefaultExport: Allow default imports in postcss.config.js
+// biome-ignore lint/style/noDefaultExport: postcss.config.js requires a default export
 export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
+	plugins: {
+		tailwindcss: {},
+		autoprefixer: {},
+	},
 };

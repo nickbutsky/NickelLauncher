@@ -1,39 +1,37 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "files": {
-    "ignore": [
-      "node_modules/",
-      "src/frontend/components/shadcn/",
-      "src/bundled-frontend/",
-      "tailwind.config.js"
-    ]
-  },
-  "formatter": {
-    "indentStyle": "space",
-    "lineWidth": 120
-  },
-  "javascript": {
-    "globals": [
-      "pywebview"
-    ]
-  },
-  "linter": {
-    "rules": {
-      "all": true,
-      "nursery": {
-        "all": true,
-        "noReactSpecificProps": "off",
-        "noUndeclaredDependencies": "off"
-      },
-      "style": {
-        "noNamespaceImport": "off",
-        "useNamingConvention": {
-          "level": "warn",
-          "options": {
-            "strictCase": false
-          }
-        }
-      }
-    }
-  }
+	"$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+	"files": {
+		"ignore": ["src/frontend/components/shadcn/", "src/frontend/components/shadcn-modified/"]
+	},
+	"formatter": {
+		"lineWidth": 120
+	},
+	"javascript": {
+		"globals": ["pywebview"]
+	},
+	"linter": {
+		"rules": {
+			"all": true,
+			"nursery": {
+				"all": true,
+				"noSecrets": "off",
+				"useExplicitType": "off"
+			},
+			"style": {
+				"useNamingConvention": {
+					"level": "warn",
+					"options": {
+						"strictCase": false
+					}
+				}
+			},
+			"suspicious": {
+				"noReactSpecificProps": "off"
+			}
+		}
+	},
+	"vcs": {
+		"clientKind": "git",
+		"enabled": true
+	}
 }
