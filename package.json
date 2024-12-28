@@ -5,7 +5,7 @@
 	"author": {
 		"name": "Nick Butsky"
 	},
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite build && py src/main.py",
