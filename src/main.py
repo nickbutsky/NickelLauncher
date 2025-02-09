@@ -148,7 +148,7 @@ def main() -> None:
         dwmapi.DwmSetWindowAttribute(
             form.Handle.ToInt32(),  # pyright: ignore [reportUnknownMemberType]
             20,
-            ctypes.byref(ctypes.c_bool(True)),
+            ctypes.byref(ctypes.c_bool(True)),  # noqa: FBT003
             ctypes.sizeof(wintypes.BOOL),
         )
         form.Icon = Icon("icon.ico")

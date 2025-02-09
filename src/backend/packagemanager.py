@@ -29,7 +29,7 @@ def find_packages(package_family_name: str, cancellation_token: CancellationToke
                     f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json',  # noqa: E501
                 ),
                 cancellation_token,
-                False,
+                log_stdout=False,
             )
         )
         else []

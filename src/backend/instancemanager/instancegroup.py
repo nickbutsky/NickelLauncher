@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class InstanceGroup:
-    def __init__(self, name: str, instances: Iterable[Instance], hidden: bool = False) -> None:
+    def __init__(self, name: str, instances: Iterable[Instance], *, hidden: bool = False) -> None:
         self._name = name.strip()
         self._hidden = False if self.unnamed else hidden
         self._instances = list(instances)

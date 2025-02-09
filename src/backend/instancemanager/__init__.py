@@ -86,7 +86,7 @@ class InstanceManager:
 
         self._save()
 
-    def copy_instance(self, instance: Instance, copy_worlds: bool) -> None:
+    def copy_instance(self, instance: Instance, *, copy_worlds: bool) -> None:
         with self._watchdog.disable_dir_created_event_tracking():
             copied_instance = Instance(
                 f"{instance.name}(copy)",

@@ -40,7 +40,7 @@ class API:
     def getLastInstanceDirname(self) -> str | None:  # noqa: N802
         return instance.directory.name if (instance := InstanceManager.last_instance) else None
 
-    def getVersionTypeToVersions(self, remotely: bool = False) -> dict[Version.Type, list[dict[str, str | list[str]]]]:  # noqa: N802
+    def getVersionTypeToVersions(self, remotely: bool = False) -> dict[Version.Type, list[dict[str, str | list[str]]]]:  # noqa: N802, FBT001, FBT002
         versions = VersionRetriever.get_versions_remotely() if remotely else VersionRetriever.get_versions_locally()
         return {
             version_type: [
@@ -85,8 +85,8 @@ class API:
             return
         instance.architecture_choice = architecture_choice
 
-    def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802
-        InstanceManager.copy_instance(self._get_instance(dirname), copy_worlds)
+    def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802, FBT001
+        InstanceManager.copy_instance(self._get_instance(dirname), copy_worlds=copy_worlds)
 
     def createInstance(self, name: str, group_name: str, version_display_name: str) -> str:  # noqa: N802
         return InstanceManager.create_instance(

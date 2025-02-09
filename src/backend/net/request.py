@@ -30,7 +30,7 @@ def download_file(
     else:
         temp_file.replace(destination)
     finally:
-        shutil.rmtree(temp_file.parent, True)
+        shutil.rmtree(temp_file.parent, ignore_errors=True)
 
 
 def _get_urlretrieve_reporthook(

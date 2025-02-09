@@ -140,8 +140,8 @@ def _load_instance_groups(
             InstanceGroup(
                 group_model.name,
                 instances_of_group,
-                False
-                if last_instance_dirname in [instance.directory.name for instance in instances_of_group]
+                hidden=False
+                if last_instance_dirname in {instance.directory.name for instance in instances_of_group}
                 or group_model.name == ""
                 else group_model.hidden,
             ),

@@ -51,6 +51,7 @@ def create_subdirectory(desired_name: str, parent_directory: Path) -> Path:
 def run_command(
     command: str | bytes | Sequence[str | bytes],
     cancellation_token: CancellationToken | None = None,
+    *,
     log_stdout: bool = True,
 ) -> str:
     logging.debug('Executing command: "%s"...', command)

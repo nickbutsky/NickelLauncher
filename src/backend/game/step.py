@@ -44,4 +44,7 @@ def relink_game_files(instance: Instance, cancellation_token: CancellationToken 
     default_game_directory_parent = Path(localappdata_path) / "Packages" / instance.version.pfn / "LocalState" / "games"
     default_game_directory_parent.mkdir(parents=True, exist_ok=True)
     shell.clear_directory(default_game_directory_parent, cancellation_token)
-    (default_game_directory_parent / "com.mojang").symlink_to(instance.directory / "com.mojang", True)
+    (default_game_directory_parent / "com.mojang").symlink_to(
+        instance.directory / "com.mojang",
+        target_is_directory=True,
+    )
