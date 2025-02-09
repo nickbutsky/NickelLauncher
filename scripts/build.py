@@ -24,7 +24,7 @@ class AuthorModel(BaseModel):
 
 
 def main() -> None:
-    shutil.rmtree("dist", True)
+    shutil.rmtree("dist", ignore_errors=True)
 
     with Path("package.json").open() as f:
         data = f.read()
@@ -42,7 +42,7 @@ def main() -> None:
                 package_model.version,
             )
     except:
-        shutil.rmtree("dist", True)
+        shutil.rmtree("dist", ignore_errors=True)
         raise
 
 
@@ -113,7 +113,7 @@ def build_installer(iscc_executable: Path, name: str, publisher: str, version: s
                 z.extractall(archive.parent)
             (archive.parent / "UninsIS.dll").replace(uninsis_dll)
         finally:
-            shutil.rmtree(archive.parent, True)
+            shutil.rmtree(archive.parent, ignore_errors=True)
 
     subprocess.run(  # noqa: S603
         (
