@@ -44,7 +44,7 @@ declare global {
 }
 
 // biome-ignore lint/style/useNamingConvention: False positive
-export interface API {
+export type API = {
 	readonly static: { readonly onSuddenChange: () => void };
 	readonly temporary: {
 		readonly propelLaunchReport: (
@@ -55,7 +55,7 @@ export interface API {
 			} | null,
 		) => void;
 	};
-}
+};
 
 function getApi() {
 	return (window as unknown as { webview: API }).webview;

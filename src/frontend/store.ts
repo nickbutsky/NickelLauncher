@@ -1,13 +1,13 @@
 import type { VersionTypeToVersions } from "@/core-types";
 import { create } from "zustand";
 
-interface State {
+type State = {
 	readonly ready: boolean;
 	readonly instanceGroups: Awaited<ReturnType<typeof pywebview.api.getInstanceGroups>>;
 	readonly reloadInstanceGroups: () => void;
 	readonly versionTypeToVersions: VersionTypeToVersions;
 	readonly reloadVersionTypeToVersions: (remotely: boolean) => void;
-}
+};
 
 export const useStore = create<State>((set) => ({
 	ready: false,
