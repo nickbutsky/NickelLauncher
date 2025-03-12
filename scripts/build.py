@@ -24,6 +24,7 @@ class AuthorModel(BaseModel):
 
 
 def main() -> None:
+    shutil.rmtree("build", ignore_errors=True)
     shutil.rmtree("dist", ignore_errors=True)
 
     with Path("package.json").open() as f:
@@ -42,6 +43,7 @@ def main() -> None:
                 package_model.version,
             )
     except:
+        shutil.rmtree("build", ignore_errors=True)
         shutil.rmtree("dist", ignore_errors=True)
         raise
 
@@ -58,7 +60,7 @@ def compile_app(name: str, company_name: str, version: str) -> None:
             f'--file-version="{version}"',
             '--windows-icon-from-ico="icon.ico"',
             '--include-data-files="icon.ico"="icon.ico"',
-            '--include-data-dir="bundled-frontend"="bundled-frontend"',
+            '--include-data-dir="build/bundled-frontend"="bundled-frontend"',
             '--output-dir="dist"',
             "--windows-console-mode=disable",
             "--windows-uac-admin",
@@ -69,7 +71,7 @@ def compile_app(name: str, company_name: str, version: str) -> None:
         ),
         check=True,
     )
-    shutil.rmtree("bundled-frontend")
+    shutil.rmtree("build")
     app_dist_directory = Path("dist") / "main.dist"
     new_app_dist_directory = app_dist_directory.with_name(name)
     renamed = False
