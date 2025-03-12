@@ -8,8 +8,8 @@
 	"version": "0.5.0",
 	"type": "module",
 	"scripts": {
-		"dev": "vite build && py src/main.py && rmdir /s /q bundled-frontend",
-		"build": "tsc && py scripts/build.py"
+		"dev": "vite build && uv run src/main.py && rmdir /s /q bundled-frontend",
+		"build": "tsc && uv run scripts/build.py"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3",
