@@ -60,7 +60,7 @@ class GeometryModel(BaseModel):
     height: int = 600
     x: int | None = None
     y: int | None = None
-    maximised: bool = False
+    maximized: bool = False
 
 
 def get_geometry_model() -> GeometryModel:
@@ -82,7 +82,7 @@ def get_geometry_model() -> GeometryModel:
                 "height": array[1],
                 "x": array[2],
                 "y": array[3],
-                "maximised": array[4],
+                "maximized": array[4],
             },
             strict=True,
         )
@@ -139,7 +139,7 @@ def main() -> None:
         x=geometry_model.x,
         y=geometry_model.y,
         min_size=(548, 610),
-        maximized=geometry_model.maximised,
+        maximized=geometry_model.maximized,
         background_color="#0a0a0a",
     )
 
