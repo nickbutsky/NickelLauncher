@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/shadcn-modified/scroll-area";
 import { Button } from "@/components/shadcn/button";
 import { useStore } from "@/store";
 import { useTrigger } from "@/utils";
-import { PlusIcon } from "@radix-ui/react-icons";
+import { Plus } from "lucide-react";
 import { type ContextType, useCallback, useEffect, useRef, useState } from "react";
 
 export function App() {
@@ -66,7 +66,7 @@ export function App() {
 				<Dialog>
 					<DialogTrigger asChild={true}>
 						<Button className="fixed right-0 bottom-0 mr-1 mb-1 rounded-full" size="icon">
-							<PlusIcon />
+							<Plus />
 						</Button>
 					</DialogTrigger>
 					<InstanceCreationDialogContent />

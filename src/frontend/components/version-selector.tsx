@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/ta
 import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
 import { type Version, type VersionTypeToVersions, versionTypes } from "@/core-types";
 import { cn } from "@/utils";
-import { UpdateIcon } from "@radix-ui/react-icons";
+import { RefreshCw } from "lucide-react";
 import { type ComponentProps, type ComponentRef, use, useEffect, useRef, useState } from "react";
 
 export function VersionSelector({
@@ -92,7 +92,7 @@ function TopBar({
 				setRefreshing(false);
 			}}
 		>
-			<UpdateIcon className={cn(refreshing && "animate-spin")} />
+			<RefreshCw className={cn(refreshing && "animate-spin")} />
 		</Button>
 	);
 

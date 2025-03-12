@@ -30,7 +30,7 @@ import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
 import { useStore } from "@/store";
 import { cn, useTrigger, useTriggerEffect, useZodForm } from "@/utils";
-import { ReloadIcon } from "@radix-ui/react-icons";
+import { RotateCw } from "lucide-react";
 import { type ComponentProps, type ComponentRef, use, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { z } from "zod";
 
@@ -300,10 +300,10 @@ function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
 			<DialogClose ref={hiddenCloseButtonRef} hidden={true} />
 			<DialogFooter className="gap-y-1.5">
 				<Button type="submit" onClick={() => copyInstance(true)} disabled={!!copying}>
-					{copying === "w" ? <ReloadIcon className="animate-spin" /> : "Yes"}
+					{copying === "w" ? <RotateCw className="animate-spin" /> : "Yes"}
 				</Button>
 				<Button type="submit" onClick={() => copyInstance(false)} disabled={!!copying}>
-					{copying === "nw" ? <ReloadIcon className="animate-spin" /> : "No"}
+					{copying === "nw" ? <RotateCw className="animate-spin" /> : "No"}
 				</Button>
 			</DialogFooter>
 		</DialogContent>

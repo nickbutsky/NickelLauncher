@@ -87,7 +87,7 @@ export function EditableLabel({
 									if (event.key === "Escape") {
 										return setEditMode(false);
 									}
-									if (!(event.key === "Enter")) {
+									if (event.key !== "Enter") {
 										return;
 									}
 									const newValue =

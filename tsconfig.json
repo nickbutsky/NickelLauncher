@@ -1,29 +1,16 @@
 {
 	"compilerOptions": {
-		"allowImportingTsExtensions": true,
-		"erasableSyntaxOnly": true,
-		"isolatedModules": true,
-		"jsx": "react-jsx",
-		"lib": ["DOM", "DOM.Iterable"],
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"noEmit": true,
-		"noFallthroughCasesInSwitch": true,
-		"noUncheckedIndexedAccess": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
 		"paths": {
 			"@/*": ["./src/frontend/*"]
-		},
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"target": "ES2022"
+		}
 	},
-	"include": ["src/frontend"],
+	"files": [],
 	"references": [
 		{
-			"path": "tsconfig.node.json"
+			"path": "./tsconfig.app.json"
+		},
+		{
+			"path": "./tsconfig.node.json"
 		}
 	]
 }

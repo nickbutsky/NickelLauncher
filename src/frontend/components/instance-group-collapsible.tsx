@@ -12,7 +12,7 @@ import {
 import type { InstanceGroup } from "@/core-types";
 import { useStore } from "@/store";
 import { navigateFlexbox, useTrigger } from "@/utils";
-import { CaretDownIcon } from "@radix-ui/react-icons";
+import { ChevronDown } from "lucide-react";
 import { type ComponentProps, type ComponentRef, useRef } from "react";
 
 export function InstanceGroupCollapsible({
@@ -36,7 +36,7 @@ export function InstanceGroupCollapsible({
 			<div className="flex items-center gap-2">
 				<CollapsibleTrigger asChild={true}>
 					<Button className="data-[state=closed]:-rotate-90" variant="ghost" size="icon">
-						<CaretDownIcon />
+						<ChevronDown />
 					</Button>
 				</CollapsibleTrigger>
 				{state.name && (

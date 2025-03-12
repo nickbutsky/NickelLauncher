@@ -3,15 +3,23 @@
 		"allowImportingTsExtensions": true,
 		"erasableSyntaxOnly": true,
 		"isolatedModules": true,
+		"jsx": "react-jsx",
+		"lib": ["DOM", "DOM.Iterable"],
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"noEmit": true,
 		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
 		"noUncheckedSideEffectImports": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
+		"paths": {
+			"@/*": ["./src/frontend/*"]
+		},
+		"resolveJsonModule": true,
 		"skipLibCheck": true,
-		"strict": true
+		"strict": true,
+		"target": "ES2022"
 	},
-	"include": ["vite.config.ts"]
+	"include": ["src/frontend"]
 }
