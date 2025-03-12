@@ -29,7 +29,7 @@ class Watchdog:
 
     def run(self) -> None:
         observer = Observer()
-        observer.schedule(self._event_handler, str(self._directory))  # pyright: ignore [reportUnknownMemberType]
+        observer.schedule(self._event_handler, str(self._directory))
         observer.start()
         logging.debug("Watchdog thread started.")
 

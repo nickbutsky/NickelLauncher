@@ -1,0 +1,24 @@
+[project]
+name = "nickel-launcher"
+dynamic = ["version"]
+requires-python = "==3.13.2"
+dependencies = [
+    "ordered-set>=4.1.0",
+    "pathvalidate>=3.2.3",
+    "pydantic>=2.10.6",
+    "pywebview>=5.4",
+    "requests>=2.32.3",
+    "tendo>=0.3.0",
+    "watchdog>=6.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "nuitka>=2.6.8",
+]
+
+[tool.ruff]
+target-version = "py313" # delete when ruff fixes PERF203
+
+[tool.ruff.lint.extend-per-file-ignores]
+"scripts/build.py" = ["T201"]

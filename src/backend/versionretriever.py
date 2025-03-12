@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import requests
-from pydantic import BaseModel, TypeAdapter, ValidationError
+from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
 
 from . import utility
 from .core import Architecture, Version
@@ -72,7 +72,5 @@ class _VersionModel(BaseModel):
     guids: _GuidsModel
 
 
-class _GuidsModel(BaseModel):
-    x64: list[str]
-    x86: list[str]
-    arm: list[str]
+class _GuidsModel(RootModel[dict[Architecture, list[str]]]):
+    root: dict[Architecture, list[str]]

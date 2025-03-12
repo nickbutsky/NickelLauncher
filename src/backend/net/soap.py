@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
+from http import HTTPStatus
 from xml.etree import ElementTree as ET
 
 import requests
@@ -15,7 +16,7 @@ def post_envelope(url: str, envelope: Envelope) -> ET.Element:
         verify=False,  # noqa: S501
     )
 
-    if res.status_code != 200:
+    if res.status_code != HTTPStatus.OK:
         error_msg = (
             error_msg.strip()
             if (error_msg := ET.fromstring(res.content).findtext("./{*}Body/{*}Fault/{*}Reason/{*}Text"))  # noqa: S314

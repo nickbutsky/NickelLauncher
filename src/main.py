@@ -7,10 +7,10 @@ from ctypes import wintypes
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
 
-import webview  # pyright: ignore [reportMissingTypeStubs]
+import webview
 from pydantic import BaseModel, ValidationError
 from tendo.singleton import SingleInstance
-from webview.platforms.winforms import (  # pyright: ignore [reportMissingTypeStubs]
+from webview.platforms.winforms import (
     BrowserView,
     Icon,  # pyright: ignore [reportAttributeAccessIssue, reportUnknownVariableType]
     WinForms,  # pyright: ignore [reportPrivateImportUsage]
