@@ -17,8 +17,5 @@ dev = [
     "nuitka>=2.6.8",
 ]
 
-[tool.ruff]
-target-version = "py313" # delete when ruff fixes PERF203
-
 [tool.ruff.lint.extend-per-file-ignores]
 "scripts/build.py" = ["T201"]
