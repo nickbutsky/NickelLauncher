@@ -11,7 +11,7 @@ import {
 } from "@/components/shadcn/context-menu";
 import type { InstanceGroup } from "@/core-types";
 import { useStore } from "@/store";
-import { navigateFlexbox, useTrigger } from "@/utils";
+import { Trigger, navigateFlexbox } from "@/utils";
 import { ChevronDown } from "lucide-react";
 import { type ComponentProps, type ComponentRef, useRef } from "react";
 
@@ -25,7 +25,7 @@ export function InstanceGroupCollapsible({
 
 	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
-	const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
+	const editableLabelTrigger = new Trigger();
 
 	return (
 		<Collapsible
@@ -46,7 +46,7 @@ export function InstanceGroupCollapsible({
 								tabIndex={state.name ? 0 : -1}
 								onKeyUp={(event) => {
 									if (event.key === "F2") {
-										fireEditableLabelTrigger();
+										editableLabelTrigger.fire();
 									} else if (event.key === "Delete") {
 										pywebview.api
 											.moveInstances(
@@ -87,7 +87,7 @@ export function InstanceGroupCollapsible({
 								onSelect={() =>
 									contextMenuContentRef.current?.addEventListener(
 										"animationend",
-										() => setTimeout(fireEditableLabelTrigger),
+										() => setTimeout(editableLabelTrigger.fire),
 										{ once: true },
 									)
 								}

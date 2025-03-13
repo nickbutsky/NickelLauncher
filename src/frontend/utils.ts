@@ -1,6 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type ClassValue, clsx } from "clsx";
-import { type ChangeEvent, type EffectCallback, useCallback, useEffect, useRef, useState } from "react";
+import {
+	type ChangeEvent,
+	type DependencyList,
+	type EffectCallback,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { type DefaultValues, useForm } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import type { ZodObject, ZodType, z } from "zod";
@@ -9,24 +17,47 @@ export function cn(...inputs: readonly ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function useTrigger() {
-	const [trigger, setTrigger] = useState(false);
-	const fire = useCallback(() => setTrigger((prev) => !prev), []);
-	return [trigger, fire] as const;
-}
+export class Trigger {
+	#state: boolean;
+	#fire: () => void;
 
-export function useTriggerEffect(effect: EffectCallback, trigger: boolean, allowFirstRender = false) {
-	const firstRender = useIsFirstRender();
-	// biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-	useEffect(() => {
-		if (!firstRender || allowFirstRender) {
-			effect();
+	constructor() {
+		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
+		const [state, setState] = useState(false);
+		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
+		this.#fire = useCallback(() => setState((prev) => !prev), []);
+		this.#state = state;
+	}
+
+	use(
+		effect: EffectCallback,
+		positionalArguments?: { readonly deps?: DependencyList; readonly allowFirstRender?: boolean },
+	) {
+		const deps = positionalArguments?.deps;
+		const allowFirstRender = positionalArguments?.allowFirstRender ?? false;
+		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
+		const firstRender = useIsFirstRender();
+		const useEffectDeps: unknown[] = [this.#state];
+		if (deps) {
+			useEffectDeps.push(...deps);
 		}
-	}, [trigger]);
+		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
+		useEffect(() => {
+			if (!firstRender || allowFirstRender) {
+				effect();
+			}
+		}, useEffectDeps);
+	}
+
+	get fire() {
+		return this.#fire;
+	}
 }
 
 export function useIsFirstRender() {
+	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
 	const firstRender = useRef(true);
+	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
 	useEffect(() => {
 		firstRender.current = false;
 	}, []);

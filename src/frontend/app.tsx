@@ -7,7 +7,7 @@ import { Dialog, DialogTrigger } from "@/components/shadcn-modified/dialog";
 import { ScrollArea } from "@/components/shadcn-modified/scroll-area";
 import { Button } from "@/components/shadcn/button";
 import { useStore } from "@/store";
-import { useTrigger } from "@/utils";
+import { Trigger } from "@/utils";
 import { Plus } from "lucide-react";
 import { type ContextType, useCallback, useEffect, useRef, useState } from "react";
 
@@ -17,8 +17,8 @@ export function App() {
 
 	const errorMsg = useRef("");
 
-	const [scrollTrigger, fireScrollTrigger] = useTrigger();
-	const [errorDialogTrigger, fireErrorDialogTrigger] = useTrigger();
+	const scrollTrigger = new Trigger();
+	const errorDialogTrigger = new Trigger();
 
 	const storeReady = useStore((state) => state.ready);
 	const instanceGroups = useStore((state) => state.instanceGroups);
@@ -40,7 +40,7 @@ export function App() {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: False positive
 	const scrollToInstance = useCallback<ContextType<typeof AppContext>["scrollToInstance"]>((dirname) => {
 		setInstanceDirnameToScrollTo(dirname);
-		fireScrollTrigger();
+		scrollTrigger.fire();
 	}, []);
 
 	return (
@@ -54,7 +54,7 @@ export function App() {
 
 					showErrorDialog: (msg) => {
 						errorMsg.current = msg;
-						fireErrorDialogTrigger();
+						errorDialogTrigger.fire();
 					},
 				}}
 			>

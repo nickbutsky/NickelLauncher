@@ -29,7 +29,7 @@ import { FormControl, FormField, FormItem } from "@/components/shadcn/form";
 import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
 import { useStore } from "@/store";
-import { cn, useTrigger, useTriggerEffect, useZodForm } from "@/utils";
+import { Trigger, cn, useZodForm } from "@/utils";
 import { RotateCw } from "lucide-react";
 import { type ComponentProps, type ComponentRef, use, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { z } from "zod";
@@ -53,12 +53,12 @@ export function InstanceButton({
 
 	const appContext = use(AppContext);
 
-	const [editableLabelTrigger, fireEditableLabelTrigger] = useTrigger();
-	const [launchTrigger, fireLaunchTrigger] = useTrigger();
+	const editableLabelTrigger = new Trigger();
+	const launchTrigger = new Trigger();
 
 	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
-	useTriggerEffect(
+	appContext.scrollTrigger.use(
 		() => {
 			if (appContext.instanceDirnameToScrollTo !== state.dirname || !buttonRef.current) {
 				return;
@@ -71,8 +71,7 @@ export function InstanceButton({
 			buttonRef.current.style.scrollMarginTop = scrollMarginTop;
 			buttonRef.current.style.scrollMarginBottom = scrollMarginBottom;
 		},
-		appContext.scrollTrigger,
-		true,
+		{ allowFirstRender: true },
 	);
 
 	const openDialog = useCallback((dialogContentId: "cg" | "cv" | "ci" | "li") => {
@@ -83,7 +82,7 @@ export function InstanceButton({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: False positive
 	const launchInstance = useCallback(() => {
 		openDialog("li");
-		fireLaunchTrigger();
+		launchTrigger.fire();
 	}, []);
 
 	return (
@@ -99,7 +98,7 @@ export function InstanceButton({
 							if (event.key === "Enter") {
 								launchInstance();
 							} else if (event.key === "F2") {
-								fireEditableLabelTrigger();
+								editableLabelTrigger.fire();
 							}
 						}}
 						{...props}
@@ -143,7 +142,7 @@ export function InstanceButton({
 						onSelect={() =>
 							contextMenuContentRef.current?.addEventListener(
 								"animationend",
-								() => setTimeout(fireEditableLabelTrigger),
+								() => setTimeout(editableLabelTrigger.fire),
 								{ once: true },
 							)
 						}
@@ -310,7 +309,7 @@ function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
 	);
 }
 
-function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; readonly trigger: boolean }) {
+function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; readonly trigger: Trigger }) {
 	const [report, setReport] = useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
 	const [cancelling, setCancelling] = useState(false);
 
@@ -318,7 +317,7 @@ function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; r
 
 	const appContext = use(AppContext);
 
-	useTriggerEffect(
+	trigger.use(
 		() => {
 			if (import.meta.env.DEV) {
 				return;
@@ -336,8 +335,7 @@ function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; r
 						}),
 			);
 		},
-		trigger,
-		true,
+		{ allowFirstRender: true },
 	);
 
 	return (

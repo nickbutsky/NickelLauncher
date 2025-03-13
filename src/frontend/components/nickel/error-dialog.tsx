@@ -7,13 +7,13 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/shadcn/alert-dialog";
-import { useTriggerEffect } from "@/utils";
+import type { Trigger } from "@/utils";
 import { useState } from "react";
 
-export function ErrorDialog({ msg, trigger }: { readonly msg: string; readonly trigger: boolean }) {
+export function ErrorDialog({ msg, trigger }: { readonly msg: string; readonly trigger: Trigger }) {
 	const [open, setOpen] = useState(false);
 
-	useTriggerEffect(() => setOpen(true), trigger);
+	trigger.use(() => setOpen(true));
 
 	return (
 		<AlertDialog open={open} onOpenChange={() => setOpen(!open)}>

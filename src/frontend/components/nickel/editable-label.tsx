@@ -1,4 +1,4 @@
-import { cn, preventLeadingWhitespace, useTriggerEffect } from "@/utils";
+import { type Trigger, cn, preventLeadingWhitespace } from "@/utils";
 // biome-ignore lint/style/noNamespaceImport: radix-ui convention
 import * as Popover from "@radix-ui/react-popover";
 import {
@@ -22,7 +22,7 @@ export function EditableLabel({
 	onSave,
 	...props
 }: Omit<ComponentProps<"div">, "defaultValue"> & {
-	readonly editModeTrigger: boolean;
+	readonly editModeTrigger: Trigger;
 	readonly defaultValue: string;
 	readonly maxLength?: number;
 	readonly applyOnAboutToSave?: (value: string) => string;
@@ -38,7 +38,7 @@ export function EditableLabel({
 	const labelRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	useTriggerEffect(() => {
+	editModeTrigger.use(() => {
 		if (editMode) {
 			return;
 		}
@@ -46,7 +46,7 @@ export function EditableLabel({
 			setHeight(labelRef.current?.clientHeight);
 		}
 		setEditMode(true);
-	}, editModeTrigger);
+	});
 
 	useEffect(() => {
 		if (editMode) {
