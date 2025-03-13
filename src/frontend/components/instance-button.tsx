@@ -79,11 +79,10 @@ export function InstanceButton({
 		setDialogOpen(true);
 	}, []);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: False positive
 	const launchInstance = useCallback(() => {
 		openDialog("li");
 		launchTrigger.fire();
-	}, []);
+	}, [openDialog, launchTrigger.fire]);
 
 	return (
 		<>
@@ -271,7 +270,6 @@ function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
 
 	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: False positive
 	const copyInstance = useCallback(
 		(copyWorlds: boolean) => {
 			setCopying(copyWorlds ? "w" : "nw");
@@ -287,7 +285,7 @@ function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
 				hiddenCloseButtonRef.current?.click();
 			});
 		},
-		[dirname],
+		[dirname, reloadInstanceGroups],
 	);
 
 	return (

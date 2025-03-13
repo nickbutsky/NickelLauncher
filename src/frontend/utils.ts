@@ -54,16 +54,6 @@ export class Trigger {
 	}
 }
 
-export function useIsFirstRender() {
-	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
-	const firstRender = useRef(true);
-	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
-	useEffect(() => {
-		firstRender.current = false;
-	}, []);
-	return firstRender.current;
-}
-
 export function useZodForm<T extends ZodObject<Record<string, ZodType>>>(
 	schema: T,
 	defaultValues: DefaultValues<z.infer<T>>,
@@ -157,6 +147,16 @@ export function navigateFlexbox(
 		throw new Error("Should never happen.");
 	}
 	nextElement.focus();
+}
+
+function useIsFirstRender() {
+	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
+	const firstRender = useRef(true);
+	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
+	useEffect(() => {
+		firstRender.current = false;
+	}, []);
+	return firstRender.current;
 }
 
 function getFlexboxDimensions(element: HTMLElement) {

@@ -24,7 +24,6 @@ export function App() {
 	const instanceGroups = useStore((state) => state.instanceGroups);
 	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: False positive
 	useEffect(() => {
 		if (import.meta.env.PROD) {
 			exposeStaticFunction("onSuddenChange", reloadInstanceGroups);
@@ -35,13 +34,15 @@ export function App() {
 			}
 			setReady(true);
 		});
-	}, []);
+	}, [reloadInstanceGroups]);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: False positive
-	const scrollToInstance = useCallback<ContextType<typeof AppContext>["scrollToInstance"]>((dirname) => {
-		setInstanceDirnameToScrollTo(dirname);
-		scrollTrigger.fire();
-	}, []);
+	const scrollToInstance = useCallback<ContextType<typeof AppContext>["scrollToInstance"]>(
+		(dirname) => {
+			setInstanceDirnameToScrollTo(dirname);
+			scrollTrigger.fire();
+		},
+		[scrollTrigger.fire],
+	);
 
 	return (
 		storeReady &&
