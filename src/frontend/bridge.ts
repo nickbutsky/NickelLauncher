@@ -1,12 +1,12 @@
 import type { InstanceGroup, VersionTypeToVersions } from "@/core-types";
-import type { MarkWritable } from "ts-essentials";
+import type { Writable } from "ts-essentials";
 
 export function exposeStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
 	if (exposedStaticFunctionNames.has(name)) {
 		throw new Error("A function with this name has already been exposed.");
 	}
 	const staticApi = getApi().static;
-	(staticApi as MarkWritable<typeof staticApi, typeof name>)[name] = func;
+	(staticApi as Writable<typeof staticApi>)[name] = func;
 	exposedStaticFunctionNames.add(name);
 }
 
