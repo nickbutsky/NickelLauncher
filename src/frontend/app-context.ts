@@ -3,22 +3,15 @@ import type { DependencyList, EffectCallback } from "react";
 import { createContext } from "react";
 
 class TriggerDummy {
-	#dummyState: boolean;
-
-	constructor() {
-		this.#dummyState = false;
-		this.#dummyState;
-	}
-
+	#errorMsg = "You are not allowed to call methods of the trigger dummy.";
 	use(
 		_effect: EffectCallback,
 		_positionalArguments?: { readonly deps?: DependencyList; readonly allowFirstRender?: boolean },
 	) {
-		throw new Error("You are not allowed to call the trigger dummy.");
+		throw new Error(this.#errorMsg);
 	}
-
 	get fire() {
-		throw new Error("You are not allowed to call the trigger dummy.");
+		throw new Error(this.#errorMsg);
 	}
 }
 
