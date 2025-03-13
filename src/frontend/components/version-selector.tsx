@@ -39,7 +39,7 @@ export function VersionSelector({
 			/>
 			{versionTypes.map((versionType) => (
 				<TabsContent
-					className="flex-1 data-[state=inactive]:hidden"
+					className="h-48 data-[state=inactive]:hidden"
 					tabIndex={-1}
 					key={versionType}
 					value={versionType}
@@ -57,85 +57,36 @@ export function VersionSelector({
 	);
 }
 
-function TopBar({
-	variant = "cl",
-	onRefreshRequest,
-}: { readonly variant?: "lr" | "rl" | "cr" | "cl" } & Pick<
-	ComponentProps<typeof VersionSelector>,
-	"onRefreshRequest"
->) {
+function TopBar({ onRefreshRequest }: Pick<ComponentProps<typeof VersionSelector>, "onRefreshRequest">) {
 	const [refreshing, setRefreshing] = useState(false);
 
-	const versionTypeSelector = (
-		<TabsList
-			className="grid bg-transparent"
-			style={{ gridTemplateColumns: `repeat(${versionTypes.length}, minmax(0, 1fr))` }}
-		>
-			{versionTypes.map((versionType) => (
-				<TabsTrigger key={versionType} value={versionType}>
-					{versionType.charAt(0).toUpperCase() + versionType.slice(1)}
-				</TabsTrigger>
-			))}
-		</TabsList>
-	);
-
-	const refreshButton = (
-		<Button
-			className={{ lr: "", rl: "", cr: "ml-auto", cl: "mr-auto" }[variant]}
-			type="button"
-			size="icon"
-			variant="link"
-			disabled={refreshing}
-			onClick={async () => {
-				setRefreshing(true);
-				await onRefreshRequest();
-				setRefreshing(false);
-			}}
-		>
-			<RefreshCw className={cn(refreshing && "animate-spin")} />
-		</Button>
-	);
-
 	return (
-		<div
-			className={
-				{
-					lr: "flex justify-between",
-					rl: "flex justify-between",
-					cr: "grid grid-cols-[minmax(0,1fr),auto,minmax(0,1fr)] items-center",
-					cl: "grid grid-cols-[minmax(0,1fr),auto,minmax(0,1fr)] items-center",
-				}[variant]
-			}
-		>
-			{
-				{
-					lr: (
-						<>
-							{versionTypeSelector}
-							{refreshButton}
-						</>
-					),
-					rl: (
-						<>
-							{refreshButton}
-							{versionTypeSelector}
-						</>
-					),
-					cr: (
-						<>
-							<div />
-							{versionTypeSelector}
-							{refreshButton}
-						</>
-					),
-					cl: (
-						<>
-							{refreshButton}
-							{versionTypeSelector}
-						</>
-					),
-				}[variant]
-			}
+		<div className="flex justify-between">
+			<Button
+				className="mr-auto"
+				type="button"
+				size="icon"
+				variant="link"
+				disabled={refreshing}
+				onClick={async () => {
+					setRefreshing(true);
+					await onRefreshRequest();
+					setRefreshing(false);
+				}}
+			>
+				<RefreshCw className={cn(refreshing && "animate-spin")} />
+			</Button>
+			<TabsList
+				className="grid bg-transparent"
+				style={{ gridTemplateColumns: `repeat(${versionTypes.length}, minmax(0, 1fr))` }}
+			>
+				{versionTypes.map((versionType) => (
+					<TabsTrigger key={versionType} value={versionType}>
+						{versionType.charAt(0).toUpperCase() + versionType.slice(1)}
+					</TabsTrigger>
+				))}
+			</TabsList>
+			<div className="ml-auto w-9" />
 		</div>
 	);
 }
@@ -166,7 +117,7 @@ function InnerVersionSelector({
 	return (
 		<ScrollArea className={cn("pr-3", className)} viewportClassName="border" type="always" {...props}>
 			<ToggleGroup
-				className="flex-col gap-0"
+				className="w-full flex-col"
 				type="single"
 				orientation="vertical"
 				value={currentDisplayName}
@@ -179,7 +130,7 @@ function InnerVersionSelector({
 			>
 				{versions.map(({ displayName, availableArchitectures }) => (
 					<ToggleGroupItem
-						className="w-full justify-between rounded-none"
+						className="w-full justify-between py-1.5 first:rounded-none last:rounded-none"
 						ref={displayName === currentDisplayName ? selectedItemRef : undefined}
 						key={displayName}
 						value={displayName}

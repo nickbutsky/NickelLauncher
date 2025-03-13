@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type ClassValue, clsx } from "clsx";
-import { type EffectCallback, useCallback, useEffect, useRef, useState } from "react";
+import { type ChangeEvent, type EffectCallback, useCallback, useEffect, useRef, useState } from "react";
 import { type DefaultValues, useForm } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import type { ZodObject, ZodType, z } from "zod";
@@ -38,6 +38,17 @@ export function useZodForm<T extends ZodObject<Record<string, ZodType>>>(
 	defaultValues: DefaultValues<z.infer<T>>,
 ) {
 	return useForm({ resolver: zodResolver(schema), reValidateMode: "onSubmit", defaultValues });
+}
+
+export function preventLeadingWhitespace(event: ChangeEvent<HTMLInputElement>) {
+	const trimmedValue = event.currentTarget.value.trimStart();
+	const selectionRange = [
+		event.currentTarget.value === trimmedValue ? event.currentTarget.selectionStart : 0,
+		event.currentTarget.value === trimmedValue ? event.currentTarget.selectionEnd : 0,
+		event.currentTarget.selectionDirection === null ? undefined : event.currentTarget.selectionDirection,
+	] as const;
+	event.currentTarget.value = trimmedValue;
+	event.currentTarget.setSelectionRange(...selectionRange);
 }
 
 export function navigateFlexbox(

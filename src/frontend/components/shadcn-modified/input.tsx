@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@/utils"
+import { cn, preventLeadingWhitespace } from "@/utils"
 
 function Input({ className, type, onChange, ...props }: React.ComponentProps<"input">) {
   return (
@@ -14,7 +14,7 @@ function Input({ className, type, onChange, ...props }: React.ComponentProps<"in
         className
       )}
       onChange={(event) => {
-        event.currentTarget.value = event.currentTarget.value.trimStart()
+        preventLeadingWhitespace(event)
         onChange?.(event);
       }}
       {...props}

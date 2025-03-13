@@ -1,4 +1,4 @@
-import { cn, useTriggerEffect } from "@/utils";
+import { cn, preventLeadingWhitespace, useTriggerEffect } from "@/utils";
 // biome-ignore lint/style/noNamespaceImport: radix-ui convention
 import * as Popover from "@radix-ui/react-popover";
 import {
@@ -111,7 +111,7 @@ export function EditableLabel({
 	);
 }
 
-function DynamicInput({ className, onFocus, onChange, ...props }: ComponentProps<"input">) {
+function DynamicInput({ className, onFocus, onChange, onKeyDown, ...props }: ComponentProps<"input">) {
 	return (
 		<input
 			className={cn("bg-black px-1", className)}
@@ -121,16 +121,13 @@ function DynamicInput({ className, onFocus, onChange, ...props }: ComponentProps
 				onFocus?.(event);
 			}}
 			onChange={(event) => {
-				const trimmedValue = event.currentTarget.value.trimStart();
-				const selectionRange = [
-					event.currentTarget.value === trimmedValue ? event.currentTarget.selectionStart : 0,
-					event.currentTarget.value === trimmedValue ? event.currentTarget.selectionEnd : 0,
-					event.currentTarget.selectionDirection === null ? undefined : event.currentTarget.selectionDirection,
-				] as const;
-				event.currentTarget.value = trimmedValue;
-				event.currentTarget.setSelectionRange(...selectionRange);
+				preventLeadingWhitespace(event);
 				adjustInputWidth(event);
 				onChange?.(event);
+			}}
+			onKeyDown={(event) => {
+				event.stopPropagation();
+				onKeyDown?.(event);
 			}}
 			{...props}
 		/>
