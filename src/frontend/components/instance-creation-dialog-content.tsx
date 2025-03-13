@@ -11,10 +11,12 @@ import { z } from "zod";
 
 export function InstanceCreationDialogContent() {
 	const appContext = use(AppContext);
-	const versionTypeToVersions = useStore((state) => state.versionTypeToVersions);
-	const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
-	const instanceGroups = useStore((state) => state.instanceGroups);
-	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
+	const { versionTypeToVersions, reloadVersionTypeToVersions, instanceGroups, reloadInstanceGroups } = useStore(
+		"versionTypeToVersions",
+		"reloadVersionTypeToVersions",
+		"instanceGroups",
+		"reloadInstanceGroups",
+	);
 
 	const zodForm = useZodForm(
 		z.object({

@@ -23,7 +23,7 @@ export function InstanceGroupCollapsible({
 }: ComponentProps<typeof Collapsible> & { readonly state: InstanceGroup }) {
 	const contextMenuContentRef = useRef<ComponentRef<typeof ContextMenuContent>>(null);
 
-	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
+	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
 
 	const editableLabelTrigger = new Trigger();
 

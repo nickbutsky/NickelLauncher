@@ -45,7 +45,7 @@
 		"@types/react-dom": "^19",
 		"@vitejs/plugin-react": "^4",
 		"tailwindcss": "^4",
-		"ts-essentials": "^9",
+		"ts-essentials": "^10",
 		"typescript": "^5",
 		"vite": "^6",
 		"vite-tsconfig-paths": "^5"

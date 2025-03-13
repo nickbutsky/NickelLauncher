@@ -20,9 +20,11 @@ export function App() {
 	const scrollTrigger = new Trigger();
 	const errorDialogTrigger = new Trigger();
 
-	const storeReady = useStore((state) => state.ready);
-	const instanceGroups = useStore((state) => state.instanceGroups);
-	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
+	const {
+		ready: storeReady,
+		instanceGroups,
+		reloadInstanceGroups,
+	} = useStore("ready", "instanceGroups", "reloadInstanceGroups");
 
 	useEffect(() => {
 		if (import.meta.env.PROD) {

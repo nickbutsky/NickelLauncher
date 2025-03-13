@@ -56,7 +56,7 @@ export function InstanceButton({
 	const editableLabelTrigger = new Trigger();
 	const launchTrigger = new Trigger();
 
-	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
+	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
 
 	appContext.scrollTrigger.use(
 		() => {
@@ -182,8 +182,7 @@ export function InstanceButton({
 }
 
 function ChangeGroupDialogContent({ dirname }: { readonly dirname: string }) {
-	const instanceGroups = useStore((state) => state.instanceGroups);
-	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
+	const { instanceGroups, reloadInstanceGroups } = useStore("instanceGroups", "reloadInstanceGroups");
 
 	const zodForm = useZodForm(z.object({ groupName: z.string() }), {
 		groupName:
@@ -224,9 +223,11 @@ function ChangeVersionDialogContent({
 	dirname,
 	currentVersionDisplayName,
 }: { readonly dirname: string; readonly currentVersionDisplayName: string }) {
-	const versionTypeToVersions = useStore((state) => state.versionTypeToVersions);
-	const reloadVersionTypeToVersions = useStore((state) => state.reloadVersionTypeToVersions);
-	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
+	const { versionTypeToVersions, reloadVersionTypeToVersions, reloadInstanceGroups } = useStore(
+		"versionTypeToVersions",
+		"reloadVersionTypeToVersions",
+		"reloadInstanceGroups",
+	);
 
 	const zodForm = useZodForm(z.object({ versionDisplayName: z.string() }), {
 		versionDisplayName: currentVersionDisplayName,
@@ -268,7 +269,7 @@ function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
 	const dialogContentRef = useRef<ComponentRef<typeof DialogContent>>(null);
 	const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
 
-	const reloadInstanceGroups = useStore((state) => state.reloadInstanceGroups);
+	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
 
 	const copyInstance = useCallback(
 		(copyWorlds: boolean) => {
