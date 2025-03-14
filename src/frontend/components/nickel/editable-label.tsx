@@ -38,7 +38,7 @@ export function EditableLabel({
 	const labelRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	editModeTrigger.use(() => {
+	editModeTrigger.useEffect(() => {
 		if (editMode) {
 			return;
 		}

@@ -29,22 +29,22 @@ export class Trigger {
 		this.#state = state;
 	}
 
-	use(
+	useEffect(
 		effect: EffectCallback,
-		positionalArguments?: { readonly deps?: DependencyList; readonly allowFirstRender?: boolean },
+		positionalArguments?: { readonly deps?: DependencyList; readonly runOnMount?: boolean },
 	) {
 		const deps = positionalArguments?.deps;
-		const allowFirstRender = positionalArguments?.allowFirstRender ?? false;
+		const runOnMount = positionalArguments?.runOnMount ?? false;
 		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
-		const firstRender = useIsFirstRender();
+		const mounted = useIsMounted();
 		const useEffectDeps: unknown[] = [this.#state];
 		if (deps) {
 			useEffectDeps.push(...deps);
 		}
 		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
 		useEffect(() => {
-			if (!firstRender || allowFirstRender) {
-				effect();
+			if (mounted || runOnMount) {
+				return effect();
 			}
 		}, useEffectDeps);
 	}
@@ -149,14 +149,14 @@ export function navigateFlexbox(
 	nextElement.focus();
 }
 
-function useIsFirstRender() {
+function useIsMounted() {
 	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
-	const firstRender = useRef(true);
+	const mountedRef = useRef(false);
 	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
 	useEffect(() => {
-		firstRender.current = false;
+		mountedRef.current = true;
 	}, []);
-	return firstRender.current;
+	return mountedRef.current;
 }
 
 function getFlexboxDimensions(element: HTMLElement) {

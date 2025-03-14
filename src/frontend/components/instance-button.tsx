@@ -58,7 +58,7 @@ export function InstanceButton({
 
 	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
 
-	appContext.scrollTrigger.use(
+	appContext.scrollTrigger.useEffect(
 		() => {
 			if (appContext.instanceDirnameToScrollTo !== state.dirname || !buttonRef.current) {
 				return;
@@ -71,7 +71,7 @@ export function InstanceButton({
 			buttonRef.current.style.scrollMarginTop = scrollMarginTop;
 			buttonRef.current.style.scrollMarginBottom = scrollMarginBottom;
 		},
-		{ allowFirstRender: true },
+		{ runOnMount: true },
 	);
 
 	const openDialog = useCallback((dialogContentId: "cg" | "cv" | "ci" | "li") => {
@@ -316,7 +316,7 @@ function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; r
 
 	const appContext = use(AppContext);
 
-	trigger.use(
+	trigger.useEffect(
 		() => {
 			if (import.meta.env.DEV) {
 				return;
@@ -334,7 +334,7 @@ function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; r
 						}),
 			);
 		},
-		{ allowFirstRender: true },
+		{ runOnMount: true },
 	);
 
 	return (

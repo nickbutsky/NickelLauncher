@@ -13,7 +13,7 @@ import { useState } from "react";
 export function ErrorDialog({ msg, trigger }: { readonly msg: string; readonly trigger: Trigger }) {
 	const [open, setOpen] = useState(false);
 
-	trigger.use(() => setOpen(true));
+	trigger.useEffect(() => setOpen(true));
 
 	return (
 		<AlertDialog open={open} onOpenChange={() => setOpen(!open)}>
