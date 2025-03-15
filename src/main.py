@@ -56,11 +56,11 @@ class FrontendAPITemporary:
 
 
 class GeometryModel(BaseModel):
-    width = 800
-    height = 600
+    width: int = 800
+    height: int = 600
     x: int | None = None
     y: int | None = None
-    maximized = False
+    maximized: bool = False
 
 
 def get_geometry_model() -> GeometryModel:
