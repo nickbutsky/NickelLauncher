@@ -15,7 +15,7 @@ export function InputWithOptions({
 	readonly options: readonly string[];
 	readonly value?: string;
 }) {
-	useImperativeHandle(ref, () => inputRef.current as Exclude<typeof inputRef.current, null>, []);
+	useImperativeHandle(ref, () => inputRef.current ?? new HTMLInputElement());
 
 	const [currentValue, setCurrentValue] = useState(value);
 

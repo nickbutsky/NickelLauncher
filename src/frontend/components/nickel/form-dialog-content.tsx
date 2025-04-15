@@ -28,7 +28,7 @@ export function FormDialogContent<T extends FieldValues = FieldValues>({
 	readonly onSubmitBeforeClose?: SubmitHandler<T>;
 	readonly onSubmitAfterClose?: SubmitHandler<T>;
 }) {
-	useImperativeHandle(ref, () => dialogContentRef.current as Exclude<typeof dialogContentRef.current, null>);
+	useImperativeHandle(ref, () => dialogContentRef.current ?? new HTMLDivElement());
 
 	const dialogContentRef = useRef<ComponentRef<typeof DialogContent>>(null);
 	const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);

@@ -43,7 +43,7 @@ export function InstanceButton({
 	onKeyUp,
 	...props
 }: Omit<ComponentProps<typeof Button>, "name"> & { readonly state: Instance }) {
-	useImperativeHandle(ref, () => buttonRef.current as Exclude<typeof buttonRef.current, null>);
+	useImperativeHandle(ref, () => buttonRef.current ?? new HTMLButtonElement());
 
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [dialogContentId, setDialogContentId] = useState<"cg" | "cv" | "ci" | "li">("ci");

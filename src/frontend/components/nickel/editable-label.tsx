@@ -29,7 +29,7 @@ export function EditableLabel({
 	readonly isAllowedToSave?: (value: string) => boolean;
 	readonly onSave?: (value: string) => void;
 }) {
-	useImperativeHandle(ref, () => labelRef.current as Exclude<typeof labelRef.current, null>, []);
+	useImperativeHandle(ref, () => labelRef.current ?? new HTMLDivElement());
 
 	const [value, setValue] = useState(maxLength === undefined ? defaultValue : defaultValue.slice(0, maxLength));
 	const [editMode, setEditMode] = useState(false);
