@@ -17,5 +17,8 @@ dev = [
     "nuitka>=2.6.8",
 ]
 
+[tool.ruff.isort]
+required-imports = ["from __future__ import annotations"]
+
 [tool.ruff.lint.extend-per-file-ignores]
 "scripts/build.py" = ["T201"]
