@@ -133,7 +133,7 @@ class InstanceManager:
 
     def initialise_watchdog(self, on_sudden_change: Callable[[], object]) -> None:
         if isinstance(self._watchdog, _Watchdog):
-            error_msg = "The watchdog is already initialized."
+            error_msg = "The watchdog is already initialized"
             raise TypeError(error_msg)
 
         def callback() -> None:

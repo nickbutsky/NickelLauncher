@@ -3,7 +3,7 @@ import type { Writable } from "ts-essentials";
 
 export function exposeStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
 	if (exposedStaticFunctionNames.has(name)) {
-		throw new Error("A function with this name has already been exposed.");
+		throw new Error("A function with this name has already been exposed");
 	}
 	const staticApi = getApi().static;
 	(staticApi as Writable<typeof staticApi>)[name] = func;
@@ -62,11 +62,11 @@ function getApi() {
 }
 
 function notExposedStaticFunction() {
-	throw new ReferenceError("This function has not been exposed yet.");
+	throw new ReferenceError("This function has not been exposed yet");
 }
 
 function notExposedTemporaryFunction() {
-	throw new ReferenceError("This function is not exposed.");
+	throw new ReferenceError("This function is not exposed");
 }
 
 const exposedStaticFunctionNames: Set<keyof API["static"]> = new Set();

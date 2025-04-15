@@ -3,7 +3,7 @@ import type { DependencyList, EffectCallback } from "react";
 import { createContext } from "react";
 
 class TriggerDummy {
-	#errorMsg = "You are not allowed to call methods of the trigger dummy.";
+	#errorMsg = "You are not allowed to call methods of the trigger dummy";
 	useEffect(
 		_effect: EffectCallback,
 		_positionalArguments?: { readonly deps?: DependencyList; readonly allowFirstRender?: boolean },

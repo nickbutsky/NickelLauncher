@@ -57,7 +57,7 @@ class _GroupsModel(BaseModel):
         if (value is not None) and (
             any(whitespace_character in value for whitespace_character in string.whitespace) or not value
         ):
-            error_msg = "Whitespace and empty strings are not allowed."
+            error_msg = "Whitespace and empty strings are not allowed"
             raise ValueError(error_msg)
         return value
 
@@ -71,12 +71,12 @@ class _GroupsModel(BaseModel):
         if not (
             (len(group_names) == len(set(group_names))) and (len(instance_dirnames) == len(set(instance_dirnames)))
         ):
-            error_msg = "Group names and instance dirnames must be unique."
+            error_msg = "Group names and instance dirnames must be unique"
             raise ValueError(error_msg)
 
         for i, group_model in enumerate(self.groups):
             if group_model.name == "" and i != 0:
-                error_msg = "The unnamed group must be at the top."
+                error_msg = "The unnamed group must be at the top"
                 raise ValueError(error_msg)
 
         return self
@@ -91,7 +91,7 @@ class _GroupModel(BaseModel):
     @classmethod
     def _validate_name(cls, value: str) -> str:
         if value.strip() != value:
-            error_msg = "Leading and trailing whitespace is not allowed."
+            error_msg = "Leading and trailing whitespace is not allowed"
             raise ValueError(error_msg)
         return value
 
@@ -103,7 +103,7 @@ class _GroupModel(BaseModel):
                 any(whitespace_character in instance_dirname for whitespace_character in string.whitespace)
                 or not instance_dirname
             ):
-                error_msg = "Whitespace and empty strings are not allowed."
+                error_msg = "Whitespace and empty strings are not allowed"
                 raise ValueError(error_msg)
         return value
 

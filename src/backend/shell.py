@@ -73,11 +73,11 @@ def run_command(
         stdout, stderr = process.communicate()
 
         if process.returncode:
-            error_msg = stderr if stderr else f"The process finished with the code {process.returncode}."
+            error_msg = stderr if stderr else f"The process finished with the code {process.returncode}"
             logging.error(error_msg)
             raise subprocess.SubprocessError(error_msg)
 
         if log_stdout and stdout:
-            logging.debug('Command result: "%s".', stdout)
+            logging.debug('Command result: "%s"', stdout)
 
         return stdout

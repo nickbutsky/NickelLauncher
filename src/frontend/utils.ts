@@ -78,7 +78,7 @@ export function navigateFlexbox(
 ) {
 	const { parentElement } = currentElement;
 	if (!parentElement) {
-		throw new Error("Should never happen.");
+		throw new Error("Should never happen");
 	}
 	const [rowNumber, columnNumber] = getFlexboxDimensions(parentElement);
 	const getNextElement = new Map([
@@ -140,11 +140,11 @@ export function navigateFlexbox(
 		],
 	]).get(key);
 	if (!getNextElement) {
-		throw new Error("Should never happen.");
+		throw new Error("Should never happen");
 	}
 	const nextElement = getNextElement();
 	if (!(nextElement instanceof HTMLElement)) {
-		throw new Error("Should never happen.");
+		throw new Error("Should never happen");
 	}
 	nextElement.focus();
 }

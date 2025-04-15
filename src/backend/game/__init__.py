@@ -27,7 +27,7 @@ class Game:
 
     def run(self, instance: Instance, reporthook: Callable[[Report], object] | None = None) -> None:
         if self.launched_instance:
-            error_msg = "Another instance is being launched."
+            error_msg = "Another instance is being launched"
             raise ValueError(error_msg)
 
         self._cancellation_token_source = CancellationTokenSource()
@@ -70,6 +70,6 @@ class Game:
 
     def cancel_launch(self) -> None:
         if not self._cancellation_token_source:
-            error_msg = "Nothing is being launched."
+            error_msg = "Nothing is being launched"
             raise ValueError(error_msg)
         self._cancellation_token_source.cancel()

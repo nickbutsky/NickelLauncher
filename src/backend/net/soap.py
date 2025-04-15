@@ -20,7 +20,7 @@ def post_envelope(url: str, envelope: Envelope) -> ET.Element:
         error_msg = (
             error_msg.strip()
             if (error_msg := ET.fromstring(res.content).findtext("./{*}Body/{*}Fault/{*}Reason/{*}Text"))  # noqa: S314
-            else "An unknown error has occurred."
+            else "An unknown error has occurred"
         )
         raise SOAPError(error_msg)
 

@@ -31,7 +31,7 @@ class Watchdog:
         observer = Observer()
         observer.schedule(self._event_handler, str(self._directory))
         observer.start()
-        logging.debug("Watchdog thread started.")
+        logging.debug("Watchdog thread started")
 
 
 class _EventHandler(FileSystemEventHandler):
