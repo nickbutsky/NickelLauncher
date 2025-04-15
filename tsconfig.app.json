@@ -1,6 +1,5 @@
 {
 	"compilerOptions": {
-		"allowImportingTsExtensions": true,
 		"erasableSyntaxOnly": true,
 		"isolatedModules": true,
 		"jsx": "react-jsx",
