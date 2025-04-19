@@ -18,7 +18,7 @@ class PackageDict(TypedDict):
 def find_packages(package_family_name: str, cancellation_token: CancellationToken | None = None) -> list[PackageDict]:
     return (
         (
-            [cast(PackageDict, deserialized_output)]
+            [cast("PackageDict", deserialized_output)]
             if isinstance((deserialized_output := json.loads(output)), dict)
             else deserialized_output
         )

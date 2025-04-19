@@ -54,7 +54,7 @@ def run_command(
     *,
     log_stdout: bool = True,
 ) -> str:
-    logging.debug('Executing command: "%s"...', command)
+    logging.getLogger(__name__).debug('Executing command: "%s"...', command)
     with subprocess.Popen(  # noqa: S603
         command,
         stdout=subprocess.PIPE,
@@ -74,10 +74,10 @@ def run_command(
 
         if process.returncode:
             error_msg = stderr if stderr else f"The process finished with the code {process.returncode}"
-            logging.error(error_msg)
+            logging.getLogger(__name__).error(error_msg)
             raise subprocess.SubprocessError(error_msg)
 
         if log_stdout and stdout:
-            logging.debug('Command result: "%s"', stdout)
+            logging.getLogger(__name__).debug('Command result: "%s"', stdout)
 
         return stdout

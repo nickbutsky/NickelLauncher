@@ -107,16 +107,16 @@ def save_geometry(window: webview.Window) -> None:
             winreg.REG_SZ,
             json.dumps(
                 [
-                    round(cast(int, form.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
-                    round(cast(int, form.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(cast("int", form.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(cast("int", form.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
                     form.Location.X,  # pyright: ignore [reportUnknownMemberType]
                     form.Location.Y,  # pyright: ignore [reportUnknownMemberType]
                     False,
                 ]
                 if form.WindowState == WinForms.FormWindowState.Normal  # pyright: ignore [reportUnknownMemberType]
                 else [
-                    round(cast(int, form.RestoreBounds.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
-                    round(cast(int, form.RestoreBounds.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(cast("int", form.RestoreBounds.Size.Width) / divisor),  # pyright: ignore [reportUnknownMemberType]
+                    round(cast("int", form.RestoreBounds.Size.Height) / divisor),  # pyright: ignore [reportUnknownMemberType]
                     form.RestoreBounds.Location.X,  # pyright: ignore [reportUnknownMemberType]
                     form.RestoreBounds.Location.Y,  # pyright: ignore [reportUnknownMemberType]
                     form.WindowState == WinForms.FormWindowState.Maximized,  # pyright: ignore [reportUnknownMemberType]

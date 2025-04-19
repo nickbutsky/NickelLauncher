@@ -33,14 +33,14 @@ class Game:
         self._cancellation_token_source = CancellationTokenSource()
         self._launched_instance = instance
 
-        logging.info('Launching instance "%s" at "%s"...', instance.name, instance.directory)
+        logging.getLogger(__name__).info('Launching instance "%s" at "%s"...', instance.name, instance.directory)
         if reporthook:
             reporthook(Report(Report.Type.PROGRESS, "Checking game files..."))
         try:
             _step.grant_access(instance.directory / "com.mojang", instance.version.user_sid)
 
             if not instance.version.is_downloaded(instance.architecture_choice):
-                logging.info("Downloading Minecraft %s...", instance.version.name)
+                logging.getLogger(__name__).info("Downloading Minecraft %s...", instance.version.name)
                 download_version(
                     instance.version,
                     instance.architecture_choice,
@@ -58,7 +58,7 @@ class Game:
 
             _step.relink_game_files(instance, self._cancellation_token_source.token)
 
-            logging.info("Launching Minecraft %s...", instance.version.name)
+            logging.getLogger(__name__).info("Launching Minecraft %s...", instance.version.name)
             if reporthook:
                 reporthook(Report(Report.Type.PROGRESS, "Launching Minecraft..."))
             packagemanager.launch_package(instance.version.pfn, "App", self._cancellation_token_source.token)

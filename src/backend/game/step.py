@@ -30,14 +30,14 @@ def install(
     for package_dict in packagemanager.find_packages(version.pfn, cancellation_token):
         packagemanager.remove_package(package_dict["PackageFullName"], cancellation_token)
 
-    logging.info("Installing Minecraft %s...", version.name)
+    logging.getLogger(__name__).info("Installing Minecraft %s...", version.name)
     if reporthook:
         reporthook(Report(Report.Type.PROGRESS, "Installing Minecraft..."))
     packagemanager.add_package(version.architecture_to_package[architecture], cancellation_token)
 
 
 def relink_game_files(instance: Instance, cancellation_token: CancellationToken | None = None) -> None:
-    logging.debug('Relinking to new game folder at "%s"...', instance.directory / "com.mojang")
+    logging.getLogger(__name__).debug('Relinking to new game folder at "%s"...', instance.directory / "com.mojang")
     localappdata_path = os.getenv("LOCALAPPDATA")
     if not localappdata_path:
         raise FileNotFoundError

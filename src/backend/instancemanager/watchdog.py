@@ -31,7 +31,7 @@ class Watchdog:
         observer = Observer()
         observer.schedule(self._event_handler, str(self._directory))
         observer.start()
-        logging.debug("Watchdog thread started")
+        logging.getLogger(__name__).debug("Watchdog thread started")
 
 
 class _EventHandler(FileSystemEventHandler):
@@ -51,6 +51,6 @@ class _EventHandler(FileSystemEventHandler):
                 DirMovedEvent,
             ),
         ):
-            logging.debug(str(event))
+            logging.getLogger(__name__).debug(str(event))
             time.sleep(0.25)
             self._callback()
