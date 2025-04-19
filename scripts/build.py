@@ -27,9 +27,7 @@ def main() -> None:
     shutil.rmtree("build", ignore_errors=True)
     shutil.rmtree("dist", ignore_errors=True)
 
-    with Path("package.json").open() as f:
-        data = f.read()
-    package_model = PackageModel.model_validate_json(data, strict=True)
+    package_model = PackageModel.model_validate_json(Path("package.json").read_text(), strict=True)
 
     try:
         compile_app(package_model.displayName, package_model.author.name, package_model.version)

@@ -26,8 +26,7 @@ class LoadResult:
 
 def load(directory: Path, versions: Iterable[Version]) -> LoadResult:
     try:
-        with (directory / "groups.json").open() as f:
-            groups_model = _GroupsModel.model_validate_json(f.read(), strict=True)
+        groups_model = _GroupsModel.model_validate_json((directory / "groups.json").read_text(), strict=True)
     except (OSError, ValidationError):
         return LoadResult(_load_instance_groups([], None, directory, versions), None)
 
@@ -173,8 +172,7 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
     ):
         return None
     try:
-        with (directory / "config.json").open() as f:
-            instance_model = _InstanceModel.model_validate_json(f.read(), strict=True)
+        instance_model = _InstanceModel.model_validate_json((directory / "config.json").read_text(), strict=True)
         version = next(
             v
             for v in versions

@@ -22,8 +22,7 @@ class VersionRetriever:
             return self._versions
 
         try:
-            with (self._CONFIG).open() as f:
-                data = f.read()
+            data = self._CONFIG.read_text()
         except OSError:
             return ()
 
@@ -35,8 +34,7 @@ class VersionRetriever:
             "https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/versions.json",
             timeout=10,
         )
-        with (self._CONFIG).open("w") as f:
-            f.write(res.text)
+        self._CONFIG.write_text(res.text)
         self._versions = self._parse_json(res.text)
         return self._versions
 
