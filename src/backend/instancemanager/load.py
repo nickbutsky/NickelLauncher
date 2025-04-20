@@ -75,7 +75,7 @@ class _GroupsModel(BaseModel):
 
         for i, group_model in enumerate(self.groups):
             if group_model.name == "" and i != 0:
-                error_msg = "The unnamed group must be at the top"
+                error_msg = "Unnamed group must be at the top"
                 raise ValueError(error_msg)
 
         return self
