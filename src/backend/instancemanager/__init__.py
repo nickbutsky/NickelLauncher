@@ -12,9 +12,9 @@ from backend.game import Game
 from backend.path import ROOT_DIRECTORY
 from backend.versionretriever import VersionRetriever
 
-from . import load as _load
+from . import load
 from .instancegroup import InstanceGroup
-from .watchdog import Watchdog as _Watchdog
+from .watchdog import Watchdog
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
@@ -33,10 +33,10 @@ class _WatchdogDummy:
 class InstanceManager:
     DIRECTORY = ROOT_DIRECTORY / "instances"
 
-    _watchdog: _Watchdog | _WatchdogDummy = _WatchdogDummy()
+    _watchdog: Watchdog | _WatchdogDummy = _WatchdogDummy()
 
     def __init__(self) -> None:
-        load_result = _load.load(self.DIRECTORY, VersionRetriever.get_versions_locally())
+        load_result = load.load(self.DIRECTORY, VersionRetriever.get_versions_locally())
         self._instance_groups = load_result.instance_groups
         for group in self._instance_groups:
             group.subscribe_to_change(self._save)
@@ -132,12 +132,12 @@ class InstanceManager:
             return instance_directory
 
     def initialise_watchdog(self, on_sudden_change: Callable[[], object]) -> None:
-        if isinstance(self._watchdog, _Watchdog):
+        if isinstance(self._watchdog, Watchdog):
             error_msg = "Watchdog is already initialized"
             raise TypeError(error_msg)
 
         def callback() -> None:
-            load_result = _load.load(self.DIRECTORY, VersionRetriever.get_versions_locally())
+            load_result = load.load(self.DIRECTORY, VersionRetriever.get_versions_locally())
             self._instance_groups = load_result.instance_groups
             for group in self._instance_groups:
                 group.subscribe_to_change(self._save)
@@ -148,7 +148,7 @@ class InstanceManager:
                 Game.cancel_launch()
             on_sudden_change()
 
-        self._watchdog = _Watchdog(self.DIRECTORY, callback)
+        self._watchdog = Watchdog(self.DIRECTORY, callback)
         self._watchdog.run()
 
     def _save(self) -> None:

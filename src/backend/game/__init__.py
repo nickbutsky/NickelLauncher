@@ -7,7 +7,7 @@ from backend import packagemanager, utility
 from backend.cancellationtoken import CancellationTokenSource, Cancelled
 from backend.report import Report
 
-from . import step as _step
+from . import step
 from .download import download_version
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ class Game:
         if reporthook:
             reporthook(Report(Report.Type.PROGRESS, "Checking game files..."))
         try:
-            _step.grant_access(instance.directory / "com.mojang", instance.version.user_sid)
+            step.grant_access(instance.directory / "com.mojang", instance.version.user_sid)
 
             if not instance.version.is_downloaded(instance.architecture_choice):
                 logging.getLogger(__name__).info("Downloading Minecraft %s...", instance.version.name)
@@ -49,14 +49,14 @@ class Game:
                 )
 
             if not instance.version.is_installed(instance.architecture_choice):
-                _step.install(
+                step.install(
                     instance.version,
                     instance.architecture_choice,
                     self._cancellation_token_source.token,
                     reporthook,
                 )
 
-            _step.relink_game_files(instance, self._cancellation_token_source.token)
+            step.relink_game_files(instance, self._cancellation_token_source.token)
 
             logging.getLogger(__name__).info("Launching Minecraft %s...", instance.version.name)
             if reporthook:
