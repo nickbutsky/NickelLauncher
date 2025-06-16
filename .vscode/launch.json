@@ -1,0 +1,12 @@
+{
+	"configurations": [
+		{
+			"name": "Python Debugger",
+			"postDebugTask": "postDebug",
+			"preLaunchTask": "preLaunch",
+			"program": "src/main.py",
+			"request": "launch",
+			"type": "debugpy"
+		}
+	]
+}
