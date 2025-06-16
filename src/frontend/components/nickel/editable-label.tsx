@@ -1,6 +1,5 @@
 import { type Trigger, cn, preventLeadingWhitespace } from "@/utils";
-// biome-ignore lint/style/noNamespaceImport: radix-ui convention
-import * as Popover from "@radix-ui/react-popover";
+import { Popover } from "radix-ui";
 import {
 	type ChangeEvent,
 	type ComponentProps,
