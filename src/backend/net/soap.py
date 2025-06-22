@@ -4,15 +4,14 @@ from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
 from xml.etree import ElementTree as ET
 
-import requests
+import httpx
 
 
 def post_envelope(url: str, envelope: Envelope) -> ET.Element:
-    res = requests.post(
+    res = httpx.post(
         url,
-        ET.tostring(envelope),
+        content=ET.tostring(envelope),
         headers={"content-type": "application/soap+xml; charset=utf-8"},
-        timeout=10,
         verify=False,  # noqa: S501
     )
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import requests
+import httpx
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
 
 from . import utility
@@ -30,10 +30,7 @@ class VersionRetriever:
         return self._versions
 
     def get_versions_remotely(self) -> tuple[Version, ...]:
-        res = requests.get(
-            "https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/versions.json",
-            timeout=10,
-        )
+        res = httpx.get("https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/versions.json")
         self._CONFIG.write_text(res.text)
         self._versions = self._parse_json(res.text)
         return self._versions
