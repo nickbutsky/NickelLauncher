@@ -29,10 +29,10 @@ import { FormControl, FormField, FormItem } from "@/components/shadcn/form";
 import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
 import { useStore } from "@/store";
-import { Trigger, cn, useZodForm } from "@/utils";
+import { Trigger, cn, useArkTypeForm } from "@/utils";
+import { type } from "arktype";
 import { RotateCw } from "lucide-react";
 import { type ComponentProps, type ComponentRef, use, useCallback, useImperativeHandle, useRef, useState } from "react";
-import { z } from "zod";
 
 export function InstanceButton({
 	className,
@@ -184,7 +184,7 @@ export function InstanceButton({
 function ChangeGroupDialogContent({ dirname }: { readonly dirname: string }) {
 	const { instanceGroups, reloadInstanceGroups } = useStore("instanceGroups", "reloadInstanceGroups");
 
-	const zodForm = useZodForm(z.object({ groupName: z.string() }), {
+	const arkTypeForm = useArkTypeForm(type({ groupName: "string" }), {
 		groupName:
 			instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
 	});
@@ -193,14 +193,14 @@ function ChangeGroupDialogContent({ dirname }: { readonly dirname: string }) {
 		<FormDialogContent
 			title="Change group"
 			submitText="Change"
-			form={zodForm}
+			form={arkTypeForm}
 			onSubmitBeforeClose={(data) =>
 				pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
 			}
 			onSubmitAfterClose={reloadInstanceGroups}
 		>
 			<FormField
-				control={zodForm.control}
+				control={arkTypeForm.control}
 				name="groupName"
 				render={({ field }) => (
 					<FormItem>
@@ -229,7 +229,7 @@ function ChangeVersionDialogContent({
 		"reloadInstanceGroups",
 	);
 
-	const zodForm = useZodForm(z.object({ versionDisplayName: z.string() }), {
+	const arkTypeForm = useArkTypeForm(type({ versionDisplayName: "string" }), {
 		versionDisplayName: currentVersionDisplayName,
 	});
 
@@ -237,13 +237,13 @@ function ChangeVersionDialogContent({
 		<FormDialogContent
 			title="Change Version"
 			submitText="Change"
-			form={zodForm}
+			form={arkTypeForm}
 			onSubmitBeforeClose={(data) =>
 				pywebview.api.changeVersion(dirname, data.versionDisplayName).then(reloadInstanceGroups)
 			}
 		>
 			<FormField
-				control={zodForm.control}
+				control={arkTypeForm.control}
 				name="versionDisplayName"
 				render={({ field }) => (
 					<FormItem>

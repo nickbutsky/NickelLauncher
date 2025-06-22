@@ -5,9 +5,9 @@ import { Input } from "@/components/shadcn-modified/input";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/shadcn/form";
 import { VersionSelector } from "@/components/version-selector";
 import { useStore } from "@/store";
-import { useZodForm } from "@/utils";
+import { useArkTypeForm } from "@/utils";
+import { type } from "arktype";
 import { use } from "react";
-import { z } from "zod";
 
 export function InstanceCreationDialogContent() {
 	const appContext = use(AppContext);
@@ -18,11 +18,14 @@ export function InstanceCreationDialogContent() {
 		"reloadInstanceGroups",
 	);
 
-	const zodForm = useZodForm(
-		z.object({
-			instanceName: z.string().trim().min(1, "Instance name must be at least 1 character long."),
-			groupName: z.string().trim(),
-			versionDisplayName: z.string(),
+	const arkTypeForm = useArkTypeForm(
+		type({
+			instanceName: type("string.trim.preformatted").atLeastLength({
+				rule: 1,
+				"meta.message": "Instance name must be at least 1 character long.",
+			}),
+			groupName: "string.trim.preformatted",
+			versionDisplayName: "string",
 		}),
 		{
 			instanceName: "",
@@ -35,7 +38,7 @@ export function InstanceCreationDialogContent() {
 		<FormDialogContent
 			title="Create new instance"
 			submitText="Create"
-			form={zodForm}
+			form={arkTypeForm}
 			onSubmitBeforeClose={(data) =>
 				pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then((dirname) => {
 					reloadInstanceGroups();
@@ -44,7 +47,7 @@ export function InstanceCreationDialogContent() {
 			}
 		>
 			<FormField
-				control={zodForm.control}
+				control={arkTypeForm.control}
 				name="instanceName"
 				render={({ field }) => (
 					<FormItem>
@@ -57,7 +60,7 @@ export function InstanceCreationDialogContent() {
 				)}
 			/>
 			<FormField
-				control={zodForm.control}
+				control={arkTypeForm.control}
 				name="groupName"
 				render={({ field }) => (
 					<FormItem>
@@ -74,7 +77,7 @@ export function InstanceCreationDialogContent() {
 				)}
 			/>
 			<FormField
-				control={zodForm.control}
+				control={arkTypeForm.control}
 				name="versionDisplayName"
 				render={({ field }) => (
 					<FormItem>

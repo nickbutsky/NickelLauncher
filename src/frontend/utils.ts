@@ -1,4 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
+import type { Type } from "arktype";
 import { type ClassValue, clsx } from "clsx";
 import {
 	type ChangeEvent,
@@ -9,9 +10,8 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { type DefaultValues, useForm } from "react-hook-form";
+import { type DefaultValues, type FieldValues, useForm } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
-import type { ZodObject, ZodType, z } from "zod";
 
 export function cn(...inputs: readonly ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -54,11 +54,12 @@ export class Trigger {
 	}
 }
 
-export function useZodForm<T extends ZodObject<Record<string, ZodType>>>(
-	schema: T,
-	defaultValues: DefaultValues<z.infer<T>>,
-) {
-	return useForm({ resolver: zodResolver(schema), reValidateMode: "onSubmit", defaultValues });
+export function useArkTypeForm<T extends FieldValues>(schema: Type<T>, defaultValues: T) {
+	return useForm<T, unknown, T>({
+		resolver: arktypeResolver(schema),
+		reValidateMode: "onSubmit",
+		defaultValues: defaultValues as DefaultValues<T>,
+	});
 }
 
 export function preventLeadingWhitespace(event: ChangeEvent<HTMLInputElement>) {
