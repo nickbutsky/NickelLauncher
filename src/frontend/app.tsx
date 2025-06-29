@@ -7,7 +7,6 @@ import { Dialog, DialogTrigger } from "@/components/shadcn-modified/dialog";
 import { ScrollArea } from "@/components/shadcn-modified/scroll-area";
 import { Button } from "@/components/shadcn/button";
 import { useStore } from "@/store";
-import { Trigger } from "@/utils";
 import { Plus } from "lucide-react";
 import { type ContextType, useCallback, useEffect, useRef, useState } from "react";
 
@@ -15,10 +14,8 @@ export function App() {
 	const [ready, setReady] = useState(false);
 	const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = useState<string | null>(null);
 
+	const [errorDialogOpen, setErrorDialogOpen] = useState(false);
 	const errorMsg = useRef("");
-
-	const scrollTrigger = new Trigger();
-	const errorDialogTrigger = new Trigger();
 
 	const {
 		ready: storeReady,
@@ -38,13 +35,9 @@ export function App() {
 		});
 	}, [reloadInstanceGroups]);
 
-	const scrollToInstance = useCallback<ContextType<typeof AppContext>["scrollToInstance"]>(
-		(dirname) => {
-			setInstanceDirnameToScrollTo(dirname);
-			scrollTrigger.fire();
-		},
-		[scrollTrigger.fire],
-	);
+	const scrollToInstance = useCallback<ContextType<typeof AppContext>["scrollToInstance"]>((dirname) => {
+		setInstanceDirnameToScrollTo(dirname);
+	}, []);
 
 	return (
 		storeReady &&
@@ -53,11 +46,10 @@ export function App() {
 				value={{
 					scrollToInstance,
 					instanceDirnameToScrollTo,
-					scrollTrigger,
 
 					showErrorDialog: (msg) => {
 						errorMsg.current = msg;
-						errorDialogTrigger.fire();
+						setErrorDialogOpen(true);
 					},
 				}}
 			>
@@ -74,7 +66,7 @@ export function App() {
 					</DialogTrigger>
 					<InstanceCreationDialogContent />
 				</Dialog>
-				<ErrorDialog msg={errorMsg.current} trigger={errorDialogTrigger} />
+				<ErrorDialog msg={errorMsg.current} open={errorDialogOpen} onOpenChange={(open) => setErrorDialogOpen(open)} />
 			</AppContext>
 		)
 	);

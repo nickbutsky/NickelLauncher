@@ -10,7 +10,7 @@ import { type } from "arktype";
 import { use } from "react";
 
 export function InstanceCreationDialogContent() {
-	const appContext = use(AppContext);
+	const { scrollToInstance } = use(AppContext);
 	const { versionTypeToVersions, reloadVersionTypeToVersions, instanceGroups, reloadInstanceGroups } = useStore(
 		"versionTypeToVersions",
 		"reloadVersionTypeToVersions",
@@ -42,7 +42,7 @@ export function InstanceCreationDialogContent() {
 			onSubmitBeforeClose={(data) =>
 				pywebview.api.createInstance(data.instanceName, data.groupName, data.versionDisplayName).then((dirname) => {
 					reloadInstanceGroups();
-					appContext.scrollToInstance(dirname);
+					scrollToInstance(dirname);
 				})
 			}
 		>

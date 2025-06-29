@@ -11,9 +11,9 @@ import {
 } from "@/components/shadcn/context-menu";
 import type { InstanceGroup } from "@/core-types";
 import { useStore } from "@/store";
-import { Trigger, navigateFlexbox } from "@/utils";
+import { navigateFlexbox } from "@/utils";
 import { ChevronDown } from "lucide-react";
-import { type ComponentProps, type ComponentRef, useRef } from "react";
+import { type ComponentProps, type ComponentRef, useRef, useState } from "react";
 
 export function InstanceGroupCollapsible({
 	state,
@@ -25,7 +25,7 @@ export function InstanceGroupCollapsible({
 
 	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
 
-	const editableLabelTrigger = new Trigger();
+	const [editableLabelEditing, setEditableLabelEditing] = useState(false);
 
 	return (
 		<Collapsible
@@ -46,7 +46,7 @@ export function InstanceGroupCollapsible({
 								tabIndex={state.name ? 0 : -1}
 								onKeyUp={(event) => {
 									if (event.key === "F2") {
-										editableLabelTrigger.fire();
+										setEditableLabelEditing(true);
 									} else if (event.key === "Delete") {
 										pywebview.api
 											.moveInstances(
@@ -57,12 +57,13 @@ export function InstanceGroupCollapsible({
 											.then(reloadInstanceGroups);
 									}
 								}}
-								editModeTrigger={editableLabelTrigger}
-								defaultValue={state.name}
+								editing={editableLabelEditing}
+								onEditingChange={setEditableLabelEditing}
+								value={state.name}
 								maxLength={50}
-								applyOnAboutToSave={(value) => value.trim()}
-								isAllowedToSave={(value) => value.length > 0}
-								onSave={async (value) => {
+								onBeforeValueChange={(value) => value.trim()}
+								isAllowedValueChange={(value) => value.length > 0}
+								onValueChange={async (value) => {
 									const instanceGroups = await pywebview.api.getInstanceGroups();
 									const instanceGroupNumber = instanceGroups.length;
 									const oldPosition = instanceGroups.findIndex((group) => group.name === state.name);
@@ -87,7 +88,7 @@ export function InstanceGroupCollapsible({
 								onSelect={() =>
 									contextMenuContentRef.current?.addEventListener(
 										"animationend",
-										() => setTimeout(editableLabelTrigger.fire),
+										() => setTimeout(() => setEditableLabelEditing(true)),
 										{ once: true },
 									)
 								}

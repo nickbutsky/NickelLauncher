@@ -1,57 +1,12 @@
 import { arktypeResolver } from "@hookform/resolvers/arktype";
 import type { Type } from "arktype";
 import { type ClassValue, clsx } from "clsx";
-import {
-	type ChangeEvent,
-	type DependencyList,
-	type EffectCallback,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import type { ChangeEvent } from "react";
 import { type DefaultValues, type FieldValues, useForm } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: readonly ClassValue[]) {
 	return twMerge(clsx(inputs));
-}
-
-export class Trigger {
-	#state: boolean;
-	#fire: () => void;
-
-	constructor() {
-		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
-		const [state, setState] = useState(false);
-		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
-		this.#fire = useCallback(() => setState((prev) => !prev), []);
-		this.#state = state;
-	}
-
-	useEffect(
-		effect: EffectCallback,
-		positionalArguments?: { readonly deps?: DependencyList; readonly runOnMount?: boolean },
-	) {
-		const deps = positionalArguments?.deps;
-		const runOnMount = positionalArguments?.runOnMount ?? false;
-		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
-		const mounted = useIsMounted();
-		const useEffectDeps: unknown[] = [this.#state];
-		if (deps) {
-			useEffectDeps.push(...deps);
-		}
-		// biome-ignore lint/correctness/useHookAtTopLevel: Custom pattern
-		useEffect(() => {
-			if (mounted || runOnMount) {
-				return effect();
-			}
-		}, useEffectDeps);
-	}
-
-	get fire() {
-		return this.#fire;
-	}
 }
 
 export function useArkTypeForm<T extends FieldValues>(schema: Type<T>, defaultValues: T) {
@@ -148,16 +103,6 @@ export function navigateFlexbox(
 		throw new Error("Should never happen");
 	}
 	nextElement.focus();
-}
-
-function useIsMounted() {
-	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
-	const mountedRef = useRef(false);
-	// biome-ignore lint/correctness/useHookAtTopLevel: False positive
-	useEffect(() => {
-		mountedRef.current = true;
-	}, []);
-	return mountedRef.current;
 }
 
 function getFlexboxDimensions(element: HTMLElement) {

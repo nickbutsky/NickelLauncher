@@ -22,7 +22,7 @@ export function VersionSelector({
 	readonly defaultDisplayName?: string;
 	readonly onDisplayNameChange?: (displayName: string) => void;
 }) {
-	const appContext = use(AppContext);
+	const { showErrorDialog } = use(AppContext);
 
 	return (
 		<Tabs
@@ -34,9 +34,7 @@ export function VersionSelector({
 			}
 			{...props}
 		>
-			<TopBar
-				onRefreshRequest={() => onRefreshRequest().catch((reason: Error) => appContext.showErrorDialog(reason.message))}
-			/>
+			<TopBar onRefreshRequest={() => onRefreshRequest().catch((reason: Error) => showErrorDialog(reason.message))} />
 			{versionTypes.map((versionType) => (
 				<TabsContent
 					className="h-48 data-[state=inactive]:hidden"

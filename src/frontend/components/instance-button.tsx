@@ -29,10 +29,19 @@ import { FormControl, FormField, FormItem } from "@/components/shadcn/form";
 import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
 import { useStore } from "@/store";
-import { Trigger, cn, useArkTypeForm } from "@/utils";
+import { cn, useArkTypeForm } from "@/utils";
 import { type } from "arktype";
 import { RotateCw } from "lucide-react";
-import { type ComponentProps, type ComponentRef, use, useCallback, useImperativeHandle, useRef, useState } from "react";
+import {
+	type ComponentProps,
+	type ComponentRef,
+	use,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useRef,
+	useState,
+} from "react";
 
 export function InstanceButton({
 	className,
@@ -46,33 +55,28 @@ export function InstanceButton({
 	useImperativeHandle(ref, () => buttonRef.current ?? new HTMLButtonElement());
 
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const [dialogContentId, setDialogContentId] = useState<"cg" | "cv" | "ci" | "li">("ci");
+	const [dialogContentId, setDialogContentId] = useState<"cg" | "cv" | "ci" | "li">();
+	const [editableLabelEditing, setEditableLabelEditing] = useState(false);
 
 	const buttonRef = useRef<ComponentRef<typeof Button>>(null);
 	const contextMenuContentRef = useRef<ComponentRef<typeof ContextMenuContent>>(null);
 
-	const appContext = use(AppContext);
-
-	const editableLabelTrigger = new Trigger();
-	const launchTrigger = new Trigger();
+	const { instanceDirnameToScrollTo } = use(AppContext);
 
 	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
 
-	appContext.scrollTrigger.useEffect(
-		() => {
-			if (appContext.instanceDirnameToScrollTo !== state.dirname || !buttonRef.current) {
-				return;
-			}
-			const scrollMarginTop = buttonRef.current.style.scrollMarginTop;
-			const scrollMarginBottom = buttonRef.current.style.scrollMarginBottom;
-			buttonRef.current.style.scrollMarginTop = "40px";
-			buttonRef.current.style.scrollMarginBottom = "25px";
-			buttonRef.current.scrollIntoView({ block: "nearest" });
-			buttonRef.current.style.scrollMarginTop = scrollMarginTop;
-			buttonRef.current.style.scrollMarginBottom = scrollMarginBottom;
-		},
-		{ runOnMount: true },
-	);
+	useEffect(() => {
+		if (instanceDirnameToScrollTo !== state.dirname || !buttonRef.current) {
+			return;
+		}
+		const scrollMarginTop = buttonRef.current.style.scrollMarginTop;
+		const scrollMarginBottom = buttonRef.current.style.scrollMarginBottom;
+		buttonRef.current.style.scrollMarginTop = "40px";
+		buttonRef.current.style.scrollMarginBottom = "25px";
+		buttonRef.current.scrollIntoView({ block: "nearest" });
+		buttonRef.current.style.scrollMarginTop = scrollMarginTop;
+		buttonRef.current.style.scrollMarginBottom = scrollMarginBottom;
+	}, [instanceDirnameToScrollTo, state.dirname]);
 
 	const openDialog = useCallback((dialogContentId: "cg" | "cv" | "ci" | "li") => {
 		setDialogContentId(dialogContentId);
@@ -81,8 +85,7 @@ export function InstanceButton({
 
 	const launchInstance = useCallback(() => {
 		openDialog("li");
-		launchTrigger.fire();
-	}, [openDialog, launchTrigger.fire]);
+	}, [openDialog]);
 
 	return (
 		<>
@@ -97,7 +100,7 @@ export function InstanceButton({
 							if (event.key === "Enter") {
 								launchInstance();
 							} else if (event.key === "F2") {
-								editableLabelTrigger.fire();
+								setEditableLabelEditing(true);
 							}
 						}}
 						{...props}
@@ -107,12 +110,13 @@ export function InstanceButton({
 						</picture>
 						<div className="grid grid-rows-2 text-left">
 							<EditableLabel
-								editModeTrigger={editableLabelTrigger}
-								defaultValue={state.name}
+								editing={editableLabelEditing}
+								onEditingChange={setEditableLabelEditing}
+								value={state.name}
 								maxLength={20}
-								applyOnAboutToSave={(value) => value.trim()}
-								isAllowedToSave={(value) => value.length > 0}
-								onSave={(value) => pywebview.api.renameInstance(state.dirname, value)}
+								onBeforeValueChange={(value) => value.trim()}
+								isAllowedValueChange={(value) => value.length > 0}
+								onValueChange={(value) => pywebview.api.renameInstance(state.dirname, value)}
 							/>
 							<div>
 								{state.version.displayName}
@@ -141,7 +145,7 @@ export function InstanceButton({
 						onSelect={() =>
 							contextMenuContentRef.current?.addEventListener(
 								"animationend",
-								() => setTimeout(editableLabelTrigger.fire),
+								() => setTimeout(() => setEditableLabelEditing(true)),
 								{ once: true },
 							)
 						}
@@ -162,7 +166,15 @@ export function InstanceButton({
 					<ContextMenuItem onSelect={() => openDialog("ci")}>Copy Instance</ContextMenuItem>
 				</ContextMenuContent>
 			</ContextMenu>
-			<Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(!dialogOpen)}>
+			<Dialog
+				open={dialogOpen}
+				onOpenChange={(open) => {
+					setDialogOpen(open);
+					if (!open) {
+						setDialogContentId(undefined);
+					}
+				}}
+			>
 				{
 					{
 						cg: <ChangeGroupDialogContent dirname={state.dirname} />,
@@ -173,8 +185,8 @@ export function InstanceButton({
 							/>
 						),
 						ci: <CopyInstanceDialogContent dirname={state.dirname} />,
-						li: <LaunchDialogContent dirname={state.dirname} trigger={launchTrigger} />,
-					}[dialogContentId]
+						li: <LaunchDialogContent dirname={state.dirname} />,
+					}[String(dialogContentId)]
 				}
 			</Dialog>
 		</>
@@ -308,34 +320,31 @@ function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
 	);
 }
 
-function LaunchDialogContent({ dirname, trigger }: { readonly dirname: string; readonly trigger: Trigger }) {
+function LaunchDialogContent({ dirname }: { readonly dirname: string }) {
 	const [report, setReport] = useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
 	const [cancelling, setCancelling] = useState(false);
 
 	const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
 
-	const appContext = use(AppContext);
+	const { showErrorDialog } = use(AppContext);
 
-	trigger.useEffect(
-		() => {
-			if (import.meta.env.DEV) {
-				return;
-			}
-			exposeTemporaryFunction(
-				"propelLaunchReport",
-				(report) => setReport(report),
-				() =>
-					pywebview.api
-						.launchInstance(dirname)
-						.catch((reason: Error) => appContext.showErrorDialog(reason.message))
-						.finally(() => {
-							hiddenCloseButtonRef.current?.click();
-							setCancelling(false);
-						}),
-			);
-		},
-		{ runOnMount: true },
-	);
+	useEffect(() => {
+		if (import.meta.env.DEV) {
+			return;
+		}
+		exposeTemporaryFunction(
+			"propelLaunchReport",
+			(report) => setReport(report),
+			() =>
+				pywebview.api
+					.launchInstance(dirname)
+					.catch((reason: Error) => showErrorDialog(reason.message))
+					.finally(() => {
+						hiddenCloseButtonRef.current?.click();
+						setCancelling(false);
+					}),
+		);
+	}, [dirname, showErrorDialog]);
 
 	return (
 		<>

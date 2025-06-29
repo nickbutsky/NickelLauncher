@@ -1,4 +1,4 @@
-import { type Trigger, cn, preventLeadingWhitespace } from "@/utils";
+import { cn, preventLeadingWhitespace } from "@/utils";
 import { Popover } from "radix-ui";
 import {
 	type ChangeEvent,
@@ -13,53 +13,45 @@ import {
 export function EditableLabel({
 	className,
 	ref,
-	editModeTrigger,
-	defaultValue,
+	editing,
+	onEditingChange,
+	value,
 	maxLength,
-	applyOnAboutToSave,
-	isAllowedToSave,
-	onSave,
+	onBeforeValueChange,
+	isAllowedValueChange,
+	onValueChange,
 	...props
-}: Omit<ComponentProps<"div">, "defaultValue"> & {
-	readonly editModeTrigger: Trigger;
-	readonly defaultValue: string;
+}: ComponentProps<"div"> & {
+	readonly editing: boolean;
+	readonly onEditingChange: (value: boolean) => void;
+	readonly value?: string;
 	readonly maxLength?: number;
-	readonly applyOnAboutToSave?: (value: string) => string;
-	readonly isAllowedToSave?: (value: string) => boolean;
-	readonly onSave?: (value: string) => void;
+	readonly onBeforeValueChange?: (value: string) => string;
+	readonly isAllowedValueChange?: (value: string) => boolean;
+	readonly onValueChange?: (value: string) => void;
 }) {
 	useImperativeHandle(ref, () => labelRef.current ?? new HTMLDivElement());
 
-	const [value, setValue] = useState(maxLength === undefined ? defaultValue : defaultValue.slice(0, maxLength));
-	const [editMode, setEditMode] = useState(false);
 	const [height, setHeight] = useState(0);
 
 	const labelRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	editModeTrigger.useEffect(() => {
-		if (editMode) {
-			return;
-		}
-		if (labelRef.current) {
-			setHeight(labelRef.current?.clientHeight);
-		}
-		setEditMode(true);
-	});
-
 	useEffect(() => {
-		if (editMode) {
+		if (editing) {
 			inputRef.current?.focus();
 			inputRef.current?.select();
+		} else if (labelRef.current) {
+			setHeight(labelRef.current?.clientHeight);
 		}
-	}, [editMode]);
+	}, [editing]);
 
 	return (
 		<>
 			<div className={cn("overflow-hidden text-ellipsis whitespace-pre", className)} ref={labelRef} {...props}>
-				{editMode ? "" : value}
+				{editing ? "" : value}
 			</div>
-			{editMode && (
+			{editing && (
 				<Popover.Root open={true} modal={true}>
 					<Popover.Portal>
 						<Popover.Content
@@ -80,26 +72,24 @@ export function EditableLabel({
 								ref={inputRef}
 								defaultValue={value}
 								maxLength={maxLength}
-								onBlur={() => setEditMode(false)}
+								onBlur={() => onEditingChange(false)}
 								onContextMenu={(event) => event.stopPropagation()}
 								onKeyDown={(event) => {
 									if (event.key === "Escape") {
-										return setEditMode(false);
+										return onEditingChange(false);
 									}
 									if (event.key !== "Enter") {
 										return;
 									}
 									const newValue =
-										applyOnAboutToSave?.(event.currentTarget.value ?? "") ?? event.currentTarget.value ?? "";
-									if (isAllowedToSave && !isAllowedToSave(newValue)) {
+										onBeforeValueChange?.(event.currentTarget.value ?? "") ?? event.currentTarget.value ?? "";
+									if (isAllowedValueChange && !isAllowedValueChange(newValue)) {
 										return;
 									}
-									if (newValue === value) {
-										return setEditMode(false);
+									if (newValue !== value) {
+										onValueChange?.(newValue);
 									}
-									onSave?.(newValue);
-									setValue(newValue);
-									setEditMode(false);
+									onEditingChange(false);
 								}}
 							/>
 						</Popover.Content>
