@@ -14,29 +14,26 @@ export function EditableLabel({
 	className,
 	ref,
 	editing,
-	onEditingChange,
 	value,
 	maxLength,
+	onNoValueChange,
 	onBeforeValueChange,
 	isAllowedValueChange,
 	onValueChange,
 	...props
 }: ComponentProps<"div"> & {
 	readonly editing: boolean;
-	readonly onEditingChange: (value: boolean) => void;
 	readonly value?: string;
 	readonly maxLength?: number;
+	readonly onNoValueChange: () => void;
 	readonly onBeforeValueChange?: (value: string) => string;
 	readonly isAllowedValueChange?: (value: string) => boolean;
 	readonly onValueChange?: (value: string) => void;
 }) {
 	useImperativeHandle(ref, () => labelRef.current ?? new HTMLDivElement());
-
 	const [height, setHeight] = useState(0);
-
 	const labelRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
-
 	useEffect(() => {
 		if (editing) {
 			inputRef.current?.focus();
@@ -45,7 +42,6 @@ export function EditableLabel({
 			setHeight(labelRef.current?.clientHeight);
 		}
 	}, [editing]);
-
 	return (
 		<>
 			<div className={cn("overflow-hidden text-ellipsis whitespace-pre", className)} ref={labelRef} {...props}>
@@ -72,11 +68,11 @@ export function EditableLabel({
 								ref={inputRef}
 								defaultValue={value}
 								maxLength={maxLength}
-								onBlur={() => onEditingChange(false)}
+								onBlur={onNoValueChange}
 								onContextMenu={(event) => event.stopPropagation()}
 								onKeyDown={(event) => {
 									if (event.key === "Escape") {
-										return onEditingChange(false);
+										return onNoValueChange();
 									}
 									if (event.key !== "Enter") {
 										return;
@@ -86,10 +82,7 @@ export function EditableLabel({
 									if (isAllowedValueChange && !isAllowedValueChange(newValue)) {
 										return;
 									}
-									if (newValue !== value) {
-										onValueChange?.(newValue);
-									}
-									onEditingChange(false);
+									newValue === value ? onNoValueChange() : onValueChange?.(newValue);
 								}}
 							/>
 						</Popover.Content>
@@ -100,7 +93,7 @@ export function EditableLabel({
 	);
 }
 
-function DynamicInput({ className, onFocus, onChange, onKeyDown, ...props }: ComponentProps<"input">) {
+function DynamicInput({ className, onFocus, onChange, ...props }: ComponentProps<"input">) {
 	return (
 		<input
 			className={cn("bg-black px-1", className)}
@@ -113,10 +106,6 @@ function DynamicInput({ className, onFocus, onChange, onKeyDown, ...props }: Com
 				preventLeadingWhitespace(event);
 				adjustInputWidth(event);
 				onChange?.(event);
-			}}
-			onKeyDown={(event) => {
-				event.stopPropagation();
-				onKeyDown?.(event);
 			}}
 			{...props}
 		/>

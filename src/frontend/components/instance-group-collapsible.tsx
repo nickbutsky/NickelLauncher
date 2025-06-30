@@ -21,12 +21,9 @@ export function InstanceGroupCollapsible({
 	onOpenChange,
 	...props
 }: ComponentProps<typeof Collapsible> & { readonly state: InstanceGroup }) {
-	const contextMenuContentRef = useRef<ComponentRef<typeof ContextMenuContent>>(null);
-
-	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
-
+	const { instanceGroups, reloadInstanceGroups } = useStore("instanceGroups", "reloadInstanceGroups");
 	const [editableLabelEditing, setEditableLabelEditing] = useState(false);
-
+	const contextMenuContentRef = useRef<ComponentRef<typeof ContextMenuContent>>(null);
 	return (
 		<Collapsible
 			open={!state.hidden}
@@ -58,13 +55,12 @@ export function InstanceGroupCollapsible({
 									}
 								}}
 								editing={editableLabelEditing}
-								onEditingChange={setEditableLabelEditing}
 								value={state.name}
 								maxLength={50}
+								onNoValueChange={() => setEditableLabelEditing(false)}
 								onBeforeValueChange={(value) => value.trim()}
 								isAllowedValueChange={(value) => value.length > 0}
 								onValueChange={async (value) => {
-									const instanceGroups = await pywebview.api.getInstanceGroups();
 									const instanceGroupNumber = instanceGroups.length;
 									const oldPosition = instanceGroups.findIndex((group) => group.name === state.name);
 									await pywebview.api.moveInstances(

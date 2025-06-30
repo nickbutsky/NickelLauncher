@@ -10,14 +10,13 @@ import { type } from "arktype";
 import { use } from "react";
 
 export function InstanceCreationDialogContent() {
-	const { scrollToInstance } = use(AppContext);
 	const { versionTypeToVersions, reloadVersionTypeToVersions, instanceGroups, reloadInstanceGroups } = useStore(
 		"versionTypeToVersions",
 		"reloadVersionTypeToVersions",
 		"instanceGroups",
 		"reloadInstanceGroups",
 	);
-
+	const { scrollToInstance } = use(AppContext);
 	const arkTypeForm = useArkTypeForm(
 		type({
 			instanceName: type("string.trim.preformatted").atLeastLength({
@@ -33,7 +32,6 @@ export function InstanceCreationDialogContent() {
 			versionDisplayName: versionTypeToVersions.release[0]?.displayName ?? "",
 		},
 	);
-
 	return (
 		<FormDialogContent
 			title="Create new instance"

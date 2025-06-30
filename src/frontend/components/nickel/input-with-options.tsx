@@ -16,12 +16,9 @@ export function InputWithOptions({
 	readonly value?: string;
 }) {
 	useImperativeHandle(ref, () => inputRef.current ?? new HTMLInputElement());
-
 	const [currentValue, setCurrentValue] = useState(value);
-
 	const inputRef = useRef<ComponentRef<typeof Input>>(null);
 	const selectTriggerRef = useRef<ComponentRef<typeof SelectTrigger>>(null);
-
 	return options.length > 0 ? (
 		<div className="flex">
 			<Input
@@ -47,7 +44,6 @@ export function InputWithOptions({
 					function preventFocus() {
 						selectTriggerRef.current?.blur();
 					}
-
 					if (!open) {
 						selectTriggerRef.current?.addEventListener("focus", preventFocus);
 						setTimeout(() => {

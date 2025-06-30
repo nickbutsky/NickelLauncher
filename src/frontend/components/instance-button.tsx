@@ -54,16 +54,15 @@ export function InstanceButton({
 }: Omit<ComponentProps<typeof Button>, "name"> & { readonly state: Instance }) {
 	useImperativeHandle(ref, () => buttonRef.current ?? new HTMLButtonElement());
 
-	const [dialogOpen, setDialogOpen] = useState(false);
+	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
+
+	const { instanceDirnameToScrollTo } = use(AppContext);
+
 	const [dialogContentId, setDialogContentId] = useState<"cg" | "cv" | "ci" | "li">();
 	const [editableLabelEditing, setEditableLabelEditing] = useState(false);
 
 	const buttonRef = useRef<ComponentRef<typeof Button>>(null);
 	const contextMenuContentRef = useRef<ComponentRef<typeof ContextMenuContent>>(null);
-
-	const { instanceDirnameToScrollTo } = use(AppContext);
-
-	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
 
 	useEffect(() => {
 		if (instanceDirnameToScrollTo !== state.dirname || !buttonRef.current) {
@@ -78,15 +77,6 @@ export function InstanceButton({
 		buttonRef.current.style.scrollMarginBottom = scrollMarginBottom;
 	}, [instanceDirnameToScrollTo, state.dirname]);
 
-	const openDialog = useCallback((dialogContentId: "cg" | "cv" | "ci" | "li") => {
-		setDialogContentId(dialogContentId);
-		setDialogOpen(true);
-	}, []);
-
-	const launchInstance = useCallback(() => {
-		openDialog("li");
-	}, [openDialog]);
-
 	return (
 		<>
 			<ContextMenu>
@@ -95,10 +85,13 @@ export function InstanceButton({
 						className={cn("grid h-16 w-48 grid-cols-[max-content_1fr] gap-3", className)}
 						ref={buttonRef}
 						variant="outline"
-						onDoubleClick={launchInstance}
+						onDoubleClick={() => setDialogContentId("li")}
 						onKeyUp={(event) => {
+							if (editableLabelEditing) {
+								return;
+							}
 							if (event.key === "Enter") {
-								launchInstance();
+								setDialogContentId("li");
 							} else if (event.key === "F2") {
 								setEditableLabelEditing(true);
 							}
@@ -111,12 +104,17 @@ export function InstanceButton({
 						<div className="grid grid-rows-2 text-left">
 							<EditableLabel
 								editing={editableLabelEditing}
-								onEditingChange={setEditableLabelEditing}
 								value={state.name}
 								maxLength={20}
+								onNoValueChange={() => setEditableLabelEditing(false)}
 								onBeforeValueChange={(value) => value.trim()}
 								isAllowedValueChange={(value) => value.length > 0}
-								onValueChange={(value) => pywebview.api.renameInstance(state.dirname, value)}
+								onValueChange={(value) => {
+									pywebview.api
+										.renameInstance(state.dirname, value)
+										.then(reloadInstanceGroups)
+										.then(() => setEditableLabelEditing(false));
+								}}
 							/>
 							<div>
 								{state.version.displayName}
@@ -126,7 +124,7 @@ export function InstanceButton({
 					</Button>
 				</ContextMenuTrigger>
 				<ContextMenuContent ref={contextMenuContentRef}>
-					<ContextMenuItem onSelect={launchInstance}>Launch</ContextMenuItem>
+					<ContextMenuItem onSelect={() => setDialogContentId("li")}>Launch</ContextMenuItem>
 					<ContextMenuSeparator />
 					<ContextMenuRadioGroup
 						value={state.architectureChoice}
@@ -153,8 +151,8 @@ export function InstanceButton({
 						Rename
 						<ContextMenuShortcut>F2</ContextMenuShortcut>
 					</ContextMenuItem>
-					<ContextMenuItem onSelect={() => openDialog("cg")}>Change Group</ContextMenuItem>
-					<ContextMenuItem onSelect={() => openDialog("cv")}>Change Version</ContextMenuItem>
+					<ContextMenuItem onSelect={() => setDialogContentId("cg")}>Change Group</ContextMenuItem>
+					<ContextMenuItem onSelect={() => setDialogContentId("cv")}>Change Version</ContextMenuItem>
 					<ContextMenuSeparator />
 					<ContextMenuItem onSelect={() => pywebview.api.openGameDirectory(state.dirname)}>
 						Minecraft Folder
@@ -163,13 +161,12 @@ export function InstanceButton({
 						Instance Folder
 					</ContextMenuItem>
 					<ContextMenuSeparator />
-					<ContextMenuItem onSelect={() => openDialog("ci")}>Copy Instance</ContextMenuItem>
+					<ContextMenuItem onSelect={() => setDialogContentId("ci")}>Copy Instance</ContextMenuItem>
 				</ContextMenuContent>
 			</ContextMenu>
 			<Dialog
-				open={dialogOpen}
+				open={!!dialogContentId}
 				onOpenChange={(open) => {
-					setDialogOpen(open);
 					if (!open) {
 						setDialogContentId(undefined);
 					}
@@ -195,12 +192,10 @@ export function InstanceButton({
 
 function ChangeGroupDialogContent({ dirname }: { readonly dirname: string }) {
 	const { instanceGroups, reloadInstanceGroups } = useStore("instanceGroups", "reloadInstanceGroups");
-
 	const arkTypeForm = useArkTypeForm(type({ groupName: "string" }), {
 		groupName:
 			instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
 	});
-
 	return (
 		<FormDialogContent
 			title="Change group"
@@ -240,11 +235,9 @@ function ChangeVersionDialogContent({
 		"reloadVersionTypeToVersions",
 		"reloadInstanceGroups",
 	);
-
 	const arkTypeForm = useArkTypeForm(type({ versionDisplayName: "string" }), {
 		versionDisplayName: currentVersionDisplayName,
 	});
-
 	return (
 		<FormDialogContent
 			title="Change Version"
@@ -276,12 +269,12 @@ function ChangeVersionDialogContent({
 }
 
 function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
+	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
+
 	const [copying, setCopying] = useState<"w" | "nw" | undefined>(undefined);
 
 	const dialogContentRef = useRef<ComponentRef<typeof DialogContent>>(null);
 	const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
-
-	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
 
 	const copyInstance = useCallback(
 		(copyWorlds: boolean) => {
@@ -321,12 +314,12 @@ function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
 }
 
 function LaunchDialogContent({ dirname }: { readonly dirname: string }) {
+	const { showErrorDialog } = use(AppContext);
+
 	const [report, setReport] = useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
 	const [cancelling, setCancelling] = useState(false);
 
 	const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
-
-	const { showErrorDialog } = use(AppContext);
 
 	useEffect(() => {
 		if (import.meta.env.DEV) {

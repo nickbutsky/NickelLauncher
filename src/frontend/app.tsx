@@ -11,17 +11,17 @@ import { Plus } from "lucide-react";
 import { type ContextType, useCallback, useEffect, useRef, useState } from "react";
 
 export function App() {
-	const [ready, setReady] = useState(false);
-	const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = useState<string | null>(null);
-
-	const [errorDialogOpen, setErrorDialogOpen] = useState(false);
-	const errorMsg = useRef("");
-
 	const {
 		ready: storeReady,
 		instanceGroups,
 		reloadInstanceGroups,
 	} = useStore("ready", "instanceGroups", "reloadInstanceGroups");
+
+	const [ready, setReady] = useState(false);
+	const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+	const [instanceDirnameToScrollTo, setInstanceDirnameToScrollTo] = useState<string | null>(null);
+
+	const errorMsg = useRef("");
 
 	useEffect(() => {
 		if (import.meta.env.PROD) {

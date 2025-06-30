@@ -23,7 +23,6 @@ export function VersionSelector({
 	readonly onDisplayNameChange?: (displayName: string) => void;
 }) {
 	const { showErrorDialog } = use(AppContext);
-
 	return (
 		<Tabs
 			className={cn("flex flex-col", className)}
@@ -57,7 +56,6 @@ export function VersionSelector({
 
 function TopBar({ onRefreshRequest }: Pick<ComponentProps<typeof VersionSelector>, "onRefreshRequest">) {
 	const [refreshing, setRefreshing] = useState(false);
-
 	return (
 		<div className="flex justify-between">
 			<Button
