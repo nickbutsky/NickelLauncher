@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 
 class API:
+    @utility.log_callable
     def getInstanceGroups(self) -> list[dict[str, object]]:  # noqa: N802
         return [
             {
@@ -37,9 +38,11 @@ class API:
             for group in InstanceManager.instance_groups
         ]
 
+    @utility.log_callable
     def getLastInstanceDirname(self) -> str | None:  # noqa: N802
         return instance.directory.name if (instance := InstanceManager.last_instance) else None
 
+    @utility.log_callable
     def getVersionTypeToVersions(self, remotely: bool = False) -> dict[Version.Type, list[dict[str, str | list[str]]]]:  # noqa: N802, FBT001, FBT002
         versions = VersionRetriever.get_versions_remotely() if remotely else VersionRetriever.get_versions_locally()
         return {
@@ -51,24 +54,29 @@ class API:
             for version_type in Version.Type
         }
 
+    @utility.log_callable
     def toggleInstanceGroupHidden(self, name: str) -> None:  # noqa: N802
         next(group for group in InstanceManager.instance_groups if group.name == name).toggle_hidden()
 
+    @utility.log_callable
     def moveInstanceGroup(self, position: int, group_name: str) -> None:  # noqa: N802
         InstanceManager.move_instance_group(
             position,
             next(group for group in InstanceManager.instance_groups if group.name == group_name),
         )
 
+    @utility.log_callable
     def moveInstances(self, position: int, group_name: str, dirnames: list[str]) -> None:  # noqa: N802
         InstanceManager.move_instances(position, group_name, [self._get_instance(dirname) for dirname in dirnames])
 
+    @utility.log_callable
     def renameInstance(self, dirname: str, new_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
         if instance.name == new_name:
             return
         instance.name = new_name
 
+    @utility.log_callable
     def changeVersion(self, dirname: str, version_display_name: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
         if instance.version.display_name == version_display_name:
@@ -79,15 +87,18 @@ class API:
             if version.display_name == version_display_name
         )
 
+    @utility.log_callable
     def changeArchitectureChoice(self, dirname: str, architecture_choice: Architecture) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
         if instance.architecture_choice == architecture_choice:
             return
         instance.architecture_choice = architecture_choice
 
+    @utility.log_callable
     def copyInstance(self, dirname: str, copy_worlds: bool) -> None:  # noqa: N802, FBT001
         InstanceManager.copy_instance(self._get_instance(dirname), copy_worlds=copy_worlds)
 
+    @utility.log_callable
     def createInstance(self, name: str, group_name: str, version_display_name: str) -> str:  # noqa: N802
         return InstanceManager.create_instance(
             name,
@@ -99,17 +110,21 @@ class API:
             ),
         ).name
 
+    @utility.log_callable
     def openGameDirectory(self, dirname: str) -> None:  # noqa: N802
         os.startfile(self._get_instance(dirname).directory / "com.mojang")  # noqa: S606
 
+    @utility.log_callable
     def openInstanceDirectory(self, dirname: str) -> None:  # noqa: N802
         os.startfile(self._get_instance(dirname).directory)  # noqa: S606
 
+    @utility.log_callable
     def launchInstance(self, dirname: str) -> None:  # noqa: N802
         instance = self._get_instance(dirname)
         InstanceManager.last_instance = instance
         Game.run(instance, lambda report: Bridge.frontend_api.temporary.propel_launch_report(report))
 
+    @utility.log_callable
     def cancelInstanceLaunch(self) -> None:  # noqa: N802
         Game.cancel_launch()
 
