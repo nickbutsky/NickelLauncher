@@ -17,17 +17,18 @@ import { type ComponentProps, type ComponentRef, useRef, useState } from "react"
 
 export function InstanceGroupCollapsible({
 	state,
-	open,
-	onOpenChange,
 	...props
-}: ComponentProps<typeof Collapsible> & { readonly state: InstanceGroup }) {
+}: Omit<ComponentProps<typeof Collapsible>, "open" | "onOpenChange"> & { readonly state: InstanceGroup }) {
 	const { instanceGroups, reloadInstanceGroups } = useStore("instanceGroups", "reloadInstanceGroups");
 	const [editableLabelEditing, setEditableLabelEditing] = useState(false);
 	const contextMenuContentRef = useRef<ComponentRef<typeof ContextMenuContent>>(null);
 	return (
 		<Collapsible
 			open={!state.hidden}
-			onOpenChange={() => pywebview.api.toggleInstanceGroupHidden(state.name).then(reloadInstanceGroups)}
+			onOpenChange={async () => {
+				await pywebview.api.toggleInstanceGroupHidden(state.name);
+				reloadInstanceGroups();
+			}}
 			{...props}
 		>
 			<div className="flex items-center gap-2">
@@ -41,17 +42,16 @@ export function InstanceGroupCollapsible({
 						<ContextMenuTrigger asChild={true}>
 							<EditableLabel
 								tabIndex={state.name ? 0 : -1}
-								onKeyUp={(event) => {
+								onKeyUp={async (event) => {
 									if (event.key === "F2") {
 										setEditableLabelEditing(true);
 									} else if (event.key === "Delete") {
-										pywebview.api
-											.moveInstances(
-												Number.MAX_SAFE_INTEGER,
-												"",
-												state.instances.map((instance) => instance.dirname),
-											)
-											.then(reloadInstanceGroups);
+										await pywebview.api.moveInstances(
+											Number.MAX_SAFE_INTEGER,
+											"",
+											state.instances.map((instance) => instance.dirname),
+										);
+										reloadInstanceGroups();
 									}
 								}}
 								editing={editableLabelEditing}
@@ -93,15 +93,14 @@ export function InstanceGroupCollapsible({
 								<ContextMenuShortcut>F2</ContextMenuShortcut>
 							</ContextMenuItem>
 							<ContextMenuItem
-								onSelect={() =>
-									pywebview.api
-										.moveInstances(
-											Number.MAX_SAFE_INTEGER,
-											"",
-											state.instances.map((instance) => instance.dirname),
-										)
-										.then(reloadInstanceGroups)
-								}
+								onSelect={async () => {
+									await pywebview.api.moveInstances(
+										Number.MAX_SAFE_INTEGER,
+										"",
+										state.instances.map((instance) => instance.dirname),
+									);
+									reloadInstanceGroups();
+								}}
 							>
 								Delete
 								<ContextMenuShortcut>Del</ContextMenuShortcut>
@@ -113,7 +112,7 @@ export function InstanceGroupCollapsible({
 			<CollapsibleContent className="my-1 flex flex-wrap gap-3 data-[state=closed]:hidden" forceMount={true}>
 				{state.instances.map((instance, i) => (
 					<InstanceButton
-						key={instance.name}
+						key={instance.dirname}
 						state={instance}
 						tabIndex={i ? -1 : 0}
 						onKeyDown={(event) => {

@@ -7,14 +7,11 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/shadcn/alert-dialog";
+import type { ComponentProps } from "react";
 
-export function ErrorDialog({
-	msg,
-	open,
-	onOpenChange,
-}: { readonly msg: string; readonly open: boolean; readonly onOpenChange: (open: boolean) => void }) {
+export function ErrorDialog({ msg, ...props }: ComponentProps<typeof AlertDialog> & { readonly msg: string }) {
 	return (
-		<AlertDialog open={open} onOpenChange={() => onOpenChange(!open)}>
+		<AlertDialog {...props}>
 			<AlertDialogContent className="grid-cols-1">
 				<AlertDialogHeader>
 					<AlertDialogTitle>Error</AlertDialogTitle>

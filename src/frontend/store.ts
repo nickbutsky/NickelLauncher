@@ -8,6 +8,8 @@ type State = {
 	readonly reloadInstanceGroups: () => void;
 	readonly versionTypeToVersions: VersionTypeToVersions;
 	readonly reloadVersionTypeToVersions: (remotely: boolean) => void;
+	readonly instanceDirnameToScrollTo: string | undefined;
+	readonly scrollToInstance: (dirname: string) => void;
 };
 
 export function useStore<K extends keyof State>(...keys: readonly K[]) {
@@ -31,6 +33,8 @@ const useRegularStore = create<State>((set) => ({
 	versionTypeToVersions: { release: [], beta: [], preview: [] },
 	reloadVersionTypeToVersions: async (remotely) =>
 		set({ versionTypeToVersions: await pywebview.api.getVersionTypeToVersions(remotely) }),
+	instanceDirnameToScrollTo: undefined,
+	scrollToInstance: (dirname) => set({ instanceDirnameToScrollTo: dirname }),
 }));
 
 async function prepareStore() {

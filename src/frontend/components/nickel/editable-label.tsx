@@ -1,14 +1,7 @@
-import { cn, preventLeadingWhitespace } from "@/utils";
+import { DynamicInput } from "@/components/nickel/dynamic-input";
+import { cn } from "@/utils";
 import { Popover } from "radix-ui";
-import {
-	type ChangeEvent,
-	type ComponentProps,
-	type FocusEvent,
-	useEffect,
-	useImperativeHandle,
-	useRef,
-	useState,
-} from "react";
+import { type ComponentProps, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 export function EditableLabel({
 	className,
@@ -91,28 +84,4 @@ export function EditableLabel({
 			)}
 		</>
 	);
-}
-
-function DynamicInput({ className, onFocus, onChange, ...props }: ComponentProps<"input">) {
-	return (
-		<input
-			className={cn("bg-black px-1", className)}
-			type="text"
-			onFocus={(event) => {
-				adjustInputWidth(event);
-				onFocus?.(event);
-			}}
-			onChange={(event) => {
-				preventLeadingWhitespace(event);
-				adjustInputWidth(event);
-				onChange?.(event);
-			}}
-			{...props}
-		/>
-	);
-}
-
-function adjustInputWidth(event: FocusEvent<HTMLInputElement, Element> | ChangeEvent<HTMLInputElement>) {
-	event.target.style.width = "16px";
-	event.target.style.width = `${event.target.scrollWidth}px`;
 }

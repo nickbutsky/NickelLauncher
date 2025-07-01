@@ -8,6 +8,7 @@ import { cn } from "@/utils";
 import { RefreshCw } from "lucide-react";
 import { type ComponentProps, type ComponentRef, use, useEffect, useRef, useState } from "react";
 
+// rewrite as a controlled component when shadcn/ui implements tanstack form
 export function VersionSelector({
 	className,
 	versionTypeToVersions,
@@ -33,7 +34,19 @@ export function VersionSelector({
 			}
 			{...props}
 		>
-			<TopBar onRefreshRequest={() => onRefreshRequest().catch((reason: Error) => showErrorDialog(reason.message))} />
+			<TopBar
+				onRefreshRequest={async () => {
+					try {
+						await onRefreshRequest();
+					} catch (error) {
+						if (error instanceof Error) {
+							showErrorDialog(error.message);
+						} else {
+							throw error;
+						}
+					}
+				}}
+			/>
 			{versionTypes.map((versionType) => (
 				<TabsContent
 					className="h-48 data-[state=inactive]:hidden"

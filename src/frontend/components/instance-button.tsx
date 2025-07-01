@@ -2,11 +2,9 @@ import { AppContext } from "@/app-context";
 import defaultLogo from "@/assets/default.png";
 import { type API, exposeTemporaryFunction } from "@/bridge";
 import { EditableLabel } from "@/components/nickel/editable-label";
-import { FormDialogContent } from "@/components/nickel/form-dialog-content";
 import { InputWithOptions } from "@/components/nickel/input-with-options";
 import {
 	Dialog,
-	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
@@ -25,7 +23,7 @@ import {
 	ContextMenuShortcut,
 	ContextMenuTrigger,
 } from "@/components/shadcn/context-menu";
-import { FormControl, FormField, FormItem } from "@/components/shadcn/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/shadcn/form";
 import { VersionSelector } from "@/components/version-selector";
 import type { Instance } from "@/core-types";
 import { useStore } from "@/store";
@@ -54,9 +52,10 @@ export function InstanceButton({
 }: Omit<ComponentProps<typeof Button>, "name"> & { readonly state: Instance }) {
 	useImperativeHandle(ref, () => buttonRef.current ?? new HTMLButtonElement());
 
-	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
-
-	const { instanceDirnameToScrollTo } = use(AppContext);
+	const { reloadInstanceGroups, instanceDirnameToScrollTo } = useStore(
+		"reloadInstanceGroups",
+		"instanceDirnameToScrollTo",
+	);
 
 	const [dialogContentId, setDialogContentId] = useState<"cg" | "cv" | "ci" | "li">();
 	const [editableLabelEditing, setEditableLabelEditing] = useState(false);
@@ -109,11 +108,10 @@ export function InstanceButton({
 								onNoValueChange={() => setEditableLabelEditing(false)}
 								onBeforeValueChange={(value) => value.trim()}
 								isAllowedValueChange={(value) => value.length > 0}
-								onValueChange={(value) => {
-									pywebview.api
-										.renameInstance(state.dirname, value)
-										.then(reloadInstanceGroups)
-										.then(() => setEditableLabelEditing(false));
+								onValueChange={async (value) => {
+									await pywebview.api.renameInstance(state.dirname, value);
+									reloadInstanceGroups();
+									setEditableLabelEditing(false);
 								}}
 							/>
 							<div>
@@ -128,9 +126,10 @@ export function InstanceButton({
 					<ContextMenuSeparator />
 					<ContextMenuRadioGroup
 						value={state.architectureChoice}
-						onValueChange={(value) =>
-							pywebview.api.changeArchitectureChoice(state.dirname, value).then(reloadInstanceGroups)
-						}
+						onValueChange={async (value) => {
+							await pywebview.api.changeArchitectureChoice(state.dirname, value);
+							reloadInstanceGroups();
+						}}
 					>
 						{state.version.availableArchitectures.map((architecture) => (
 							<ContextMenuRadioItem key={architecture} value={architecture}>
@@ -164,72 +163,98 @@ export function InstanceButton({
 					<ContextMenuItem onSelect={() => setDialogContentId("ci")}>Copy Instance</ContextMenuItem>
 				</ContextMenuContent>
 			</ContextMenu>
-			<Dialog
-				open={!!dialogContentId}
-				onOpenChange={(open) => {
-					if (!open) {
-						setDialogContentId(undefined);
-					}
-				}}
-			>
-				{
-					{
-						cg: <ChangeGroupDialogContent dirname={state.dirname} />,
-						cv: (
-							<ChangeVersionDialogContent
-								dirname={state.dirname}
-								currentVersionDisplayName={state.version.displayName}
-							/>
-						),
-						ci: <CopyInstanceDialogContent dirname={state.dirname} />,
-						li: <LaunchDialogContent dirname={state.dirname} />,
-					}[String(dialogContentId)]
-				}
-			</Dialog>
+			<ChangeGroupDialog
+				open={dialogContentId === "cg"}
+				onOpenChange={(open) => open || setDialogContentId(undefined)}
+				dirname={state.dirname}
+			/>
+			<ChangeVersionDialog
+				open={dialogContentId === "cv"}
+				onOpenChange={(open) => open || setDialogContentId(undefined)}
+				dirname={state.dirname}
+				currentVersionDisplayName={state.version.displayName}
+			/>
+			<CopyInstanceDialog
+				open={dialogContentId === "ci"}
+				onOpenChange={(open) => open || setDialogContentId(undefined)}
+				dirname={state.dirname}
+			/>
+			<LaunchDialog
+				open={dialogContentId === "li"}
+				onOpenChange={(open) => open || setDialogContentId(undefined)}
+				dirname={state.dirname}
+			/>
 		</>
 	);
 }
 
-function ChangeGroupDialogContent({ dirname }: { readonly dirname: string }) {
+function ChangeGroupDialog({
+	onOpenChange,
+	dirname,
+	...props
+}: ComponentProps<typeof Dialog> & { readonly dirname: string }) {
 	const { instanceGroups, reloadInstanceGroups } = useStore("instanceGroups", "reloadInstanceGroups");
+	const dialogContentRef = useRef<ComponentRef<typeof DialogContent>>(null);
 	const arkTypeForm = useArkTypeForm(type({ groupName: "string" }), {
 		groupName:
 			instanceGroups.find((group) => group.instances.find((instance) => instance.dirname === dirname))?.name ?? "",
 	});
 	return (
-		<FormDialogContent
-			title="Change group"
-			submitText="Change"
-			form={arkTypeForm}
-			onSubmitBeforeClose={(data) =>
-				pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname])
-			}
-			onSubmitAfterClose={reloadInstanceGroups}
+		<Dialog
+			onOpenChange={(open) => {
+				if (!open) {
+					arkTypeForm.reset(arkTypeForm.control._defaultValues);
+				}
+				onOpenChange?.(open);
+			}}
+			{...props}
 		>
-			<FormField
-				control={arkTypeForm.control}
-				name="groupName"
-				render={({ field }) => (
-					<FormItem>
-						<FormControl>
-							<InputWithOptions
-								placeholder="Group name"
-								maxLength={50}
-								options={instanceGroups.map((group) => group.name).filter((name) => name !== "")}
-								{...field}
-							/>
-						</FormControl>
-					</FormItem>
-				)}
-			/>
-		</FormDialogContent>
+			<DialogContent ref={dialogContentRef}>
+				<DialogHeader>
+					<DialogTitle>Change group</DialogTitle>
+					<DialogDescription className="hidden" />
+				</DialogHeader>
+				<Form {...arkTypeForm}>
+					<form
+						className="space-y-4"
+						onSubmit={arkTypeForm.handleSubmit(async (data) => {
+							await pywebview.api.moveInstances(Number.MAX_SAFE_INTEGER, data.groupName.trim(), [dirname]);
+							dialogContentRef.current?.addEventListener("animationend", reloadInstanceGroups, { once: true });
+							onOpenChange?.(false);
+						})}
+					>
+						<FormField
+							control={arkTypeForm.control}
+							name="groupName"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<InputWithOptions
+											placeholder="Group name"
+											maxLength={50}
+											options={instanceGroups.map((group) => group.name).filter((name) => name !== "")}
+											{...field}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+						<DialogFooter>
+							<Button>Change</Button>
+						</DialogFooter>
+					</form>
+				</Form>
+			</DialogContent>
+		</Dialog>
 	);
 }
 
-function ChangeVersionDialogContent({
+function ChangeVersionDialog({
+	onOpenChange,
 	dirname,
 	currentVersionDisplayName,
-}: { readonly dirname: string; readonly currentVersionDisplayName: string }) {
+	...props
+}: ComponentProps<typeof Dialog> & { readonly dirname: string; readonly currentVersionDisplayName: string }) {
 	const { versionTypeToVersions, reloadVersionTypeToVersions, reloadInstanceGroups } = useStore(
 		"versionTypeToVersions",
 		"reloadVersionTypeToVersions",
@@ -239,141 +264,169 @@ function ChangeVersionDialogContent({
 		versionDisplayName: currentVersionDisplayName,
 	});
 	return (
-		<FormDialogContent
-			title="Change Version"
-			submitText="Change"
-			form={arkTypeForm}
-			onSubmitBeforeClose={(data) =>
-				pywebview.api.changeVersion(dirname, data.versionDisplayName).then(reloadInstanceGroups)
-			}
+		<Dialog
+			onOpenChange={(open) => {
+				if (!open) {
+					arkTypeForm.reset(arkTypeForm.control._defaultValues);
+				}
+				onOpenChange?.(open);
+			}}
+			{...props}
 		>
-			<FormField
-				control={arkTypeForm.control}
-				name="versionDisplayName"
-				render={({ field }) => (
-					<FormItem>
-						<FormControl>
-							<VersionSelector
-								className="h-72"
-								versionTypeToVersions={versionTypeToVersions}
-								onRefreshRequest={async () => reloadVersionTypeToVersions(true)}
-								defaultDisplayName={field.value}
-								onDisplayNameChange={field.onChange}
-							/>
-						</FormControl>
-					</FormItem>
-				)}
-			/>
-		</FormDialogContent>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Change Version</DialogTitle>
+					<DialogDescription className="hidden" />
+				</DialogHeader>
+				<Form {...arkTypeForm}>
+					<form
+						className="space-y-4"
+						onSubmit={arkTypeForm.handleSubmit(async (data) => {
+							await pywebview.api.changeVersion(dirname, data.versionDisplayName);
+							reloadInstanceGroups();
+							onOpenChange?.(false);
+						})}
+					>
+						<FormField
+							control={arkTypeForm.control}
+							name="versionDisplayName"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<VersionSelector
+											className="h-72"
+											versionTypeToVersions={versionTypeToVersions}
+											onRefreshRequest={async () => reloadVersionTypeToVersions(true)}
+											defaultDisplayName={field.value}
+											onDisplayNameChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+						<DialogFooter>
+							<Button>Change</Button>
+						</DialogFooter>
+					</form>
+				</Form>
+			</DialogContent>
+		</Dialog>
 	);
 }
 
-function CopyInstanceDialogContent({ dirname }: { readonly dirname: string }) {
+function CopyInstanceDialog({
+	onOpenChange,
+	dirname,
+	...props
+}: ComponentProps<typeof Dialog> & { readonly dirname: string }) {
 	const { reloadInstanceGroups } = useStore("reloadInstanceGroups");
 
-	const [copying, setCopying] = useState<"w" | "nw" | undefined>(undefined);
+	const [copying, setCopying] = useState<"w" | "nw">();
 
 	const dialogContentRef = useRef<ComponentRef<typeof DialogContent>>(null);
-	const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
 
 	const copyInstance = useCallback(
-		(copyWorlds: boolean) => {
+		async (copyWorlds: boolean) => {
 			setCopying(copyWorlds ? "w" : "nw");
-			pywebview.api.copyInstance(dirname, copyWorlds).then(() => {
-				dialogContentRef.current?.addEventListener(
-					"animationend",
-					() => {
-						reloadInstanceGroups();
-						setCopying(undefined);
-					},
-					{ once: true },
-				);
-				hiddenCloseButtonRef.current?.click();
-			});
+			await pywebview.api.copyInstance(dirname, copyWorlds);
+			reloadInstanceGroups();
+			setCopying(undefined);
+			onOpenChange?.(false);
 		},
-		[dirname, reloadInstanceGroups],
+		[onOpenChange, dirname, reloadInstanceGroups],
 	);
 
 	return (
-		<DialogContent ref={dialogContentRef} closeable={!copying}>
-			<DialogHeader>
-				<DialogTitle>Do you want to copy your worlds?</DialogTitle>
-				<DialogDescription className="hidden" />
-			</DialogHeader>
-			<DialogClose ref={hiddenCloseButtonRef} hidden={true} />
-			<DialogFooter className="gap-y-1.5">
-				<Button type="submit" onClick={() => copyInstance(true)} disabled={!!copying}>
-					{copying === "w" ? <RotateCw className="animate-spin" /> : "Yes"}
-				</Button>
-				<Button type="submit" onClick={() => copyInstance(false)} disabled={!!copying}>
-					{copying === "nw" ? <RotateCw className="animate-spin" /> : "No"}
-				</Button>
-			</DialogFooter>
-		</DialogContent>
+		<Dialog onOpenChange={onOpenChange} {...props}>
+			<DialogContent ref={dialogContentRef} closeable={!copying}>
+				<DialogHeader>
+					<DialogTitle>Do you want to copy your worlds?</DialogTitle>
+					<DialogDescription className="hidden" />
+				</DialogHeader>
+				<DialogFooter className="gap-y-1.5">
+					<Button type="submit" onClick={() => copyInstance(true)} disabled={!!copying}>
+						{copying === "w" ? <RotateCw className="animate-spin" /> : "Yes"}
+					</Button>
+					<Button type="submit" onClick={() => copyInstance(false)} disabled={!!copying}>
+						{copying === "nw" ? <RotateCw className="animate-spin" /> : "No"}
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	);
 }
 
-function LaunchDialogContent({ dirname }: { readonly dirname: string }) {
+function LaunchDialog({
+	open,
+	onOpenChange,
+	dirname,
+	...props
+}: ComponentProps<typeof Dialog> & { readonly dirname: string }) {
 	const { showErrorDialog } = use(AppContext);
 
 	const [report, setReport] = useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
 	const [cancelling, setCancelling] = useState(false);
 
-	const hiddenCloseButtonRef = useRef<ComponentRef<typeof DialogClose>>(null);
-
 	useEffect(() => {
-		if (import.meta.env.DEV) {
+		if (import.meta.env.DEV || !open) {
 			return;
 		}
 		exposeTemporaryFunction(
 			"propelLaunchReport",
 			(report) => setReport(report),
-			() =>
-				pywebview.api
-					.launchInstance(dirname)
-					.catch((reason: Error) => showErrorDialog(reason.message))
-					.finally(() => {
-						hiddenCloseButtonRef.current?.click();
-						setCancelling(false);
-					}),
+			async () => {
+				try {
+					await pywebview.api.launchInstance(dirname);
+				} catch (error) {
+					if (error instanceof Error) {
+						showErrorDialog(error.message);
+					} else {
+						throw error;
+					}
+				} finally {
+					onOpenChange?.(false);
+					setCancelling(false);
+				}
+			},
 		);
-	}, [dirname, showErrorDialog]);
+	}, [open, onOpenChange, dirname, showErrorDialog]);
 
 	return (
 		<>
-			<DialogContent closeable={false}>
-				<DialogHeader className="hidden">
-					<DialogTitle />
-					<DialogDescription />
-				</DialogHeader>
-				<div className="flex">
-					<div>{report?.text}</div>
-					<div className="flex-1" />
-					{report?.progress && (
-						<div>{`${report.progress.processed.toFixed(1)}/${report.progress.totalsize.toFixed(1)} ${
-							report.progress.unit
-						}`}</div>
-					)}
-				</div>
-				{report?.progress ? (
-					<Progress value={report.progress.processed} max={report.progress.totalsize} />
-				) : (
-					<div className="h-2 w-full overflow-hidden rounded-full bg-primary/20">
-						<div className="progress h-full w-full bg-primary" />
+			<Dialog open={open} onOpenChange={onOpenChange} {...props}>
+				<DialogContent closeable={false}>
+					<DialogHeader className="hidden">
+						<DialogTitle />
+						<DialogDescription />
+					</DialogHeader>
+					<div className="flex">
+						<div>{report?.text}</div>
+						<div className="flex-1" />
+						{report?.progress && (
+							<div>{`${report.progress.processed.toFixed(1)}/${report.progress.totalsize.toFixed(1)} ${
+								report.progress.unit
+							}`}</div>
+						)}
 					</div>
-				)}
-				<DialogClose ref={hiddenCloseButtonRef} hidden={true} />
-				<Button
-					variant="secondary"
-					disabled={cancelling}
-					onClick={() => {
-						setCancelling(true);
-						pywebview.api.cancelInstanceLaunch();
-					}}
-				>
-					Abort
-				</Button>
-			</DialogContent>
+					{report?.progress ? (
+						<Progress value={report.progress.processed} max={report.progress.totalsize} />
+					) : (
+						<div className="h-2 w-full overflow-hidden rounded-full bg-primary/20">
+							<div className="progress h-full w-full bg-primary" />
+						</div>
+					)}
+					<Button
+						variant="secondary"
+						disabled={cancelling}
+						onClick={() => {
+							setCancelling(true);
+							pywebview.api.cancelInstanceLaunch();
+						}}
+					>
+						Abort
+					</Button>
+				</DialogContent>
+			</Dialog>
 			<style>
 				{`
 					.progress {
