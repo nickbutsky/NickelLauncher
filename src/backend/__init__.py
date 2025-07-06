@@ -39,3 +39,5 @@ def _setup_rotating_logger(logs_directory: Path, filename_base: str) -> None:
         level=logging.DEBUG,
         handlers=[handler] if "__compiled__" in globals() else (handler, logging.StreamHandler()),
     )
+    logging.getLogger("httpcore.connection").setLevel(logging.WARNING)
+    logging.getLogger("httpcore.http11").setLevel(logging.WARNING)
