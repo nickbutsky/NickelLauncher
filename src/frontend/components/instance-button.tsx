@@ -1,6 +1,6 @@
 import { AppContext } from "@/app-context";
 import defaultLogo from "@/assets/default.png";
-import { type API, exposeTemporaryFunction } from "@/bridge";
+import { type Api, exposeTemporaryFunction } from "@/bridge";
 import { EditableLabel } from "@/components/nickel/editable-label";
 import { InputWithOptions } from "@/components/nickel/input-with-options";
 import {
@@ -364,7 +364,7 @@ function LaunchDialog({
 }: ComponentProps<typeof Dialog> & { readonly dirname: string }) {
 	const { showErrorDialog } = use(AppContext);
 
-	const [report, setReport] = useState<Parameters<API["temporary"]["propelLaunchReport"]>[0]>(null);
+	const [report, setReport] = useState<Parameters<Api["temporary"]["propelLaunchReport"]>[0]>(null);
 	const [cancelling, setCancelling] = useState(false);
 
 	useEffect(() => {

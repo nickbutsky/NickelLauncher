@@ -1,7 +1,7 @@
 import type { InstanceGroup, VersionTypeToVersions } from "@/core-types";
 import type { Writable } from "ts-essentials";
 
-export function exposeStaticFunction<N extends keyof API["static"]>(name: N, func: API["static"][N]) {
+export function exposeStaticFunction<N extends keyof Api["static"]>(name: N, func: Api["static"][N]) {
 	if (exposedStaticFunctionNames.has(name)) {
 		throw new Error("Function with this name has already been exposed");
 	}
@@ -10,9 +10,9 @@ export function exposeStaticFunction<N extends keyof API["static"]>(name: N, fun
 	exposedStaticFunctionNames.add(name);
 }
 
-export function exposeTemporaryFunction<N extends keyof API["temporary"]>(
+export function exposeTemporaryFunction<N extends keyof Api["temporary"]>(
 	name: N,
-	func: API["temporary"][N],
+	func: Api["temporary"][N],
 	functionWithBackendCall: () => Promise<void>,
 ) {
 	getApi().temporary[name] = func;
@@ -43,8 +43,7 @@ declare global {
 	};
 }
 
-// biome-ignore lint/style/useNamingConvention: False positive
-export type API = {
+export type Api = {
 	readonly static: { readonly onSuddenChange: () => void };
 	readonly temporary: {
 		readonly propelLaunchReport: (
@@ -58,7 +57,7 @@ export type API = {
 };
 
 function getApi() {
-	return (window as unknown as { webview: API }).webview;
+	return (window as unknown as { webview: Api }).webview;
 }
 
 function notExposedStaticFunction() {
@@ -69,9 +68,9 @@ function notExposedTemporaryFunction() {
 	throw new ReferenceError("Function is not exposed");
 }
 
-const exposedStaticFunctionNames: Set<keyof API["static"]> = new Set();
+const exposedStaticFunctionNames: Set<keyof Api["static"]> = new Set();
 
-(window as unknown as { webview: API }).webview = {
+(window as unknown as { webview: Api }).webview = {
 	static: { onSuddenChange: notExposedStaticFunction },
 	temporary: { propelLaunchReport: notExposedTemporaryFunction },
 };

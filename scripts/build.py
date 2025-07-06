@@ -10,13 +10,15 @@ from urllib import request
 from uuid import uuid4
 from zipfile import ZipFile
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, alias_generators
 
 
 class PackageModel(BaseModel):
-    displayName: str  # noqa: N815
+    display_name: str
     author: AuthorModel
     version: str
+
+    model_config = ConfigDict(alias_generator=alias_generators.to_camel)
 
 
 class AuthorModel(BaseModel):
@@ -30,13 +32,13 @@ def main() -> None:
     package_model = PackageModel.model_validate_json(Path("package.json").read_text(), strict=True)
 
     try:
-        compile_app(package_model.displayName, package_model.author.name, package_model.version)
+        compile_app(package_model.display_name, package_model.author.name, package_model.version)
 
         iscc_executable = get_iscc_executable()
         if iscc_executable:
             build_installer(
                 iscc_executable,
-                package_model.displayName,
+                package_model.display_name,
                 package_model.author.name,
                 package_model.version,
             )
@@ -47,7 +49,7 @@ def main() -> None:
 
 
 def compile_app(name: str, company_name: str, version: str) -> None:
-    subprocess.run(("powershell", "vite build"), check=True)  # noqa: S603
+    subprocess.run(("powershell", "vite build"), check=True)
     subprocess.run(  # noqa: S603
         (
             "powershell",

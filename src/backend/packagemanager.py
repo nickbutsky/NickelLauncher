@@ -26,7 +26,8 @@ def find_packages(package_family_name: str, cancellation_token: CancellationToke
             output := shell.run_command(
                 (
                     "powershell",
-                    f'Get-AppxPackage | Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json',  # noqa: E501
+                    "Get-AppxPackage"
+                    f'| Where-Object {{$_.PackageFamilyName -eq "{package_family_name}"}} | ConvertTo-Json',
                 ),
                 cancellation_token,
                 log_stdout=False,
