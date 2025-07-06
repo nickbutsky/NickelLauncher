@@ -110,7 +110,7 @@ export function InstanceButton({
 								isAllowedValueChange={(value) => value.length > 0}
 								onValueChange={async (value) => {
 									await pywebview.api.renameInstance(state.dirname, value);
-									reloadInstanceGroups();
+									await reloadInstanceGroups();
 									setEditableLabelEditing(false);
 								}}
 							/>

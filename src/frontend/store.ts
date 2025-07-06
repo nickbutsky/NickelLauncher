@@ -5,7 +5,7 @@ import { useShallow } from "zustand/react/shallow";
 type State = {
 	readonly ready: boolean;
 	readonly instanceGroups: Awaited<ReturnType<typeof pywebview.api.getInstanceGroups>>;
-	readonly reloadInstanceGroups: () => void;
+	readonly reloadInstanceGroups: () => Promise<void>;
 	readonly versionTypeToVersions: VersionTypeToVersions;
 	readonly reloadVersionTypeToVersions: (remotely: boolean) => void;
 	readonly instanceDirnameToScrollTo: string | undefined;
