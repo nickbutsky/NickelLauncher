@@ -4,7 +4,7 @@
 		"isolatedModules": true,
 		"jsx": "react-jsx",
 		"lib": ["DOM", "DOM.Iterable"],
-		"module": "ESNext",
+		"module": "esnext",
 		"moduleResolution": "bundler",
 		"noEmit": true,
 		"noFallthroughCasesInSwitch": true,
@@ -18,7 +18,7 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"strict": true,
-		"target": "ES2022"
+		"target": "es2022"
 	},
 	"include": ["src/frontend"]
 }

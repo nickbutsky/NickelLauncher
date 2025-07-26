@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"erasableSyntaxOnly": true,
 		"isolatedModules": true,
-		"module": "ESNext",
+		"module": "esnext",
 		"moduleResolution": "bundler",
 		"noEmit": true,
 		"noFallthroughCasesInSwitch": true,
