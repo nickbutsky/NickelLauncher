@@ -6,9 +6,11 @@
 		"moduleResolution": "bundler",
 		"noEmit": true,
 		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
 		"noUncheckedSideEffectImports": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
+		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"strict": true
 	},
