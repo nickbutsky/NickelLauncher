@@ -29,7 +29,7 @@ export function InstanceCreationDialog({ children, onOpenChange, ...props }: Com
 		type({
 			instanceName: type("string.trim.preformatted").atLeastLength({
 				rule: 1,
-				"meta.message": "Instance name must be at least 1 character long.",
+				"meta.message": "Instance name must be at least 1 character long",
 			}),
 			groupName: "string.trim.preformatted",
 			versionDisplayName: "string",

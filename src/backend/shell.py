@@ -54,7 +54,7 @@ def run_command(
     *,
     log_stdout: bool = True,
 ) -> str:
-    logging.getLogger(__name__).debug('Executing command: "%s"...', command)
+    logging.getLogger(__name__).debug('Executing command: "%s"', command)
     with subprocess.Popen(  # noqa: S603
         command,
         stdout=subprocess.PIPE,

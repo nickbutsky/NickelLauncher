@@ -24,10 +24,10 @@ def download_version(
     if cancellation_token:
         cancellation_token.check()
 
-    msg = "Retrieving download link..."
+    msg = "Retrieving download link"
     logging.getLogger(__name__).debug(msg)
     if reporthook:
-        reporthook(Report(Report.Type.PROGRESS, msg))
+        reporthook(Report(Report.Type.PROGRESS, f"{msg}..."))
     link = _get_link(secrets.choice(version.architecture_to_guids[architecture]))
     if not link:
         error_msg = "Couldn't retrieve the download link"
@@ -37,7 +37,7 @@ def download_version(
     if cancellation_token:
         cancellation_token.check()
 
-    logging.getLogger(__name__).debug('Downloading package to "%s"...', version.architecture_to_package[architecture])
+    logging.getLogger(__name__).debug('Downloading package to "%s"', version.architecture_to_package[architecture])
     net.download_file(link, version.architecture_to_package[architecture], cancellation_token, reporthook)
 
 
