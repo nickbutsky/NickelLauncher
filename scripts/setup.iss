@@ -91,12 +91,12 @@ begin
 
   if (CompareISPackageVersion() = 0) then
   begin
-    MsgBox('The application is already installed.', mbInformation, MB_OK);
+    MsgBox('The application is already installed', mbInformation, MB_OK);
     Result := False;
   end
   else if (CompareISPackageVersion() < 0) then
   begin
-    MsgBox('A newer version of the application is already installed.', mbInformation, MB_OK);
+    MsgBox('A newer version of the application is already installed', mbInformation, MB_OK);
     Result := False;
   end;
 end;

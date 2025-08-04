@@ -86,7 +86,7 @@ def compile_app(name: str, company_name: str, version: str) -> None:
             break
     if not renamed:
         raise CompileError
-    print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'.")
+    print(f"Compilation: Successfully renamed '{app_dist_directory}' to '{new_app_dist_directory}'")
 
 
 def get_iscc_executable() -> Path | None:
