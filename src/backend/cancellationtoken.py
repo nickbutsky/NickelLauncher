@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 class CancellationTokenSource:
     def __init__(self) -> None:
         self._token = CancellationToken()

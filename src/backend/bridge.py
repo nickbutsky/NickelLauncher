@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import os
 from itertools import chain
 from typing import TYPE_CHECKING, Protocol, runtime_checkable

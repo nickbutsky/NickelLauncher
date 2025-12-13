@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import string
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal
