@@ -25,7 +25,7 @@ class LoadResult:
 def load(directory: Path, versions: Iterable[Version]) -> LoadResult:
     try:
         groups_model = _GroupsModel.model_validate_json((directory / "groups.json").read_text(), strict=True)
-    except (OSError, ValidationError):
+    except OSError, ValidationError:
         return LoadResult(_load_instance_groups([], None, directory, versions), None)
 
     groups = _load_instance_groups(groups_model.groups, groups_model.last_instance, directory, versions)
@@ -177,7 +177,7 @@ def _load_instance(directory: Path, versions: Iterable[Version]) -> Instance | N
             if (v.name == instance_model.version.name)
             and (instance_model.version.architecture_choice in v.available_architectures)
         )
-    except (OSError, ValidationError, StopIteration):
+    except OSError, ValidationError, StopIteration:
         return None
     return Instance(instance_model.name, version, instance_model.version.architecture_choice, directory)
 

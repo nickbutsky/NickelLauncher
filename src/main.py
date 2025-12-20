@@ -84,7 +84,7 @@ def get_geometry_model() -> GeometryModel:
             },
             strict=True,
         )
-    except (json.JSONDecodeError, TypeError, IndexError, ValidationError):
+    except json.JSONDecodeError, TypeError, IndexError, ValidationError:
         return GeometryModel()
 
 
