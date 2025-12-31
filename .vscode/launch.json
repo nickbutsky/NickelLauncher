@@ -1,7 +1,7 @@
 {
 	"configurations": [
 		{
-			"name": "Python Debugger",
+			"name": "Python",
 			"postDebugTask": "postDebug",
 			"preLaunchTask": "preLaunch",
 			"program": "src/main.py",
