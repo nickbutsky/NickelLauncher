@@ -60,8 +60,8 @@ class _GroupsModel(BaseModel):
 
     @model_validator(mode="after")
     def _finish_validation(self) -> Self:
-        group_names: list[str] = []
-        instance_dirnames: list[str] = []
+        group_names = list[str]()
+        instance_dirnames = list[str]()
         for group_model in self.groups:
             group_names.append(group_model.name)
             instance_dirnames += group_model.instances
@@ -117,7 +117,7 @@ def _load_instance_groups(
     if not instances:
         return []
 
-    groups: list[InstanceGroup] = []
+    groups = list[InstanceGroup]()
     for group_model in group_models:
         instances_of_group = [
             instance

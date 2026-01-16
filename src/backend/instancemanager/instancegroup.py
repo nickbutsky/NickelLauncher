@@ -1,9 +1,10 @@
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from ordered_set import OrderedSet
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
+    from collections.abc import Iterable
 
     from backend.core import Instance
 
@@ -14,7 +15,7 @@ class InstanceGroup:
         self._hidden = False if self.unnamed else hidden
         self._instances = list(instances)
 
-        self._subscribers: OrderedSet[Callable[[], object]] = OrderedSet({})
+        self._subscribers = OrderedSet[Callable[[], object]]({})
 
     @property
     def unnamed(self) -> bool:
