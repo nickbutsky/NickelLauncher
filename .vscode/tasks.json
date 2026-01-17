@@ -3,11 +3,17 @@
 		{
 			"command": "npx vite build",
 			"label": "preLaunch",
+			"presentation": {
+				"close": true
+			},
 			"type": "shell"
 		},
 		{
 			"command": "Remove-Item -Recurse -Force build",
 			"label": "postDebug",
+			"presentation": {
+				"close": true
+			},
 			"type": "shell"
 		}
 	],
