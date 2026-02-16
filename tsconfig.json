@@ -1,16 +1,9 @@
 {
 	"compilerOptions": {
+		"exactOptionalPropertyTypes": false,
 		"paths": {
 			"@/*": ["./src/frontend/*"]
 		}
 	},
-	"files": [],
-	"references": [
-		{
-			"path": "./tsconfig.app.json"
-		},
-		{
-			"path": "./tsconfig.node.json"
-		}
-	]
+	"extends": ["@tsconfig/bases/vite-react", "@tsconfig/bases/strictest"]
 }

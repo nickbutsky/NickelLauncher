@@ -26,6 +26,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@tailwindcss/vite": "^4",
+		"@tsconfig/bases": "^1",
 		"@types/node": "^24",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
