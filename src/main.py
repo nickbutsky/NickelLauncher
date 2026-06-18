@@ -2,7 +2,7 @@ import ctypes
 import json
 import winreg
 from ctypes import wintypes
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, cast
 
 import webview
@@ -50,7 +50,7 @@ class FrontendAPITemporary:
     window: webview.Window
 
     def propel_launch_report(self, report: Report) -> None:
-        self.window.evaluate_js(f"webview.temporary.propelLaunchReport({json.dumps(report.to_dict())})")
+        self.window.evaluate_js(f"webview.temporary.propelLaunchReport({json.dumps(asdict(report))})")
 
 
 class GeometryModel(BaseModel):
